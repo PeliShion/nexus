@@ -327,6 +327,7 @@ module.exports.auccheck = async function () {
         }
         else if (isauctionactive === true && (auctionendtime - currenttime) < 3600 && (auctionendtime - currenttime) > 3540) {
             for (let j = 0; j < notifusers.length; j++) {
+                let msguser = notifusers[j]
                 client.users.send(msguser, bluetext(`The auction #${auctionid} is going to end in an hour!`)).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             }
         }

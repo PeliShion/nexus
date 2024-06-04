@@ -99,7 +99,7 @@ module.exports = {
             if (tags && tags.length > 100) return await interaction.reply({ content: redtext("Please enter less than 100 characters for the tag!"), ephemeral: true })
             if (ahlengthinsec <= 0 || startingbid <= 0 || increment <= 0 || antisnipelengthins < 0) return await interaction.reply({ content: redtext(`Please use numbers above 0 for numbers!`), ephemeral: true })
             else if (ahlengthinsec > 604800) return await interaction.reply({ content: redtext("Auction length has to be less than 1 week!"), ephemeral: true })
-            else if (antisnipelengthins > 172800) return await interaction.reply({ content: redtext(`Antisnipe length has to be less than 2 days!`), ephemeral: true })
+            else if (antisnipelengthins > 43200) return await interaction.reply({ content: redtext(`Antisnipe length has to be less than 12 hours!`), ephemeral: true })
             let endtime = currenttime + ahlengthinsec
             if (tags === null) tagsdisplay = "None"
             else tagsdisplay = tags

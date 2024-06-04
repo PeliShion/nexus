@@ -1,0 +1,113 @@
+const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType } = require('discord.js')
+const { redtext, bluetext, greentext } = require('../../data/functions.js')
+const { embedgen, biddms } = require('../../data/ahmanager.js')
+
+const showdetails = new ButtonBuilder()
+    .setCustomId(`show`)
+    .setLabel("Show Auction Details")
+    .setStyle(ButtonStyle.Success)
+const detailrow = new ActionRowBuilder().addComponents(showdetails)
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName("searchah")
+        .setDescription("Search The Auction")
+        .addStringOption(option =>
+            option.setName("rarity")
+                .setDescription("Rarity of the Charm")
+                .addChoices(
+                    { name: "Common", value: "common" },
+                    { name: "Uncommon", value: "uncommon" },
+                    { name: "Rare", value: "rare" },
+                    { name: "Epic", value: "epic" },
+                    { name: "Legendary", value: "legendary" }
+                ))
+        .addStringOption(option =>
+            option.setName("class")
+                .setDescription("The Charm's class")
+                .addChoices(
+                    { name: "Dawnbringer", value: "dawn" },
+                    { name: "Earthbound", value: "earth" },
+                    { name: "Flamecaller", value: "flame" },
+                    { name: "Frostborn", value: "frost" },
+                    { name: "Steelsage", value: "steel" },
+                    { name: "Shadowdancer", value: "shadow" },
+                    { name: "Windwalker", value: "wind" },
+                    { name: "Multiclass", value: "multi" }
+                ))
+        .addIntegerOption(option =>
+            option.setName("cp")
+                .setDescription("Charm Power")
+                .addChoices(
+                    { name: "1", value: 1 },
+                    { name: "2", value: 2 },
+                    { name: "3", value: 3 },
+                    { name: "4", value: 4 },
+                    { name: "5", value: 5 }
+                ))
+        .addStringOption(option =>
+            option.setName("tags")
+                .setDescription("Tags For The Charm, Separated Using Commas To Search For Multiple Tags")
+        ),
+
+    async execute(interaction) {
+        let rarity = interaction.options?.getString("rarity")
+        let tags = interaction.options.getString("tags")?.toLowerCase().replace(/\s/g, '').split(",")
+        let cp = interaction.options?.getInteger("cp")
+        let charmclass = interaction.options?.getString("class")
+        let match = 0
+        let firstid = 0
+        let currentselection = 0
+        let selections = new StringSelectMenuBuilder()
+            .setCustomId("option")
+            .setPlaceholder("Select an option")
+
+        if (!rarity && !cp && !tags && !charmclass) return await interaction.reply({ content: redtext("You need to enter at least 1 argument to search for charms!"), ephemeral: true })
+        await interaction.reply({ content: bluetext("Searching..."), ephemeral: true })
+        for (let i = 0; i < listofauctions.length; i++) {
+            let ahcheck = listofauctions[i]
+            let numberoftagsmatching = ahcheck.tags?.filter(value => tags?.includes(value.replace(/\s/g, '')).length === tags?.replace(/\s/g, '').length)
+            console.log(i)
+            if ((ahcheck.rarity === rarity || rarity == null) && (ahcheck.cp === cp || cp == null) && (ahcheck.class === charmclass || charmclass == null) && (numberoftagsmatching || tags == null) && ahcheck.active === true) {
+                match++
+                let id = ahcheck.id
+                if (match === 1) {
+                    firstid = id
+                    currentselection = id
+                }
+                console.log(id)
+                if (!ahcheck.tags) tagtext = "Tags: None"
+                else tagtext = `Tags: ${ahcheck.tags.join()}`
+
+                selections.addOptions(
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel(`Auction #${id}`)
+                        .setDescription(tagtext)
+                        .setValue(`${id}`),
+                )
+            }
+            if (i === listofauctions.length - 1) {
+                if (firstid === 0) interaction.editReply({ content: redtext(`No auctions found with the criteria!`) })
+
+                const row = new ActionRowBuilder()
+                    .addComponents(selections)
+
+                const response = await interaction.editReply({ content: bluetext(`Indexed ${listofauctions.length}, found ${match} matches.`), embeds: [embedgen(firstid)], ephemeral: true, components: [row, detailrow] })
+                const ahcollect = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 180_000 });
+                const checkauccollect = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 180_000 });
+
+                ahcollect.on('collect', async i => {
+                    i.deferUpdate()
+                    currentselection = +i.values[0]
+                    await interaction.editReply({ embeds: [embedgen(currentselection)] })
+                })
+
+                checkauccollect.on('collect', async i => {
+                    i.deferUpdate()
+                    biddms(currentselection, i.user.id)
+                })
+            }
+            else continue
+        }
+    }
+}

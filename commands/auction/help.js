@@ -1,0 +1,86 @@
+const { SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, EmbedBuilder, ComponentType } = require('discord.js')
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName("help")
+        .setDescription("Displays information and list of commands the bot has"),
+
+    async execute(interaction) {
+        activecount = 0
+        allcount = listofauctions.length
+        for (i = 0; i < listofauctions.length; i++) {
+            if (listofauctions[i].active === true) activecount++
+            continue
+        }
+        const selection = new StringSelectMenuBuilder()
+            .setCustomId("option")
+            .setPlaceholder("Select an option")
+            .addOptions(
+                new StringSelectMenuOptionBuilder()
+                    .setLabel("Info")
+                    .setDescription("Displays information about the bot")
+                    .setValue("info"),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel("Auction commands")
+                    .setDescription("List of auction commands")
+                    .setValue('ahcommands'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel("Moderator commands")
+                    .setDescription("List of commands moderators can use")
+                    .setValue("modcommands")
+            )
+
+
+        const infoembed = new EmbedBuilder()
+            .setTitle("Information")
+            .addFields(
+                { name: `**Bot up since**`, value: `<t:${boottime}:R>` },
+                { name: "**Developer**", value: "<@492965189038374933>" },
+                { name: "**Currently active auctions**:", value: `${activecount}` },
+                { name: "**All saved auctions:**", value: `${allcount}` }
+            )
+            .setTimestamp()
+            .setColor(0xadd8e6)
+            .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
+
+        const ahcommandembed = new EmbedBuilder()
+            .setTitle("Commands")
+            .addFields(
+                { name: "**createah**", value: "Creates an auction" },
+                { name: "**searchah**", value: "Searches auction for charms using arguments" },
+                { name: "**getah**", value: "Gets auction by ID or User" },
+                { name: "**bids**", value: "View the bids on the auction" },
+                { name: "**deleteah**", value: "Deletes an auction if there are no bids and you are the owner" },
+            )
+            .setTimestamp()
+            .setColor(0xadd8e6)
+            .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
+
+        const modcommandembed = new EmbedBuilder()
+            .setTitle("Mod commands")
+            .addFields(
+                { name: "**purgeah**", value: "Purges auctions that are inactive from the file" },
+                { name: "**banuser**", value: "Bans user from creating or bidding on an auction" },
+                { name: "**unbanuser**", value: "Unbans user who was banned" }, 
+                { name: "**deleteah**", value: "Deletes an auction unconditionally" },
+                { name: "**removebid**", value: "Removes bids from an auction"}
+            )
+            .setTimestamp()
+            .setColor(0xadd8e6)
+            .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
+
+        const row = new ActionRowBuilder()
+            .addComponents(selection)
+
+        const response = await interaction.reply({ embeds: [infoembed], ephemeral: true, components: [row] })
+
+        const collector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 120_000 });
+        collector.on('collect', async i => {
+            i.deferUpdate()
+            const selection = i.values[0]
+            if (selection === "info") await interaction.editReply({ embeds: [infoembed] })
+            else if (selection === "ahcommands") await interaction.editReply({ embeds: [ahcommandembed] })
+            else if (selection === "modcommands") await interaction.editReply({ embeds: [modcommandembed] })
+        })
+    }
+}

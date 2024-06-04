@@ -51,6 +51,7 @@ module.exports = {
         ),
 
     async execute(interaction) {
+        //turn collected arguments into variables
         let rarity = interaction.options?.getString("rarity")
         let tags = interaction.options.getString("tags")?.toLowerCase().replace(/\s/g, '').split(",")
         let cp = interaction.options?.getInteger("cp")
@@ -58,24 +59,29 @@ module.exports = {
         let match = 0
         let firstid = 0
         let currentselection = 0
+
+        //set up string menu for later
         let selections = new StringSelectMenuBuilder()
             .setCustomId("option")
             .setPlaceholder("Select an option")
 
+        //check if none of the variables are collected
         if (!rarity && !cp && !tags && !charmclass) return await interaction.reply({ content: redtext("You need to enter at least 1 argument to search for charms!"), ephemeral: true })
-        await interaction.reply({ content: bluetext("Searching..."), ephemeral: true })
+        await interaction.reply({ content: bluetext("Searching..."), ephemeral: true })//sending this so it can be editreplyed later
+        
         for (let i = 0; i < listofauctions.length; i++) {
             let ahcheck = listofauctions[i]
+            //loop through the auctions and add options to string menu on match
             let numberoftagsmatching = ahcheck.tags?.filter(value => tags?.includes(value.replace(/\s/g, '')).length === tags?.replace(/\s/g, '').length)
-            console.log(i)
             if ((ahcheck.rarity === rarity || rarity == null) && (ahcheck.cp === cp || cp == null) && (ahcheck.class === charmclass || charmclass == null) && (numberoftagsmatching || tags == null) && ahcheck.active === true) {
                 match++
                 let id = ahcheck.id
                 if (match === 1) {
+                    //checks for the first match to display first before the user picks anything
                     firstid = id
                     currentselection = id
                 }
-                console.log(id)
+
                 if (!ahcheck.tags) tagtext = "Tags: None"
                 else tagtext = `Tags: ${ahcheck.tags.join()}`
 
@@ -87,22 +93,27 @@ module.exports = {
                 )
             }
             if (i === listofauctions.length - 1) {
+                //at the end of auction data, check if there were no valid auctions at all
                 if (firstid === 0) interaction.editReply({ content: redtext(`No auctions found with the criteria!`) })
 
+                //create an action row with the string menu options we added earlier
                 const row = new ActionRowBuilder()
                     .addComponents(selections)
 
                 const response = await interaction.editReply({ content: bluetext(`Indexed ${listofauctions.length}, found ${match} matches.`), embeds: [embedgen(firstid)], ephemeral: true, components: [row, detailrow] })
+                //2 component collectors for string menu and button
                 const ahcollect = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 180_000 });
                 const checkauccollect = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 180_000 });
 
                 ahcollect.on('collect', async i => {
+                    //if string menu was collected, change the embed to what the user has picked
                     i.deferUpdate()
                     currentselection = +i.values[0]
                     await interaction.editReply({ embeds: [embedgen(currentselection)] })
                 })
 
                 checkauccollect.on('collect', async i => {
+                    //if show auction details button was collected, send them a dm with auction details
                     i.deferUpdate()
                     biddms(currentselection, i.user.id)
                 })

@@ -18,3 +18,5 @@ module.exports = {
         })
     }
 }
+
+//this whole thing will be reworked on official release

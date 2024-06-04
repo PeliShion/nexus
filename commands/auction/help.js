@@ -9,9 +9,12 @@ module.exports = {
         activecount = 0
         allcount = listofauctions.length
         for (i = 0; i < listofauctions.length; i++) {
+            //loop through the auction data to see which auctions are active
             if (listofauctions[i].active === true) activecount++
             continue
         }
+
+        //string select menu setup
         const selection = new StringSelectMenuBuilder()
             .setCustomId("option")
             .setPlaceholder("Select an option")
@@ -30,7 +33,7 @@ module.exports = {
                     .setValue("modcommands")
             )
 
-
+        //loads of embed setup, nothing fancy
         const infoembed = new EmbedBuilder()
             .setTitle("Information")
             .addFields(
@@ -76,6 +79,7 @@ module.exports = {
 
         const collector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 120_000 });
         collector.on('collect', async i => {
+            //if collected, change the displayed embed to user's choice
             i.deferUpdate()
             const selection = i.values[0]
             if (selection === "info") await interaction.editReply({ embeds: [infoembed] })

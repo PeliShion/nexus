@@ -2,7 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRow
 const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { capfirstletter, redtext, greentext } = require('../../data/functions.js')
-const { biddms } = require('../../data/ahmanager.js')
 
 module.exports = {
       data: new SlashCommandBuilder()
@@ -74,10 +73,14 @@ module.exports = {
                         .setDescription("Other tags (charm effects, rolls, etc. Used for people to look up the charm). Separated using comma.")
             )),
       async execute(interaction) {
+
+            //check if the user is banned/current auciton ID
             let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
             let curaucid = settings.currentauctionid
             let bannedusers = settings.bannedusers
             if (bannedusers.includes(interaction.user.id)) return await interaction.reply({ content: redtext("You are banned from making auctions!"), ephemeral: true })
+            
+            //turn the options collected into variables
             let rarity = interaction.options.getString("rarity")
             let startingbid = interaction.options.getInteger("startingbid")
             let increment = interaction.options.getInteger("increment")
@@ -87,15 +90,20 @@ module.exports = {
             let auctionlength = interaction.options.getString("length").toLowerCase()
             let antisnipelength = interaction.options.getString("antisnipelength").toLowerCase()
             let image = interaction.options.getAttachment("image").url
+
             let antisnipelengthins = 0
-            let colorhex = colors[charmclass]
+            let colorhex = colors[charmclass] //color of the embed
             let currenttime = Math.round(Date.now() / 1000)
+
+            //turn auction length and antisnipe length into seconds to store them
             if (auctionlength.includes("h")) ahlengthinsec = +(auctionlength.replace(/[a-zA-Z]/g, "")) * 3600
             else if (auctionlength.includes("d")) ahlengthinsec = +(auctionlength.replace(/[a-zA-Z]/g, "")) * 86400
             else return await interaction.reply({ content: redtext("Please input a valid time for auction length in h or d!"), ephemeral: true })
             if (antisnipelength.includes("m")) antisnipelengthins = +(antisnipelength.replace(/[a-zA-Z]/g, "")) * 60
             else if (antisnipelength.includes("h")) antisnipelengthins = +(antisnipelength.replace(/[a-zA-Z]/g, "")) * 3600
             else return await interaction.reply({ content: redtext("Please input a valid antisnipe length in m or h! Leave it as 0m if you would not want an anitisnipe."), ephemeral: true })
+            
+            //various checks to check if the auction being created is valid or not
             if (tags && tags.length > 100) return await interaction.reply({ content: redtext("Please enter less than 100 characters for the tag!"), ephemeral: true })
             if (ahlengthinsec <= 0 || startingbid <= 0 || increment <= 0 || antisnipelengthins < 0) return await interaction.reply({ content: redtext(`Please use numbers above 0 for numbers!`), ephemeral: true })
             else if (ahlengthinsec > 604800) return await interaction.reply({ content: redtext("Auction length has to be less than 1 week!"), ephemeral: true })
@@ -103,6 +111,8 @@ module.exports = {
             let endtime = currenttime + ahlengthinsec
             if (tags === null) tagsdisplay = "None"
             else tagsdisplay = tags
+
+            //preview embed
             let auctionembed = new EmbedBuilder()
                   .setTitle(capfirstletter(charmclass) + " Charm | Auction ID: #" + (curaucid + 1))
                   .setColor(colorhex)
@@ -123,12 +133,15 @@ module.exports = {
 
             if (!tags) listoftags = "None"
             else listoftags = tags.split(",")
+
+            //send a confirmation message and create a collector for the button attached
             const response = await interaction.followUp({ content: `__Rarity: ${rarity}, class: ${charmclass}, charm power: ${cp}__\nAre you sure you want to create this auction? It cannot be edited once it is made!`, ephemeral: true, components: [confirmrow] })
             const confirmed = await response.createMessageComponentCollector({ time: 60_000 })
 
             confirmed.on('collect', async i => {
                   const selection = i.customId
                   if (selection === "confirm") {
+                        //if collected confirm, increase the auciton id, save it, send the embed to new-auctions channel, and push the data to auctions.json
                         curaucid++
                         settings.currentauctionid = curaucid
                         let auctionembedsend = new EmbedBuilder()

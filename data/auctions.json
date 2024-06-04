@@ -297,7 +297,7 @@
     {
         "id": 39,
         "owner": "492965189038374933",
-        "active": true,
+        "active": false,
         "cp": 1,
         "class": "dawn",
         "minbid": 20,

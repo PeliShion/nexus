@@ -33,6 +33,7 @@ for (const folder of commandFolders) {
 }
 
 client.once(Events.ClientReady, () => {
+	//sets status, activity, and start loop for every minute to run auction check
 	console.log(`Booted`);
 	client.user.setStatus(PresenceUpdateStatus.Idle);
 	client.user.setActivity('Celestial Zenith')

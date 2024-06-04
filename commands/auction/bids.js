@@ -25,21 +25,26 @@ module.exports = {
 
     async execute(interaction) {
 
-        const bidmenu = await interaction.reply({ content: bluetext("Searching..."), ephemeral: true })
-        let id = interaction.options.getInteger("id")
-        let selectedah = listofauctions.find(x => x.id === id)
+        const bidmenu = await interaction.reply({ content: bluetext("Searching..."), ephemeral: true }) //sending this first so it can be editreplied later
+        let id = interaction.options.getInteger("id") //collecting the argument from command  
+        let selectedah = listofauctions.find(x => x.id === id) //search through the auction and find the one with same id
         if (!selectedah) return await interaction.editReply({ content: redtext("Could not find an auction with ID " + id + "!"), ephemeral: true })
+
         let bidarray = selectedah.bids
         let bidlength = bidarray.length
+        //there is a default null bid as a placeholder hence why it checks if it is lower than 2
         if (bidlength < 2) return await interaction.editReply({ content: redtext(`There are no bids on this auction!`), ephemeral: true })
         let page = 0
      
+        //setting up base embed
         let bidsembed = new EmbedBuilder()
             .setTitle(`Bids for auction #${id}`)
             .setDescription(`Page ${page + 1}`)
             .setColor(0xd4af37)
             .setTimestamp()
             .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
+        
+        //for the first page, loop the bids array object and add fields to bidsembed
         for (i = bidlength - 1; i > bidlength - 6; i--) {
             bidsembed.addFields({ name: `Bid #${i}`, value: `${bidarray[i].bid} HAR by <@${bidarray[i].user}>` })
             if (i === 1 || i === bidlength - 5) {
@@ -47,13 +52,15 @@ module.exports = {
                 break;
             }
         }
-        const arrowcollector = await bidmenu.createMessageComponentCollector({ time: 60_000 })
+
+        const arrowcollector = await bidmenu.createMessageComponentCollector({ time: 60_000 }) //creation of the collector of left/right arrow buttons
         arrowcollector.on('collect', async i => {
             let selection = i.customId
             i.deferUpdate()
             if (selection === "left") {
                 if (page === 0) return 
                 else {
+                //if page is not 0 (or 1, the first page), decrease page count, remove all the fields from the embed and repeat what was done above
                 page--
                 bidsembed.spliceFields(0, 5)
                 bidsembed.setDescription(`Page ${page + 1}`)
@@ -66,6 +73,8 @@ module.exports = {
                 }
                 }
             } else {
+                //check if there are valid bids in the next page, if not return
+                //if else, increase the page count, remove all the fields from the embed and repeat what was done above
                 if(bidarray[bidlength - 1 - ((page + 1) * 5)] === undefined) return
                 page++
                 bidsembed.spliceFields(0, 5)

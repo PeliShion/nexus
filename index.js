@@ -1,19 +1,19 @@
 const { Client, Events, GatewayIntentBits, Collection, PresenceUpdateStatus, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
-const { token } = require('./data/settings.json');
+const { token, newaucchannelid } = require('./data/settings.json');
 const fs = require('node:fs');
 const path = require('node:path')
-const { auccheck } = require('./functions/ahmanager.js')
+const { auccheck, biddms } = require('./functions/ahmanager.js');
 global.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildPresences] });
 global.listofauctions = JSON.parse(fs.readFileSync("./data/auctions.json"))
 client.commands = new Collection();
 
 const confirmation = new ButtonBuilder()
-    .setCustomId('confirm')
-    .setLabel('Confirm')
-    .setStyle(ButtonStyle.Primary);
+	.setCustomId('confirm')
+	.setLabel('Confirm')
+	.setStyle(ButtonStyle.Primary);
 
 global.confirmrow = new ActionRowBuilder()
-        .addComponents(confirmation)
+	.addComponents(confirmation)
 
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
@@ -38,6 +38,15 @@ client.once(Events.ClientReady, () => {
 	client.user.setStatus(PresenceUpdateStatus.Idle);
 	client.user.setActivity('Celestial Zenith')
 	global.boottime = Math.round(Date.now() / 1000)
+	client.channels.fetch(newaucchannelid).then((channel) => {
+		console.log(`collector on`)
+		const collector = channel.createMessageComponentCollector()
+		collector.on('collect', async i => {
+			i.deferUpdate()
+			let collected = +i.customId
+			biddms(collected, i.user.id)
+		})
+	})
 	setInterval(() => {
 		auccheck()
 	}, 60000);

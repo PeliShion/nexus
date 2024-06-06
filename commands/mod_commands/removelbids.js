@@ -1,5 +1,5 @@
-const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, EmbedBuilder } = require('discord.js')
-const { redtext, bluetext, greentext } = require('../../data/functions.js')
+const { SlashCommandBuilder } = require('discord.js')
+const { redtext, greentext } = require('../../functions/functions.js')
 const fs = require('fs')
 
 module.exports = {

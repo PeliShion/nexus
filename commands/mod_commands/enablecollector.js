@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js')
-const { biddms } = require('../../data/ahmanager.js')
-const { greentext } = require('../../data/functions.js')
+const { biddms } = require('../../functions/ahmanager.js')
+const { greentext } = require('../../functions/functions.js')
 
 module.exports = {
     data: new SlashCommandBuilder()

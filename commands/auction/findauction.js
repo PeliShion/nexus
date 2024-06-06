@@ -1,6 +1,6 @@
 const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, ComponentType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js')
-const { redtext, bluetext } = require('../../data/functions.js')
-const { bidmin, bidcustom, embedgen, biddms } = require("../../data/ahmanager.js")
+const { redtext, bluetext } = require('../../functions/functions.js')
+const { bidmin, bidcustom, embedgen, biddms } = require("../../functions/ahmanager.js")
 
 const showdetails = new ButtonBuilder()
     .setCustomId(`show`)

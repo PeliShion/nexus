@@ -1,7 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
 const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
-const { capfirstletter, redtext, greentext } = require('../../data/functions.js')
+const { capfirstletter, redtext, greentext } = require('../../functions/functions.js')
+const { newaucchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
 
 module.exports = {
       data: new SlashCommandBuilder()
@@ -195,7 +196,7 @@ module.exports = {
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                         fs.writeFileSync("./data/settings.json", JSON.stringify(settings, null, 4))
 
-                        await client.channels.fetch('1237333900372475945').then(channel => channel.send({ embeds: [auctionembedsend], components: [detailrow] }))
+                        await client.channels.fetch(newaucchannelid).then(channel => channel.send({ embeds: [auctionembedsend], components: [detailrow] }))
                         await i.update({ content: greentext("Auction Created! ID: " + (curaucid)), components: [], ephemeral: true })
                   }
             })

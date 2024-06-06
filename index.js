@@ -1,8 +1,8 @@
 const { Client, Events, GatewayIntentBits, Collection, PresenceUpdateStatus, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
-const { token } = require('./config.json');
+const { token } = require('./data/settings.json');
 const fs = require('node:fs');
 const path = require('node:path')
-const { auccheck } = require('./data/ahmanager.js')
+const { auccheck } = require('./functions/ahmanager.js')
 global.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildPresences] });
 global.listofauctions = JSON.parse(fs.readFileSync("./data/auctions.json"))
 client.commands = new Collection();

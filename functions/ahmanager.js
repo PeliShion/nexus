@@ -1,7 +1,8 @@
-const { ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, Embed } = require('discord.js')
+const { ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js')
 const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { redtext, greentext, bluetext, capfirstletter, disabledbuttons } = require("./functions.js")
+const { botchannelid } = require("../data/settings.json")
 
 
 const bidcustomamount = new ButtonBuilder()
@@ -95,7 +96,7 @@ module.exports.bidmin = async function (id, interaction, authorid, indms) {
                 if (msguser === owner) continue
                 if (msguser === authorid) continue
                 let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbid} HAR!`), embeds: [module.exports.postbidembedgen(id, customamountbid, authorid)], components: [ahembedrow] }
-                let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+                let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                 const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
 
                 collector.on('collect', async j => {
@@ -190,7 +191,7 @@ module.exports.bidcustom = async function (id, interaction, authorid, indms) {
                     if (msguser === owner) continue
                     else if (msguser === authorid) continue
                     let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${customamountbid} HAR!`), embeds: [module.exports.postbidembedgen(id, customamountbid, authorid)], components: [ahembedrow] }
-                    let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+                    let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                     const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
                     collector.on('collect', async j => {
                         j.deferUpdate()
@@ -232,7 +233,7 @@ module.exports.biddms = async function (id, authorid) {
 
     //send the user dm with the buttons, if the user chooses to bid, run the function
     //if sending dm fails, send them an error message in bot channel
-    const response = await client.users.send(authorid, { embeds: [module.exports.embedgen(id)], components: [ahembedrow] }).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+    const response = await client.users.send(authorid, { embeds: [module.exports.embedgen(id)], components: [ahembedrow] }).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
     const collector = response.createMessageComponentCollector({ time: 60_000 })
 
     collector.on('collect', async i => {
@@ -359,11 +360,11 @@ module.exports.auccheck = async function () {
             for (let j = 0; j < notifusers.length; j++) {
                 let msguser = notifusers[j]
                 if (msguser === auctopbidder) {
-                    client.users.send(msguser, greentext(`You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownername} to collect your charm!`)).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownername} to collect your charm!\nPlease enable DMs with the bot!`)))
+                    client.users.send(msguser, greentext(`You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownername} to collect your charm!`)).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownername} to collect your charm!\nPlease enable DMs with the bot!`)))
                 } else if (msguser === aucowner) {
-                    if (auctopbidder === 0) client.users.send(msguser, redtext(`Your auction #${auctionid} has ended but with no bids!`)).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> Your auction #${auctionid} has ended but with no bids!\nPlease enable DMs with the bot!`)))
-                    else client.users.send(msguser, greentext(`Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbiddername} to sell your charm.`)).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbiddername} to sell your charm.\nPlease enable DMs with the bot!`)))
-                } else client.users.send(msguser, greentext(`The auction #${auctionid} has ended with ${curbid} HAR as top bid! You unfortunately did not win the auction.`)).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+                    if (auctopbidder === 0) client.users.send(msguser, redtext(`Your auction #${auctionid} has ended but with no bids!`)).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> Your auction #${auctionid} has ended but with no bids!\nPlease enable DMs with the bot!`)))
+                    else client.users.send(msguser, greentext(`Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbiddername} to sell your charm.`)).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbiddername} to sell your charm.\nPlease enable DMs with the bot!`)))
+                } else client.users.send(msguser, greentext(`The auction #${auctionid} has ended with ${curbid} HAR as top bid! You unfortunately did not win the auction.`)).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             }
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
         }
@@ -371,7 +372,7 @@ module.exports.auccheck = async function () {
             for (let j = 0; j < notifusers.length; j++) {
                 //check if an auction has an hour left, and if it is, send users notification
                 let msguser = notifusers[j]
-                client.users.send(msguser, bluetext(`The auction #${auctionid} is going to end in an hour!`)).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+                client.users.send(msguser, bluetext(`The auction #${auctionid} is going to end in an hour!`)).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             }
         }
     }
@@ -451,7 +452,7 @@ module.exports.prebid = async function (id, interaction, authorid, indms) {
                     if (msguser === owner) continue
                     else if (msguser === authorid) continue
                     let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbid} HAR!`), embeds: [module.exports.postbidembedgen(id, customamountbid, authorid)], components: [ahembedrow] }
-                    let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch('1242696457870508061').then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+                    let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                     const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
                     collector.on('collect', async j => {
                         j.deferUpdate()

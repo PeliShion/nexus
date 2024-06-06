@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
-const { redtext, bluetext } = require("../../data/functions.js")
+const { redtext, bluetext } = require("../../functions/functions.js")
 
 const leftarrow = new ButtonBuilder()
     .setCustomId("left")

@@ -324,5 +324,39 @@
             "632187399178551306"
         ],
         "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1247114786752172122/image.png?ex=665ed9a7&is=665d8827&hm=d52b0f3068cfbd31072a504a60b0c31f553ea1e647db9d330096b3d36022a887&"
+    },
+    {
+        "id": 40,
+        "owner": "492965189038374933",
+        "active": true,
+        "cp": 1,
+        "class": "frost",
+        "minbid": 15,
+        "increment": 1,
+        "rarity": "legendary",
+        "starttime": 1717948054,
+        "endtime": 1718034454,
+        "antisnipe": 60,
+        "antisnipestring": "1m",
+        "topbidder": "196806345117270017",
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            },
+            {
+                "user": "196806345117270017",
+                "bid": 15
+            }
+        ],
+        "currentbid": 15,
+        "notification": [
+            "492965189038374933",
+            "196806345117270017"
+        ],
+        "tags": [
+            "test"
+        ],
+        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1249389432503537664/image.png?ex=66672015&is=6665ce95&hm=7104c47002452b0fb81b24b4b07ea1d18810bc1562c375d4d57e5571c9c3eee3&"
     }
 ]

@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const { redtext, greentext } = require('../../functions/functions.js')
 const fs = require('fs')
+const { modroleid } = require("../../data/settings.json");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -19,7 +20,7 @@ module.exports = {
     async execute(interaction) {
         //check if the user running the command has permission to remove bids
         //if it is not the owner of the bot (Peli) and does not have moderator role, send them an error message
-        if (interaction.user.id !== "492965189038374933" && !interaction.member.roles.cache.has('1242723431548456970')) return await interaction.reply({ content: redtext("You need to be a moderator to use this command!"), ephemeral: true })
+        if (interaction.user.id !== "492965189038374933" && !interaction.member.roles.cache.has(modroleid)) return await interaction.reply({ content: redtext("You need to be a moderator to use this command!"), ephemeral: true })
         
         //turn collected variables into arguments
         let id = interaction.options.getInteger("id")

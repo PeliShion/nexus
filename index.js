@@ -2,7 +2,8 @@ const { Client, Events, GatewayIntentBits, Collection, PresenceUpdateStatus, But
 const { token, newaucchannelid } = require('./data/settings.json');
 const fs = require('node:fs');
 const path = require('node:path')
-const { auccheck, biddms } = require('./functions/ahmanager.js');
+const { auccheck, biddms, bancheck } = require('./functions/ahmanager.js');
+const { redtext } = require('./functions/functions.js');
 global.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildPresences] });
 global.listofauctions = JSON.parse(fs.readFileSync("./data/auctions.json"))
 client.commands = new Collection();
@@ -49,6 +50,7 @@ client.once(Events.ClientReady, () => {
 	})
 	setInterval(() => {
 		auccheck()
+		bancheck(Date.now() / 1000)
 	}, 60000);
 });
 
@@ -56,6 +58,13 @@ client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 	const command = interaction.client.commands.get(interaction.commandName);
 	console.log(`${interaction.user.username} used ${interaction.commandName}`)
+	let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
+	let bannedusers = settings.bannedusers
+	for(i = 0; i < bannedusers.length; i++) {
+		let user = bannedusers[i].user
+		if(interaction.user.id === user) return interaction.reply({ content:redtext(`You are banned from running a command!`), ephemeral:true})
+		else continue
+	}
 	if (!command) {
 		console.error(`No command matching ${interaction.commandName} was found.`);
 		return;

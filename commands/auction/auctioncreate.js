@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
 const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
-const { capfirstletter, redtext, greentext } = require('../../functions/functions.js')
-const { newaucchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
+const { capfirstletter, redtext, greentext, miscembed } = require('../../functions/functions.js')
+const { newaucchannelid, logchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
 
 module.exports = {
       data: new SlashCommandBuilder()
@@ -75,12 +75,9 @@ module.exports = {
             )),
       async execute(interaction) {
 
-            //check if the user is banned/current auciton ID
+            //check current auciton ID
             let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
             let curaucid = settings.currentauctionid
-            let bannedusers = settings.bannedusers
-            if (bannedusers.includes(interaction.user.id)) return await interaction.reply({ content: redtext("You are banned from making auctions!"), ephemeral: true })
-            
             //turn the options collected into variables
             let rarity = interaction.options.getString("rarity")
             let startingbid = interaction.options.getInteger("startingbid")
@@ -103,7 +100,7 @@ module.exports = {
             if (antisnipelength.includes("m")) antisnipelengthins = +(antisnipelength.replace(/[a-zA-Z]/g, "")) * 60
             else if (antisnipelength.includes("h")) antisnipelengthins = +(antisnipelength.replace(/[a-zA-Z]/g, "")) * 3600
             else return await interaction.reply({ content: redtext("Please input a valid antisnipe length in m or h! Leave it as 0m if you would not want an anitisnipe."), ephemeral: true })
-            
+
             //various checks to check if the auction being created is valid or not
             if (tags && tags.length > 100) return await interaction.reply({ content: redtext("Please enter less than 100 characters for the tag!"), ephemeral: true })
             if (ahlengthinsec <= 0 || startingbid <= 0 || increment <= 0 || antisnipelengthins < 0) return await interaction.reply({ content: redtext(`Please use numbers above 0 for numbers!`), ephemeral: true })
@@ -198,6 +195,11 @@ module.exports = {
 
                         await client.channels.fetch(newaucchannelid).then(channel => channel.send({ embeds: [auctionembedsend], components: [detailrow] }))
                         await i.update({ content: greentext("Auction Created! ID: " + (curaucid)), components: [], ephemeral: true })
+                        let auccreatelog = miscembed()
+                              .setTitle(`New auction (ID #${curaucid})`)
+                              .setDescription(`Owner: <@${interaction.user.id}>`)
+                              .setColor(0xffff00)
+                        await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [auccreatelog] }))
                   }
             })
       }

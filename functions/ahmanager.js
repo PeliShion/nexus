@@ -1,8 +1,8 @@
 const { ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js')
 const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
-const { redtext, greentext, bluetext, capfirstletter, disabledbuttons } = require("./functions.js")
-const { botchannelid } = require("../data/settings.json")
+const { redtext, greentext, bluetext, capfirstletter, disabledbuttons, miscembed } = require("./functions.js")
+const { botchannelid, logchannelid } = require("../data/settings.json")
 
 
 const bidcustomamount = new ButtonBuilder()
@@ -40,8 +40,13 @@ module.exports.bidmin = async function (id, interaction, authorid, indms) {
     }
 
     //turning all the relevant data into variables
-    let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
-    let bannedusers = settings.bannedusers
+	let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
+	let bannedusers = settings.bannedusers
+	for(i = 0; i < bannedusers.length; i++) {
+		let user = bannedusers[i].user
+		if(authorid === user) return interactionsend(redtext(`You are banned from running a command!`))
+		else continue
+	}
     let selectedah = listofauctions.find(x => x.id === id)
     let increment = selectedah.increment
     let currenttopbidder = selectedah.topbidder
@@ -66,7 +71,6 @@ module.exports.bidmin = async function (id, interaction, authorid, indms) {
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
     if (currenttopbidder === authorid) return await interactionsend(redtext("You are already the top bidder!"))
     if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
-    if (bannedusers.includes(authorid)) return await interactionsend(redtext("You are banned from bidding on an auction!"))
     
     //confirmation of if the user wants to bid
     const bidconfirmresponse = await interactionsend(bluetext(`Are you sure you want to bid ${nextbid} HAR on auction #${id}?`), confirmrow)
@@ -89,13 +93,18 @@ module.exports.bidmin = async function (id, interaction, authorid, indms) {
             if (!selectedah.notification.includes(authorid)) selectedah.notification.push(authorid)
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 
+            let bidminlog = miscembed()
+                            .setTitle(`Bid on auction #${id}`)
+                            .setDescription(`Bidder: <@${authorid}>\nAmount: ${nextbid} HAR`)
+                            .setColor(0xCCCCFF)
+            await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [bidminlog] }))
             await interactionsend(greentext(`Bid Successful!`))
             for (i = 0; i < notifications.length; i++) {
                 //send a notification to everyone who is participating in the auction
                 const msguser = notifications[i]
                 if (msguser === owner) continue
                 if (msguser === authorid) continue
-                let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbid} HAR!`), embeds: [module.exports.postbidembedgen(id, customamountbid, authorid)], components: [ahembedrow] }
+                let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbid} HAR!`), embeds: [module.exports.postbidembedgen(id, nextbid, authorid)], components: [ahembedrow] }
                 let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                 const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
 
@@ -124,8 +133,13 @@ module.exports.bidcustom = async function (id, interaction, authorid, indms) {
         }
 
     }
-    let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
-    let bannedusers = settings.bannedusers
+	let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
+	let bannedusers = settings.bannedusers
+	for(i = 0; i < bannedusers.length; i++) {
+		let user = bannedusers[i].user
+		if(authorid === user) return interactionsend(redtext(`You are banned from running a command!`))
+		else continue
+	}
     let selectedah = listofauctions.find(x => x.id === id)
     let increment = selectedah.increment
     let currenttopbidder = selectedah.topbidder
@@ -140,7 +154,6 @@ module.exports.bidcustom = async function (id, interaction, authorid, indms) {
 
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
     else if (currenttopbidder === authorid) return await interactionsend(redtext("You are already the top bidder!"))
-    else if (bannedusers.includes(authorid)) return await interactionsend(redtext("You are banned from bidding on an auction!"))
     else if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
     const collectorFilter = (m) => m.author.id === authorid
     await interactionsend(bluetext(`How much would you like to bid on auction #${id}? Please type the amount in number.`))
@@ -174,7 +187,12 @@ module.exports.bidcustom = async function (id, interaction, authorid, indms) {
                 selectedah.topbidder = authorid
                 selectedah.bids.push({ "user": authorid, "bid": customamountbid })
                 if (!selectedah.notification.includes(authorid)) selectedah.notification.push(authorid)
-
+                let bidcustomlog = miscembed()
+                .setTitle(`Bid on auction #${id}`)
+                .setDescription(`Bidder: <@${authorid}>\nAmount: ${customamountbid} HAR`)
+                .setColor(0xCCCCFF)
+                
+                await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [bidcustomlog] }))
                 fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                 await interactionsend(greentext(`Bid Successful!`))
 
@@ -355,6 +373,11 @@ module.exports.auccheck = async function () {
             //check if an auction has ended
             //if it has, send the owner, top bidder, and other bidders notifications
             //if it fails to dm, send it in bot channel instead
+            let aucendlog = miscembed()
+            .setTitle(`Auction #${auctionid} ended`)
+            .setDescription(`Winner: <@${auctopbidder}>\nOwner: <@${aucowner}>\nAmount: ${curbid} HAR`)
+            .setColor(0xffff00)
+            await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [aucendlog] }))
             currentcheck.active = false
             console.log(`${auctionid} ended, winner: ${auctopbidder}`)
             for (let j = 0; j < notifusers.length; j++) {
@@ -378,6 +401,24 @@ module.exports.auccheck = async function () {
     }
 }
 
+module.exports.bancheck = async function (timenow) {
+    let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
+    let bannedusers = settings.bannedusers
+    for(i = 0; i < bannedusers.length; i++) {
+        let bancheck = bannedusers[i].endtime 
+        let user = bannedusers[i].user
+        if(timenow > bancheck) {
+            if(bancheck === 0) continue
+            bannedusers.splice(i, 1)
+            let banexpirelog = miscembed()
+            .setTitle(`Ban expired`)
+            .setDescription(`User: <@${user}>`)
+            .setColor(0x00ff00)
+            await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [banexpirelog] }))
+        }
+    }
+}
+
 //prebid is not finished yet
 module.exports.prebid = async function (id, interaction, authorid, indms) {
     let interactionsend = function (message, components) {
@@ -390,8 +431,6 @@ module.exports.prebid = async function (id, interaction, authorid, indms) {
         }
 
     }
-    let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
-    let bannedusers = settings.bannedusers
     let selectedah = listofauctions.find(x => x.id === id)
     let increment = selectedah.increment
     let currenttopbidder = selectedah.topbidder
@@ -406,7 +445,6 @@ module.exports.prebid = async function (id, interaction, authorid, indms) {
 
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
     else if (currenttopbidder === authorid) return await interactionsend(redtext("You are already the top bidder!"))
-    else if (bannedusers.includes(authorid)) return await interactionsend(redtext("You are banned from bidding on an auction!"))
     else if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
     const collectorFilter = (m) => m.author.id === authorid
     await interactionsend(bluetext(`How much would you like to pre-bid on auction #${id}? Please type the amount in number.`))

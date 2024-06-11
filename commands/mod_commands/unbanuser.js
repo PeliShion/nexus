@@ -1,8 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const fs = require("fs")
-const { greentext, redtext } = require('../../functions/functions.js')
-const { modroleid } = require("../../data/settings.json");
-
+const { greentext, redtext, miscembed } = require('../../functions/functions.js')
+const { modroleid, logchannelid } = require("../../data/settings.json");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("unbanuser")
@@ -23,12 +22,17 @@ module.exports = {
         let i = 0;
         while (i < bannedusers.length) {
             //loop through the banned users array and splice the entries if matching
-            if (bannedusers[i] === user.id) {
+            if (bannedusers[i].user === user.id) {
                 bannedusers.splice(i, 1)
                 i++
             } else i++
         }
         fs.writeFileSync("./data/settings.json", JSON.stringify(settings, null, 4))
+        let unbanlog = miscembed()
+            .setTitle(`Unbanned ${user.username}`)
+            .setDescription(`Unbanned by <@${interaction.user.id}>`)
+            .setColor(0x00ff00)
+        await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [unbanlog] }))
         await interaction.reply({ content: greentext(`You have successfully unbanned ${user.username}!`), ephemeral: true })
     }
 }

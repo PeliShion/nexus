@@ -1,6 +1,6 @@
 const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, ComponentType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js')
-const { redtext, bluetext } = require('../../functions/functions.js')
-const { bidmin, bidcustom, embedgen, biddms } = require("../../functions/ahmanager.js")
+const { redtext, bluetext, disabledbuttons } = require('../../functions/functions.js')
+const { bidmin, bidcustom, embedgen, biddms, prebid } = require("../../functions/ahmanager.js")
 
 const showdetails = new ButtonBuilder()
     .setCustomId(`show`)
@@ -12,6 +12,11 @@ const bidcustomamount = new ButtonBuilder()
     .setCustomId('customamount')
     .setLabel('Bid Custom Amount')
     .setStyle(ButtonStyle.Primary);
+
+const bidprebid = new ButtonBuilder()
+    .setCustomId('prebid')
+    .setLabel('Pre-bid')
+    .setStyle(ButtonStyle.Primary)
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -34,12 +39,6 @@ module.exports = {
 
         if (!id && !user) return await interaction.editReply({ content: redtext("Please input ID or user you would like to search for!"), ephemeral: true })
         let authorid = interaction.user.id
-
-        const bidcustomdisabled = new ButtonBuilder()
-            .setCustomId('custom')
-            .setLabel("Bid Custom Amount")
-            .setStyle(ButtonStyle.Primary)
-            .setDisabled(true)
 
         let selections = new StringSelectMenuBuilder()
             .setCustomId("option")
@@ -65,8 +64,8 @@ module.exports = {
                 .setStyle(ButtonStyle.Primary);
 
             //check if the auction is active. if not, the buttons are greyed out
-            if (active === false) ahembedrow = new ActionRowBuilder().addComponents(bidminamount.setDisabled(true), bidcustomdisabled)
-            else ahembedrow = new ActionRowBuilder().addComponents(bidminamount, bidcustomamount)
+            if (active === false) ahembedrow = disabledbuttons(nextbid)
+            else ahembedrow = new ActionRowBuilder().addComponents(bidminamount, bidcustomamount, bidprebid)
 
             const response = await interaction.editReply({ content: "", embeds: [embedgen(id)], components: [ahembedrow], ephemeral: true })
             if (active === true) {
@@ -74,21 +73,15 @@ module.exports = {
                 //if the auction is active, create a collector and run whichever the user has decided to do
                 collector.on('collect', async i => {
                     i.deferUpdate()
+                    collector.stop()
                     const selection = i.customId
+                    if (selection === "minamount") bidmin(id, interaction, authorid, false)
+                    else if (selection === "customamount") bidcustom(id, interaction, authorid, false)
+                    else if(selection === 'prebid') prebid(id, interaction, authorid, false)
 
-                    if (selection === "minamount") {
-                        bidmin(id, interaction, authorid, false)
-                        collector.stop()
-                    }
-
-                    else if (selection === "customamount") {
-                        bidcustom(id, interaction, authorid, false)
-                        collector.stop()
-                    }
                 })
             }
         }
-
         else {
             //basic variable setup
             match = 0
@@ -114,12 +107,12 @@ module.exports = {
                 if (i === listofauctions.length - 1) {
                     //when it reaches the end of the data, check if there is a valid auction from the user
                     if (firstid === 0) return await interaction.editReply({ content: redtext(`There are no auctions from <@${user}>!`) })
-                    
+
                     //turn the options we added into actionrow, include it in a message alongside show auction button
                     const row = new ActionRowBuilder()
                         .addComponents(selections)
                     const response = await interaction.editReply({ content: bluetext(`Indexed ${listofauctions.length}, found ${match} matches.`), embeds: [embedgen(firstid)], ephemeral: true, components: [row, detailrow] })
-                    
+
                     //2 separate collectors for 2 components (string menu, and button)
                     const ahcollect = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 180_000 });
                     const checkauccollect = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 180_000 });

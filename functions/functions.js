@@ -33,7 +33,12 @@ module.exports.disabledbuttons = function (bid) {
         .setLabel(`Bid ${bid} HAR`)
         .setStyle(ButtonStyle.Primary)
         .setDisabled(true)
+    let graybidprebid = new ButtonBuilder()
+        .setCustomId('prebid')
+        .setLabel('Pre-bid')
+        .setStyle(ButtonStyle.Primary)
+        .setDisabled(true)
 
     return new ActionRowBuilder()
-            .addComponents(graybidmin, graybidcustom)
+            .addComponents(graybidmin, graybidcustom, graybidprebid)
 }

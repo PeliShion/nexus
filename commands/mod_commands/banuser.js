@@ -37,7 +37,7 @@ module.exports = {
         else duratext = duration
 
         if (durationins === 0) expiretime = 0
-        else expiretime = (Date.now() / 1000) + durationins
+        else expiretime = Math.round(Date.now() / 1000) + durationins
 
         if (reason == null) reasontext = "Unspecified"
         else reasontext = reason

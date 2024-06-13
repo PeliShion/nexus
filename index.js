@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path')
 const { auccheck, biddms, bancheck } = require('./functions/ahmanager.js');
 const { redtext } = require('./functions/functions.js');
-global.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildPresences] });
+global.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildPresences, GatewayIntentBits.DirectMessages] });
 global.listofauctions = JSON.parse(fs.readFileSync("./data/auctions.json"))
 client.commands = new Collection();
 
@@ -50,7 +50,7 @@ client.once(Events.ClientReady, () => {
 	})
 	setInterval(() => {
 		auccheck()
-		bancheck(Date.now() / 1000)
+		bancheck(Math.round(Date.now() / 1000))
 	}, 60000);
 });
 

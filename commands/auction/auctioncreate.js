@@ -177,8 +177,13 @@ module.exports = {
                                           "user": 0,
                                           "bid": 0
                                     }
-                              ]
-                              ,
+                              ],
+                              "prebids": [
+                                    {
+                                          "user": 0,
+                                          "amount": 0
+                                    }
+                              ],
                               "currentbid": 0,
                               "notification": [interaction.user.id],
                               "tags": tags?.toLowerCase().split(","),

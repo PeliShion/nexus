@@ -234,6 +234,7 @@ module.exports.biddms = async function (id, authorid) {
 
     //find the specific auction and set up variables
     let selectedah = listofauctions.find(x => x.id === id)
+    if (!selectedah) await client.users.send(authorid, { content: redtext(`Auction #${id} was not found! Maybe they were deleted?`) })
     let currentbid = selectedah.currentbid
     let minbid = selectedah.minbid
     let increment = selectedah.increment
@@ -403,11 +404,12 @@ module.exports.bancheck = async function (timenow) {
     let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
     let bannedusers = settings.bannedusers
     for (i = 0; i < bannedusers.length; i++) {
-        let bancheck = bannedusers[i].endtime
+        let bancheck = bannedusers[i].end
         let user = bannedusers[i].user
         if (timenow > bancheck) {
             if (bancheck === 0) continue
             bannedusers.splice(i, 1)
+            fs.writeFileSync("./data/settings.json", JSON.stringify(settings, null, 4))
             let banexpirelog = miscembed()
                 .setTitle(`Ban expired`)
                 .setDescription(`User: <@${user}>`)
@@ -558,7 +560,7 @@ module.exports.prebidcheck = async function (id) {
     let prebids = selectedah.prebids
     let notifications = selectedah.notification
     let prebidamount = prebids[0].amount
-    if(prebidamount === 0) return
+    if (prebidamount === 0) return
     let prebiduser = prebids[0].user
     let username = await client.users.cache.get(prebiduser).username
     if (currentbid + increment <= prebidamount) {

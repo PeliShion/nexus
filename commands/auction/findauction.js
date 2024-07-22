@@ -1,22 +1,12 @@
 const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, ComponentType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js')
-const { redtext, bluetext, disabledbuttons } = require('../../functions/functions.js')
-const { bidmin, bidcustom, embedgen, biddms, prebid } = require("../../functions/ahmanager.js")
+const { redtext, bluetext } = require('../../functions/functions.js')
+const { embedgen, biddms } = require("../../functions/ahmanager.js")
 
 const showdetails = new ButtonBuilder()
     .setCustomId(`show`)
     .setLabel("Show Auction Details")
     .setStyle(ButtonStyle.Success)
 const detailrow = new ActionRowBuilder().addComponents(showdetails)
-
-const bidcustomamount = new ButtonBuilder()
-    .setCustomId('customamount')
-    .setLabel('Bid Custom Amount')
-    .setStyle(ButtonStyle.Primary);
-
-const bidprebid = new ButtonBuilder()
-    .setCustomId('prebid')
-    .setLabel('Pre-bid')
-    .setStyle(ButtonStyle.Primary)
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -32,14 +22,13 @@ module.exports = {
         ),
 
     async execute(interaction) {
+        if (interaction.channel.id !== "1249243732029739058") return await interaction.reply({ content: redtext("You can only use this bot in charms-bot-feed!"), ephemeral: true})
         await interaction.reply({ content: bluetext("Searching..."), ephemeral: true })//sending this first so it can be editreplyed later
         //getting arguments from command
         let id = interaction.options?.getInteger("id")
         let user = interaction.options?.getUser("user")
 
         if (!id && !user) return await interaction.editReply({ content: redtext("Please input ID or user you would like to search for!"), ephemeral: true })
-        let authorid = interaction.user.id
-
         let selections = new StringSelectMenuBuilder()
             .setCustomId("option")
             .setPlaceholder("Select an option")
@@ -48,39 +37,16 @@ module.exports = {
             //if id was inputted, search the auction for the specific id and display the data + bid buttons
             let selectedah = listofauctions.find(x => x.id === id)
             if (!selectedah) return await interaction.editReply({ content: redtext("Could not find an auction with ID " + id + "!"), ephemeral: true })
-            //turn needed data into arguments
-            let currentbid = selectedah.currentbid
-            let minbid = selectedah.minbid
-            let increment = selectedah.increment
-            let active = selectedah.active
 
-            //check if there is a bid, if there is next bid = current bid + increment, if not minimum bid
-            if (currentbid < minbid) nextbid = minbid
-            else nextbid = currentbid + increment
-
-            let bidminamount = new ButtonBuilder()
-                .setCustomId('minamount')
-                .setLabel(`Bid ${nextbid} HAR`)
-                .setStyle(ButtonStyle.Primary);
-
-            //check if the auction is active. if not, the buttons are greyed out
-            if (active === false) ahembedrow = disabledbuttons(nextbid)
-            else ahembedrow = new ActionRowBuilder().addComponents(bidminamount, bidcustomamount, bidprebid)
-
-            const response = await interaction.editReply({ content: "", embeds: [embedgen(id)], components: [ahembedrow], ephemeral: true })
-            if (active === true) {
-                const collector = response.createMessageComponentCollector({ time: 60_000 })
-                //if the auction is active, create a collector and run whichever the user has decided to do
-                collector.on('collect', async i => {
-                    i.deferUpdate()
-                    collector.stop()
-                    const selection = i.customId
-                    if (selection === "minamount") bidmin(id, interaction, authorid, false)
-                    else if (selection === "customamount") bidcustom(id, interaction, authorid, false)
-                    else if(selection === 'prebid') prebid(id, interaction, authorid, false)
-
-                })
-            }
+            const response = await interaction.editReply({ content: "", embeds: [embedgen(id)], components: [detailrow], ephemeral: true })
+            const collector = response.createMessageComponentCollector({ time: 60_000 })
+                //create a collector and send them to dms
+            collector.on('collect', async i => {
+                i.deferUpdate()
+                collector.stop()
+                biddms(id, i.user.id)
+            })
+            
         }
         else {
             //basic variable setup

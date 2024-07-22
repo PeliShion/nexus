@@ -14,6 +14,7 @@ module.exports = {
         ),
 
     async execute(interaction) {
+        if (interaction.channel.id !== "1249243732029739058") return await interaction.reply({ content: redtext("You can only use this bot in charms-bot-feed!"), ephemeral: true})
         let selectedid = interaction.options.getInteger("id") //collecting argument from the command
         let selectedah = listofauctions.find(x => x.id === selectedid) //search through the auction data
         if (!selectedah) return await interaction.reply({ content: redtext("Could not find an auction with ID " + selectedid + "!"), ephemeral: true })

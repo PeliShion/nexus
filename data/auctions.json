@@ -401,7 +401,7 @@
     {
         "id": 42,
         "owner": "492965189038374933",
-        "active": true,
+        "active": false,
         "cp": 3,
         "class": "shadow",
         "minbid": 20,
@@ -411,7 +411,7 @@
         "endtime": 1718362814,
         "antisnipe": 3600,
         "antisnipestring": "1h",
-        "topbidder": "492965189038374933",
+        "topbidder": "638136566249947137",
         "bids": [
             {
                 "user": 0,
@@ -460,34 +460,39 @@
             {
                 "user": "492965189038374933",
                 "bid": 108
+            },
+            {
+                "user": "638136566249947137",
+                "bid": 112
             }
         ],
         "prebids": [
             {
-                "user": "492965189038374933",
-                "amount": 110
+                "user": "638136566249947137",
+                "amount": 120
             }
         ],
-        "currentbid": 108,
+        "currentbid": 112,
         "notification": [
-            "492965189038374933"
+            "492965189038374933",
+            "638136566249947137"
         ],
         "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1250766674408247366/image.png?ex=666c22bd&is=666ad13d&hm=c3473ce5e457eacdccae4604c56b285fccd84f19c9a05bd780f641a0b5f52a54&"
     },
     {
         "id": 43,
         "owner": "492965189038374933",
-        "active": true,
+        "active": false,
         "cp": 1,
         "class": "steel",
         "minbid": 10,
         "increment": 1,
         "rarity": "legendary",
         "starttime": 1718277540,
-        "endtime": 1718281387,
+        "endtime": 1718284887,
         "antisnipe": 3600,
         "antisnipestring": "1h",
-        "topbidder": "492965189038374933",
+        "topbidder": "368031488177864706",
         "bids": [
             {
                 "user": 0,
@@ -500,6 +505,10 @@
             {
                 "user": "492965189038374933",
                 "bid": 11
+            },
+            {
+                "user": "368031488177864706",
+                "bid": 12
             }
         ],
         "prebids": [
@@ -508,9 +517,10 @@
                 "amount": 0
             }
         ],
-        "currentbid": 11,
+        "currentbid": 12,
         "notification": [
-            "492965189038374933"
+            "492965189038374933",
+            "368031488177864706"
         ],
         "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1250771395554578502/image.png?ex=666c2722&is=666ad5a2&hm=3f2220aa4985850769089c28698f24fd59ca154af62138c6098f7faf2b98e2e8&"
     }

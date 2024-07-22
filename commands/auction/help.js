@@ -6,6 +6,7 @@ module.exports = {
         .setDescription("Displays information and list of commands the bot has"),
 
     async execute(interaction) {
+        if (interaction.channel.id !== "1249243732029739058") return await interaction.reply({ content: redtext("You can only use this bot in charms-bot-feed!"), ephemeral: true})
         activecount = 0
         allcount = listofauctions.length
         for (i = 0; i < listofauctions.length; i++) {

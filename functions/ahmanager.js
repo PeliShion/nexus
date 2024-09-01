@@ -363,9 +363,9 @@ module.exports.auccheck = async function () {
         if (!currentcheck.id) continue
         let isauctionactive = currentcheck.active
         let auctionendtime = currentcheck.endtime
+        let notifusers = currentcheck.notification
+        let auctionid = currentcheck.id
         if (isauctionactive === true && auctionendtime < currenttime) {
-            let notifusers = currentcheck.notification
-            let auctionid = currentcheck.id
             let auctopbidder = currentcheck.topbidder
             let aucowner = currentcheck.owner
             let curbid = currentcheck.currentbid

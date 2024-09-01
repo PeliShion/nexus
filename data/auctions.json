@@ -1,53 +1,86 @@
 [
     {
-        "id": 24,
-        "owner": "209293630370873344",
+        "id": 44,
+        "owner": "492965189038374933",
         "active": false,
-        "cp": 2,
-        "class": "multi",
-        "minbid": 1100,
-        "increment": 50,
+        "cp": 1,
+        "class": "wind",
+        "minbid": 15,
+        "increment": 1,
         "rarity": "legendary",
-        "starttime": 1716471347,
-        "endtime": 1716644147,
+        "starttime": 1724904744,
+        "endtime": 1724991144,
         "antisnipe": 3600,
         "antisnipestring": "1h",
-        "topbidder": "632187399178551306",
+        "topbidder": 0,
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            }
+        ],
+        "prebids": [
+            {
+                "user": 0,
+                "amount": 0
+            }
+        ],
+        "currentbid": 0,
+        "notification": [
+            "492965189038374933"
+        ],
+        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1278567906845921382/image.png?ex=66d146a7&is=66cff527&hm=cac1f623f4b0e7610b089d7a4364f5a84fd77769491ed033876688019d511655&"
+    },
+    {
+        "id": 45,
+        "owner": "492965189038374933",
+        "active": true,
+        "cp": 1,
+        "class": "shadow",
+        "minbid": 20,
+        "increment": 1,
+        "rarity": "legendary",
+        "starttime": 1725129462,
+        "endtime": 1725215862,
+        "antisnipe": 3600,
+        "antisnipestring": "1h",
+        "topbidder": "390626375620362240",
         "bids": [
             {
                 "user": 0,
                 "bid": 0
             },
             {
-                "user": "277037090313732098",
-                "bid": 1100
-            },
-            {
-                "user": "632187399178551306",
-                "bid": 1150
+                "user": "390626375620362240",
+                "bid": 1
             }
         ],
-        "currentbid": 1150,
-        "notification": [
-            "209293630370873344",
-            "277037090313732098",
-            "632187399178551306"
+        "prebids": [
+            {
+                "user": "390626375620362240",
+                "amount": 42
+            }
         ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1243195676108525648/blushing.png?ex=665097b2&is=664f4632&hm=9fb6ca45cac47a3329d2dd66747bc3fdedc3b92a92f3f272818ea43ddb928d71&"
+        "currentbid": 1,
+        "notification": [
+            "492965189038374933",
+            "390626375620362240"
+        ],
+        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1279510441802076220/image.png?ex=66d4b475&is=66d362f5&hm=bf053a8ca8d86466c2ae6e02cd3b5a2bab8200274f3db50473f33f78227c6624&"
     },
     {
-        "id": 31,
-        "owner": "209293630370873344",
+        "id": 46,
+        "owner": "390626375620362240",
         "active": true,
-        "cp": 5,
+        "cp": 4,
         "class": "wind",
         "minbid": 1,
         "increment": 1,
-        "rarity": "legendary",
-        "starttime": 1716474100,
-        "endtime": 1725027700,
-        "antisnipe": 115200,
-        "antisnipestring": "32h",
+        "rarity": "epic",
+        "starttime": 1725129576,
+        "endtime": 1725734376,
+        "antisnipe": 39600,
+        "antisnipestring": "11h",
         "topbidder": "492965189038374933",
         "bids": [
             {
@@ -57,458 +90,6 @@
             {
                 "user": "492965189038374933",
                 "bid": 1
-            },
-            {
-                "user": "632187399178551306",
-                "bid": 2
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 3
-            },
-            {
-                "user": "632187399178551306",
-                "bid": 4
-            },
-            {
-                "user": "332437496589975552",
-                "bid": 5
-            },
-            {
-                "user": "632187399178551306",
-                "bid": 6.00000001
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 7.00000001
-            }
-        ],
-        "currentbid": 7.00000001,
-        "notification": [
-            "209293630370873344",
-            "745931519650037770",
-            "492965189038374933",
-            "277037090313732098",
-            "632187399178551306",
-            "332437496589975552"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1243207221861548083/wah.png?ex=6650a273&is=664f50f3&hm=abdb84d554e049b3e128e18d49d8ec8329b99d784c66d9c450b55b3a02ad63e7&"
-    },
-    {
-        "id": 32,
-        "owner": "632187399178551306",
-        "active": false,
-        "cp": 2,
-        "class": "frost",
-        "minbid": 20,
-        "increment": 5,
-        "rarity": "legendary",
-        "starttime": 1716477451,
-        "endtime": 1716650251,
-        "antisnipe": 129600,
-        "antisnipestring": "36h",
-        "topbidder": 0,
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            }
-        ],
-        "currentbid": 0,
-        "notification": [
-            "632187399178551306"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1243221277506928723/2024-03-20_18.42.31.png?ex=6650af8a&is=664f5e0a&hm=96b244be70243711d2b33a46ee6321afb9c0494c4d7ec6240b3d9b4214c6dd04&"
-    },
-    {
-        "id": 33,
-        "owner": "745931519650037770",
-        "active": false,
-        "cp": 1,
-        "class": "dawn",
-        "minbid": 2,
-        "increment": 1,
-        "rarity": "legendary",
-        "starttime": 1716478499,
-        "endtime": 1716824099,
-        "antisnipe": 3600,
-        "antisnipestring": "1h",
-        "topbidder": "632187399178551306",
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            },
-            {
-                "user": "632187399178551306",
-                "bid": null
-            }
-        ],
-        "currentbid": null,
-        "notification": [
-            "745931519650037770",
-            "632187399178551306"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1243225674819305534/IMG_1639.jpg?ex=6650b3a2&is=664f6222&hm=610638ae52b9fe8c995c355e41c24b4de293bd385e4d89b76fc8288c1f42ebba&"
-    },
-    {
-        "id": 34,
-        "owner": "912343942635343882",
-        "active": false,
-        "cp": 1,
-        "class": "shadow",
-        "minbid": 999,
-        "increment": 99,
-        "rarity": "common",
-        "starttime": 1716516521,
-        "endtime": 1717034921,
-        "antisnipe": 3600,
-        "antisnipestring": "1h",
-        "topbidder": "492965189038374933",
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            },
-            {
-                "user": "810463215107833906",
-                "bid": 999
-            },
-            {
-                "user": "277037090313732098",
-                "bid": 2000
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 2099
-            }
-        ],
-        "currentbid": 2099,
-        "notification": [
-            "912343942635343882",
-            "810463215107833906",
-            "492965189038374933",
-            "277037090313732098"
-        ],
-        "tags": [
-            "meow meow meow"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1243385149421260830/Screen_Shot_2024-04-25_at_8.36.53_PM.png?ex=66514828&is=664ff6a8&hm=ffb9728b85d4092cb73255624feeeaadb53f688a8fc6e73dd3423765b7eb9967&"
-    },
-    {
-        "id": 35,
-        "owner": "810463215107833906",
-        "active": false,
-        "cp": 5,
-        "class": "multi",
-        "minbid": 2000,
-        "increment": 100,
-        "rarity": "legendary",
-        "starttime": 1716544121,
-        "endtime": 1716976121,
-        "antisnipe": 18000,
-        "antisnipestring": "5h",
-        "topbidder": "492965189038374933",
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 2000
-            }
-        ],
-        "currentbid": 2000,
-        "notification": [
-            "810463215107833906",
-            "492965189038374933"
-        ],
-        "tags": [
-            "bounty",
-            " king's bounty",
-            " crystal",
-            " royal crystal"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1243500905953890324/image.png?ex=6651b3f7&is=66506277&hm=a96f23053bc510f078be8901e3c98487a94471e0e2c65e79d67bb9cb75eaf971&"
-    },
-    {
-        "id": 36,
-        "owner": "332437496589975552",
-        "active": false,
-        "cp": 3,
-        "class": "flame",
-        "minbid": 3,
-        "increment": 1,
-        "rarity": "legendary",
-        "starttime": 1716545529,
-        "endtime": 1716804729,
-        "antisnipe": 600,
-        "antisnipestring": "10m",
-        "topbidder": "492965189038374933",
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 200
-            }
-        ],
-        "currentbid": 200,
-        "notification": [
-            "332437496589975552",
-            "492965189038374933"
-        ],
-        "tags": [
-            "peli is cute"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1243506816722141234/IMG_1451.jpg?ex=6651b978&is=665067f8&hm=47113e3138bf63e6a18b0bbf92cd217545d544fb9a4731120e664941f0117343&"
-    },
-    {},
-    {},
-    {
-        "id": 38,
-        "owner": "492965189038374933",
-        "active": false,
-        "cp": 1,
-        "class": "dawn",
-        "minbid": 10,
-        "increment": 1,
-        "rarity": "epic",
-        "starttime": 1717401138,
-        "endtime": 1717487538,
-        "antisnipe": 60,
-        "antisnipestring": "1m",
-        "topbidder": 0,
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            }
-        ],
-        "currentbid": 0,
-        "notification": [
-            "492965189038374933"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1247095500155523153/image.png?ex=665ec7b1&is=665d7631&hm=c6991f2746905b42a74955faf1fd128e0b95dd0319bd826f2e490915cbeb72c0&"
-    },
-    {
-        "id": 39,
-        "owner": "492965189038374933",
-        "active": false,
-        "cp": 1,
-        "class": "dawn",
-        "minbid": 20,
-        "increment": 2,
-        "rarity": "legendary",
-        "starttime": 1717405736,
-        "endtime": 1717492136,
-        "antisnipe": 60,
-        "antisnipestring": "1m",
-        "topbidder": "632187399178551306",
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            },
-            {
-                "user": "632187399178551306",
-                "bid": 335
-            }
-        ],
-        "currentbid": 335,
-        "notification": [
-            "492965189038374933",
-            "632187399178551306"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1247114786752172122/image.png?ex=665ed9a7&is=665d8827&hm=d52b0f3068cfbd31072a504a60b0c31f553ea1e647db9d330096b3d36022a887&"
-    },
-    {
-        "id": 40,
-        "owner": "492965189038374933",
-        "active": false,
-        "cp": 1,
-        "class": "frost",
-        "minbid": 15,
-        "increment": 1,
-        "rarity": "legendary",
-        "starttime": 1717948054,
-        "endtime": 1718034454,
-        "antisnipe": 60,
-        "antisnipestring": "1m",
-        "topbidder": "196806345117270017",
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            },
-            {
-                "user": "196806345117270017",
-                "bid": 15
-            }
-        ],
-        "currentbid": 15,
-        "notification": [
-            "492965189038374933",
-            "196806345117270017"
-        ],
-        "tags": [
-            "test"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1249389432503537664/image.png?ex=66672015&is=6665ce95&hm=7104c47002452b0fb81b24b4b07ea1d18810bc1562c375d4d57e5571c9c3eee3&"
-    },
-    {
-        "id": 41,
-        "owner": "196806345117270017",
-        "active": false,
-        "cp": 1,
-        "class": "shadow",
-        "minbid": 10,
-        "increment": 1,
-        "rarity": "legendary",
-        "starttime": 1718088725,
-        "endtime": 1718131925,
-        "antisnipe": 3600,
-        "antisnipestring": "1h",
-        "topbidder": "492965189038374933",
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            },
-            {
-                "user": "315687211704123393",
-                "bid": 10
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 11
-            }
-        ],
-        "currentbid": 11,
-        "notification": [
-            "196806345117270017",
-            "315687211704123393",
-            "492965189038374933"
-        ],
-        "tags": [
-            "insert tag here"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1249979444479922268/image.png?ex=66694593&is=6667f413&hm=5d248ea37da5ba9bb415dc5df7bfce53f3bbb6a9a2bd625fc692ec31f3257224&"
-    },
-    {
-        "id": 42,
-        "owner": "492965189038374933",
-        "active": false,
-        "cp": 3,
-        "class": "shadow",
-        "minbid": 20,
-        "increment": 2,
-        "rarity": "legendary",
-        "starttime": 1718276414,
-        "endtime": 1718362814,
-        "antisnipe": 3600,
-        "antisnipestring": "1h",
-        "topbidder": "638136566249947137",
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 2
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 61
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 71
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 73
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 75
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 77
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 79
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 82
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 99
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 102
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 108
-            },
-            {
-                "user": "638136566249947137",
-                "bid": 112
-            }
-        ],
-        "prebids": [
-            {
-                "user": "638136566249947137",
-                "amount": 120
-            }
-        ],
-        "currentbid": 112,
-        "notification": [
-            "492965189038374933",
-            "638136566249947137"
-        ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1250766674408247366/image.png?ex=666c22bd&is=666ad13d&hm=c3473ce5e457eacdccae4604c56b285fccd84f19c9a05bd780f641a0b5f52a54&"
-    },
-    {
-        "id": 43,
-        "owner": "492965189038374933",
-        "active": false,
-        "cp": 1,
-        "class": "steel",
-        "minbid": 10,
-        "increment": 1,
-        "rarity": "legendary",
-        "starttime": 1718277540,
-        "endtime": 1718284887,
-        "antisnipe": 3600,
-        "antisnipestring": "1h",
-        "topbidder": "368031488177864706",
-        "bids": [
-            {
-                "user": 0,
-                "bid": 0
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 10
-            },
-            {
-                "user": "492965189038374933",
-                "bid": 11
-            },
-            {
-                "user": "368031488177864706",
-                "bid": 12
             }
         ],
         "prebids": [
@@ -517,11 +98,95 @@
                 "amount": 0
             }
         ],
-        "currentbid": 12,
+        "currentbid": 1,
+        "notification": [
+            "390626375620362240",
+            "492965189038374933"
+        ],
+        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1279510919906459709/black.png?ex=66d4b4e7&is=66d36367&hm=e882c8bedf67349b65c8a9ff026c154117b087174812e8a47a35778141a11e8e&"
+    },
+    {
+        "id": 47,
+        "owner": "492965189038374933",
+        "active": false,
+        "cp": 1,
+        "class": "dawn",
+        "minbid": 1999,
+        "increment": 99,
+        "rarity": "common",
+        "starttime": 1725170565,
+        "endtime": 0,
+        "antisnipe": 43200,
+        "antisnipestring": "12h",
+        "topbidder": "1241939308395364362",
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            },
+            {
+                "user": "1241939308395364362",
+                "bid": 1999
+            },
+            {
+                "user": "492965189038374933",
+                "bid": 3000
+            },
+            {
+                "user": "1241939308395364362",
+                "bid": 3099
+            },
+            {
+                "user": "492965189038374933",
+                "bid": 3198
+            },
+            {
+                "user": "1241939308395364362",
+                "bid": 3198
+            },
+            {
+                "user": "492965189038374933",
+                "bid": 3297
+            },
+            {
+                "user": "1241939308395364362",
+                "bid": 3396
+            },
+            {
+                "user": "492965189038374933",
+                "bid": 3495
+            },
+            {
+                "user": "1241939308395364362",
+                "bid": 3594
+            },
+            {
+                "user": "492965189038374933",
+                "bid": 3693
+            },
+            {
+                "user": "1241939308395364362",
+                "bid": 3792
+            },
+            {
+                "user": "492965189038374933",
+                "bid": 4000
+            }
+        ],
+        "prebids": [
+            {
+                "user": "1241939308395364362",
+                "amount": 4000
+            }
+        ],
+        "currentbid": 4000,
         "notification": [
             "492965189038374933",
-            "368031488177864706"
+            "1241939308395364362"
         ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1250771395554578502/image.png?ex=666c2722&is=666ad5a2&hm=3f2220aa4985850769089c28698f24fd59ca154af62138c6098f7faf2b98e2e8&"
+        "tags": [
+            "its for testing pls dont bid on it"
+        ],
+        "image": "https://cdn.discordapp.com/ephemeral-attachments/1236349982710173746/1279682841621303346/black.png?ex=66d55504&is=66d40384&hm=ecc61c27b7a47035e873871596a0a27527dad6f88eafcc8821a0cb8440bb5bda&"
     }
 ]

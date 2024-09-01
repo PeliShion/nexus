@@ -15,6 +15,10 @@ module.exports = {
         .addIntegerOption(option =>
             option.setName("amount")
                 .setDescription("Amount of bids you would like to cancel. 1 will be removed if empty")
+        )
+        .addBooleanOption(option =>
+            option.setName("prebid")
+                .setDescription("Remove pre-bid? Setting this to true will only remove the pre-bid")
         ),
 
     async execute(interaction) {
@@ -25,10 +29,22 @@ module.exports = {
         //turn collected variables into arguments
         let id = interaction.options.getInteger("id")
         let amount = interaction.options.getInteger("amount")
+        let prebid = interaction.options.getBoolean("prebid")
         if (!amount) amount = 1
         let selectedah = listofauctions.find(x => x.id === id)
         if (!selectedah) return await interaction.reply({ content: redtext(`Could not find auction #${id}!`), ephemeral: true })
 
+        if (prebid === true) {
+            selectedah.prebids[0].amount = 0
+            selectedah.prebids[0].user = 0
+            fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4))
+            let removebidlog = miscembed()
+                .setTitle(`Removed pre-bid from auction #${id}`)
+                .setDescription(`Removed by <@${interaction.user.id}>`)
+                .setColor(0xff0000)
+            await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [removebidlog] }))
+            return await interaction.reply({ content: greentext(`Removed the pre-bid from auction #${id}`), ephemeral:true })
+        }
         let bids = selectedah.bids
         let bidlength = bids.length
         for (i = bidlength - 1; i > bidlength - 1 - amount; i--) {

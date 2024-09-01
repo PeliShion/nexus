@@ -95,7 +95,7 @@ module.exports = {
             }
             if (i === listofauctions.length - 1) {
                 //at the end of auction data, check if there were no valid auctions at all
-                if (firstid === 0) interaction.editReply({ content: redtext(`No auctions found with the criteria!`) })
+                if (firstid === 0) return await interaction.editReply({ content: redtext(`No auctions found with the criteria!`) })
 
                 //create an action row with the string menu options we added earlier
                 const row = new ActionRowBuilder()

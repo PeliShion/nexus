@@ -72,7 +72,7 @@ module.exports = {
                 }
                 if (i === listofauctions.length - 1) {
                     //when it reaches the end of the data, check if there is a valid auction from the user
-                    if (firstid === 0) return await interaction.editReply({ content: redtext(`There are no auctions from <@${user}>!`) })
+                    if (firstid === 0) return await interaction.editReply({ content: redtext(`There are no auctions from that user!`) })
 
                     //turn the options we added into actionrow, include it in a message alongside show auction button
                     const row = new ActionRowBuilder()

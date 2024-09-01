@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRow
 const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { capfirstletter, redtext, greentext, miscembed } = require('../../functions/functions.js')
-const { newaucchannelid, logchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
+const { newaucchannelid, logchannelid, botchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
 
 module.exports = {
       data: new SlashCommandBuilder()
@@ -74,7 +74,7 @@ module.exports = {
                         .setDescription("Other tags (charm effects, rolls, etc. Used for people to look up the charm). Separated using comma.")
             )),
       async execute(interaction) {
-            if (interaction.channel.id !== "1249243732029739058") return await interaction.reply({ content: redtext("You can only use this bot in charms-bot-feed!"), ephemeral: true})
+            if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
             //check current auciton ID
             let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
             let curaucid = settings.currentauctionid

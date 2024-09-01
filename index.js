@@ -62,7 +62,7 @@ client.on(Events.InteractionCreate, async interaction => {
 	let bannedusers = settings.bannedusers
 	for(i = 0; i < bannedusers.length; i++) {
 		let user = bannedusers[i].user
-		if(interaction.user.id === user) return interaction.reply({ content:redtext(`You are banned from running a command!`), ephemeral:true})
+		if(interaction.user.id === user) return await interaction.reply({ content:redtext(`You are banned from running a command!`), ephemeral:true})
 		else continue
 	}
 	if (!command) {

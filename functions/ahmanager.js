@@ -404,6 +404,7 @@ module.exports.auccheck = async function () {
 module.exports.bancheck = async function (timenow) {
     let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
     let bannedusers = settings.bannedusers
+    if(!bannedusers) return
     for (i = 0; i < bannedusers.length; i++) {
         let bancheck = bannedusers[i].end
         let user = bannedusers[i].user

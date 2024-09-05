@@ -2,6 +2,7 @@
   "name": "nexus",
   "version": "0.0.1",
   "dependencies": {
-    "discord.js": "^14.14.1"
+    "discord.js": "^14.14.1",
+    "forever": "^4.0.3"
   }
 }

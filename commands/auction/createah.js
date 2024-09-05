@@ -74,7 +74,7 @@ module.exports = {
                         .setDescription("Other tags (charm effects, rolls, etc. Used for people to look up the charm). Separated using comma.")
             )),
       async execute(interaction) {
-            if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
+            if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true })
             //check current auciton ID
             let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
             let curaucid = settings.currentauctionid
@@ -105,7 +105,7 @@ module.exports = {
             if (tags && tags.length > 100) return await interaction.reply({ content: redtext("Please enter less than 100 characters for the tag!"), ephemeral: true })
             if (ahlengthinsec <= 0 || startingbid <= 0 || increment <= 0 || antisnipelengthins < 0) return await interaction.reply({ content: redtext(`Please use numbers above 0 for numbers!`), ephemeral: true })
             else if (ahlengthinsec > 604800) return await interaction.reply({ content: redtext("Auction length has to be less than 1 week!"), ephemeral: true })
-            else if (antisnipelengthins > 43200) return await interaction.reply({ content: redtext(`Antisnipe length has to be less than 12 hours!`), ephemeral: true })
+            else if (antisnipelengthins > 86400) return await interaction.reply({ content: redtext(`Antisnipe length has to be less than 24 hours!`), ephemeral: true })
             let endtime = currenttime + ahlengthinsec
             if (tags === null) tagsdisplay = "None"
             else tagsdisplay = tags
@@ -141,7 +141,14 @@ module.exports = {
                   if (selection === "confirm") {
                         //if collected confirm, increase the auciton id, save it, send the embed to new-auctions channel, and push the data to auctions.json
                         curaucid++
+                        msgid = 0
                         settings.currentauctionid = curaucid
+                        const showdetails = new ButtonBuilder()
+                              .setCustomId(`${curaucid}`)
+                              .setLabel("Show Auction Details")
+                              .setStyle(ButtonStyle.Success)
+                        const detailrow = new ActionRowBuilder().addComponents(showdetails)
+
                         let auctionembedsend = new EmbedBuilder()
                               .setTitle(capfirstletter(charmclass) + " Charm | Auction ID: #" + curaucid)
                               .setColor(colorhex)
@@ -158,6 +165,9 @@ module.exports = {
                               .setTimestamp()
                               .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
 
+                        let newaucchannel = await client.channels.fetch(newaucchannelid)
+                        await newaucchannel.send({ embeds: [auctionembedsend], components: [detailrow] }).then((message) => msgid = message.id)
+                        
                         let auctionobject = {
                               "id": curaucid,
                               "owner": interaction.user.id,
@@ -187,18 +197,12 @@ module.exports = {
                               "currentbid": 0,
                               "notification": [interaction.user.id],
                               "tags": tags?.toLowerCase().split(","),
-                              "image": image
+                              "image": image,
+                              "msgid": msgid
                         }
                         listofauctions.push(auctionobject)
-                        const showdetails = new ButtonBuilder()
-                              .setCustomId(`${curaucid}`)
-                              .setLabel("Show Auction Details")
-                              .setStyle(ButtonStyle.Success)
-                        const detailrow = new ActionRowBuilder().addComponents(showdetails)
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                         fs.writeFileSync("./data/settings.json", JSON.stringify(settings, null, 4))
-
-                        await client.channels.fetch(newaucchannelid).then(channel => channel.send({ embeds: [auctionembedsend], components: [detailrow] }))
                         await i.update({ content: greentext("Auction Created! ID: " + (curaucid)), components: [], ephemeral: true })
                         let auccreatelog = miscembed()
                               .setTitle(`New auction (ID #${curaucid})`)

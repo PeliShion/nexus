@@ -11,7 +11,7 @@ const bidcustomamount = new ButtonBuilder()
 
 const bidprebid = new ButtonBuilder()
     .setCustomId('prebid')
-    .setLabel('Pre-bid')
+    .setLabel('Autobid')
     .setStyle(ButtonStyle.Primary)
 
 // module.exports.addnotif = async function (id, interaction, authorid) {
@@ -239,7 +239,7 @@ module.exports.biddms = async function (id, authorid) {
 
     //send the user dm with the buttons, if the user chooses to bid, run the function
     //if sending dm fails, send them an error message in bot channel
-    const response = await client.users.send(authorid, { embeds: [module.exports.embedgen(id)], components: [ahembedrow] }).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+    const response = await client.users.send(authorid, { embeds: [module.exports.embedgen(id)], components: [ahembedrow] }).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${authorid}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
     const collector = response.createMessageComponentCollector({ time: 60_000 })
 
     collector.on('collect', async i => {
@@ -425,7 +425,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
     else if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
     const collectorFilter = (m) => m.author.id === authorid
-    await interactionsend(bluetext(`How much would you like to pre-bid on auction #${id}? Please type the amount in number.`))
+    await interactionsend(bluetext(`How much would you like to autobid on auction #${id}? Please type the amount in number.`))
     const messagecollector = interaction.channel.createMessageCollector({ filter: collectorFilter, time: 60_000 });
 
     messagecollector.on('collect', async m => {
@@ -435,15 +435,15 @@ module.exports.prebid = async function (id, interaction, authorid) {
         if (!Number.isInteger(prebidamount)) return await interactionsend(redtext("Please only input a whole number!"))
         if (prebidamount > 9999) return await interactionsend(redtext("Invalid value! Please enter numbers below 10000."))
         if (nextbid > prebidamount) return await interactionsend(redtext("You cannot bid lower than the next minimum bid!"))
-        const bidconfirmresponsecustom = await interactionsend(bluetext(`Are you sure you want to pre-bid ${prebidamount} HAR on auction #${id}?`), confirmrow)
+        const bidconfirmresponsecustom = await interactionsend(bluetext(`Are you sure you want to immediately bid ${nextbid} HAR and autobid ${prebidamount} HAR on auction #${id}?`), confirmrow)
         const bidconfirmcollector = bidconfirmresponsecustom.createMessageComponentCollector({ time: 60_000 })
         bidconfirmcollector.on('collect', async i => {
             bidconfirmcollector.stop()
             i.deferUpdate()
             if (i.customId === "confirm") {
-                await interactionsend(greentext(`Pre-bid Successful!`))
-                //if confirmed, bid immediately and add the user to "pre-bid" on the auction.
-                //if the existing pre-bid is larger than the one that has been bid, automatically bid up until previous one's maximum
+                await interactionsend(greentext(`Autobid Successful!`))
+                //if confirmed, bid immediately and add the user to "autobid" on the auction.
+                //if the existing autobid is larger than the one that has been bid, automatically bid up until previous one's maximum
                 if (selectedah.currentbid + selectedah.increment > prebidamount) return await interactionsend(redtext("Failed to bid! Maybe someone else bid before you?"))
                 if (endtime - Math.round(Date.now() / 1000) <= antisnipe) selectedah.endtime = Math.round(Date.now() / 1000) + antisnipe
                 if (!selectedah.notification.includes(authorid)) selectedah.notification.push(authorid)
@@ -556,10 +556,10 @@ module.exports.prebidcheck = async function (id) {
         selectedah.bids.push({ "user": prebiduser, "bid": nextbidamount })
         let prebidlog = miscembed()
             .setTitle(`Bid on auction #${id}`)
-            .setDescription(`Bidder: <@${prebiduser}>\nAmount: ${nextbidamount} HAR (This is a pre-bid)`)
+            .setDescription(`Bidder: <@${prebiduser}>\nAmount: ${nextbidamount} HAR (This is an autobid)`)
             .setColor(0xCCCCFF)
         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidlog] }))
-        await client.users.send(prebiduser, greentext(`Your pre-bid on auction #${id} has triggered, bidding ${nextbidamount} HAR!`))
+        await client.users.send(prebiduser, greentext(`Your autobid on auction #${id} has triggered, bidding ${nextbidamount} HAR!`))
         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
         let bidminamount = new ButtonBuilder()
             .setCustomId('minamount')
@@ -586,4 +586,15 @@ module.exports.prebidcheck = async function (id) {
             })
         }
     } else return //else do nothing
+}
+
+module.exports.updateembed = async function(id) {
+    let selectedah = listofauctions.find(x => x.id === id)
+    let increment = selectedah.increment
+    let owner = selectedah.owner
+    let currentbid = selectedah.currentbid
+    let antisnipe = selectedah.antisnipe
+    let endtime = selectedah.endtime
+    let prebids = selectedah.prebids
+    let notifications = selectedah.notification
 }

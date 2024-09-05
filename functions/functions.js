@@ -35,7 +35,7 @@ module.exports.disabledbuttons = function (bid) {
         .setDisabled(true)
     let graybidprebid = new ButtonBuilder()
         .setCustomId('prebid')
-        .setLabel('Pre-bid')
+        .setLabel('Autobid')
         .setStyle(ButtonStyle.Primary)
         .setDisabled(true)
 

@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
 const { redtext, bluetext } = require("../../functions/functions.js")
-const { botchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
+const { botchannelid } = require("../../data/settings.json");
 
 const leftarrow = new ButtonBuilder()
     .setCustomId("left")

@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, EmbedBuilder, ComponentType } = require('discord.js')
-const { botchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
+const { botchannelid } = require("../../data/settings.json");
+const { redtext } = require('../../functions/functions.js')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("help")

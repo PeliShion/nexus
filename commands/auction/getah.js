@@ -1,6 +1,7 @@
 const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, ComponentType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js')
 const { redtext, bluetext } = require('../../functions/functions.js')
 const { embedgen, biddms } = require("../../functions/ahmanager.js")
+const { botchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
 
 const showdetails = new ButtonBuilder()
     .setCustomId(`show`)
@@ -22,7 +23,7 @@ module.exports = {
         ),
 
     async execute(interaction) {
-        if (interaction.channel.id !== "1249243732029739058") return await interaction.reply({ content: redtext("You can only use this bot in charms-bot-feed!"), ephemeral: true})
+        if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
         await interaction.reply({ content: bluetext("Searching..."), ephemeral: true })//sending this first so it can be editreplyed later
         //getting arguments from command
         let id = interaction.options?.getInteger("id")

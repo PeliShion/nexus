@@ -4,7 +4,6 @@ const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { redtext, greentext, bluetext, capfirstletter, disabledbuttons, miscembed } = require("./functions.js")
 const { botchannelid, logchannelid } = require("../data/settings.json")
 
-
 const bidcustomamount = new ButtonBuilder()
     .setCustomId('customamount')
     .setLabel('Bid Custom Amount')

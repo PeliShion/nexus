@@ -1,12 +1,12 @@
 const { SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, EmbedBuilder, ComponentType } = require('discord.js')
-
+const { botchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("help")
         .setDescription("Displays information and list of commands the bot has"),
 
     async execute(interaction) {
-        if (interaction.channel.id !== "1249243732029739058") return await interaction.reply({ content: redtext("You can only use this bot in charms-bot-feed!"), ephemeral: true})
+        if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
         activecount = 0
         allcount = listofauctions.length
         for (i = 0; i < listofauctions.length; i++) {

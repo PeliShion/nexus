@@ -1,7 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js')
 const fs = require("fs")
 const { redtext, greentext, miscembed } = require("../../functions/functions.js")
-const { modroleid, logchannelid } = require("../../data/settings.json");
+const { modroleid, logchannelid, botchannelid } = require("../../data/settings.json");
+
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,7 +15,7 @@ module.exports = {
         ),
 
     async execute(interaction) {
-        if (interaction.channel.id !== "1249243732029739058") return await interaction.reply({ content: redtext("You can only use this bot in charms-bot-feed!"), ephemeral: true})
+        if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
         let selectedid = interaction.options.getInteger("id") //collecting argument from the command
         let selectedah = listofauctions.find(x => x.id === selectedid) //search through the auction data
         if (!selectedah) return await interaction.reply({ content: redtext("Could not find an auction with ID " + selectedid + "!"), ephemeral: true })

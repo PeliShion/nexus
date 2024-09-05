@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
 const { redtext, bluetext } = require("../../functions/functions.js")
+const { botchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
 
 const leftarrow = new ButtonBuilder()
     .setCustomId("left")
@@ -24,7 +25,7 @@ module.exports = {
         ),
 
     async execute(interaction) {
-        if (interaction.channel.id !== "1249243732029739058") return await interaction.reply({ content: redtext("You can only use this bot in charms-bot-feed!"), ephemeral: true})
+        if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
         const bidmenu = await interaction.reply({ content: bluetext("Searching..."), ephemeral: true }) //sending this first so it can be editreplied later
         let id = interaction.options.getInteger("id") //collecting the argument from command  
         let selectedah = listofauctions.find(x => x.id === id) //search through the auction and find the one with same id

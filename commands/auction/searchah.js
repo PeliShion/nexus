@@ -1,6 +1,7 @@
 const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType } = require('discord.js')
 const { redtext, bluetext } = require('../../functions/functions.js')
 const { embedgen, biddms } = require('../../functions/ahmanager.js')
+const { botchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
 
 const showdetails = new ButtonBuilder()
     .setCustomId(`show`)
@@ -51,7 +52,7 @@ module.exports = {
         ),
 
     async execute(interaction) {
-        if (interaction.channel.id !== "1249243732029739058") return await interaction.reply({ content: redtext("You can only use this bot in charms-bot-feed!"), ephemeral: true})
+        if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
         //turn collected arguments into variables
         let rarity = interaction.options?.getString("rarity")
         let tags = interaction.options.getString("tags")?.toLowerCase().replace(/\s/g, '').split(",")

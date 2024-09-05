@@ -25,18 +25,13 @@ const bidprebid = new ButtonBuilder()
 //     await interaction.followUp({ content: greentext("You will now be notified when the auction is about to, and after it ends!"), ephemeral: true })
 // }
 
-module.exports.bidmin = async function (id, interaction, authorid, indms) {
+module.exports.bidmin = async function (id, interaction, authorid) {
     //function to run if a user chooses to bid next minimum bid.
 
-    //this is to check if the message being sent to is in dms or in a channel
+    //relic of the previous system, will be reworked soon
     let interactionsend = function (message, components) {
-        if (!components) {
-            if (indms === true) return interaction.channel.send({ content: message })
-            else return interaction.followUp({ content: message, ephemeral: true })
-        } else {
-            if (indms === true) return interaction.channel.send({ content: message, components: [components] })
-            else return interaction.followUp({ content: message, ephemeral: true, components: [components] })
-        }
+        if (!components) return interaction.channel.send({ content: message })
+        else return interaction.channel.send({ content: message, components: [components] })
     }
 
     //turning all the relevant data into variables
@@ -113,9 +108,9 @@ module.exports.bidmin = async function (id, interaction, authorid, indms) {
                     j.deferUpdate()
                     const selection = j.customId
                     collector.stop()
-                    if (selection === 'minamount') module.exports.bidmin(id, j, msguser, true)
-                    else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser, true)
-                    else if (selection === 'prebid') module.exports.prebid(id, j, msguser, true)
+                    if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
+                    else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
+                    else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
                 })
             }
             module.exports.prebidcheck(id)
@@ -123,18 +118,12 @@ module.exports.bidmin = async function (id, interaction, authorid, indms) {
     })
 }
 
-module.exports.bidcustom = async function (id, interaction, authorid, indms) {
+module.exports.bidcustom = async function (id, interaction, authorid) {
     //most of the process is same as bidmin function, so please refer to it if you are unsure
     let interactionsend = function (message, components) {
-        if (!components) {
-            if (indms === true) return interaction.channel.send({ content: message })
-            else return interaction.followUp({ content: message, ephemeral: true })
-        } else {
-            if (indms === true) return interaction.channel.send({ content: message, components: [components] })
-            else return interaction.followUp({ content: message, ephemeral: true, components: [components] })
+        if (!components) return interaction.channel.send({ content: message })
+        else return interaction.channel.send({ content: message, components: [components] })
         }
-
-    }
     let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
     let bannedusers = settings.bannedusers
     for (i = 0; i < bannedusers.length; i++) {
@@ -165,12 +154,6 @@ module.exports.bidcustom = async function (id, interaction, authorid, indms) {
     messagecollector.on('collect', async m => {
         messagecollector.stop()
         let customamountbid = +m.content
-
-        //delete the message if it is NOT in dms
-        if (indms === false) {
-            interaction.channel.messages.fetch(m.id)
-                .then(message => message.delete())
-        }
 
         //multiple checks to see if the inputted data is valid (if it's integer, if it's over 9999, if it's lower than next minimum bid)
         if (!Number.isInteger(customamountbid)) return await interactionsend(redtext("Please only input a whole number!"))
@@ -218,9 +201,9 @@ module.exports.bidcustom = async function (id, interaction, authorid, indms) {
                         j.deferUpdate()
                         collector.stop()
                         const selection = j.customId
-                        if (selection === 'minamount') module.exports.bidmin(id, j, msguser, true)
-                        else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser, true)
-                        else if (selection === 'prebid') module.exports.prebid(id, j, msguser, true)
+                        if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
+                        else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
+                        else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
                     })
                 }
                 module.exports.prebidcheck(id)
@@ -264,13 +247,13 @@ module.exports.biddms = async function (id, authorid) {
         i.deferUpdate()
         collector.stop()
         const selection = i.customId
-        if (selection === "minamount") module.exports.bidmin(id, i, authorid, true)
-        else if (selection === "customamount") module.exports.bidcustom(id, i, authorid, true)
-        else if (selection === 'prebid') module.exports.prebid(id, i, authorid, true)
+        if (selection === "minamount") module.exports.bidmin(id, i, authorid)
+        else if (selection === "customamount") module.exports.bidcustom(id, i, authorid)
+        else if (selection === 'prebid') module.exports.prebid(id, i, authorid)
     })
 }
 
-module.exports.postbidembedgen = function (id, newbid, authorid) {
+module.exports.postbidembedgen = function (id, newbid, bidderid) {
 
     //embed generator after the user bids.
     //find the auction and set up variables
@@ -295,7 +278,7 @@ module.exports.postbidembedgen = function (id, newbid, authorid) {
             { name: "Ends in:", value: `<t:${endtime}:R>`, inline: true },
             { name: "Anti-snipe Length", value: antisnipestring, inline: true },
             { name: "\u200B", value: "\u200B" },
-            { name: "Current Bid", value: newbid.toString() + " HAR " + `<@${authorid}>`, inline: true },
+            { name: "Current Bid", value: newbid.toString() + " HAR " + `<@${bidderid}>`, inline: true },
             { name: "Increment:", value: increment.toString() + " HAR", inline: true },
             { name: "Tags:", value: tags, inline: true },
         )
@@ -421,21 +404,14 @@ module.exports.bancheck = async function (timenow) {
     }
 }
 
-//prebid is not finished yet
-module.exports.prebid = async function (id, interaction, authorid, indms) {
+module.exports.prebid = async function (id, interaction, authorid) {
     let interactionsend = function (message, components) {
-        if (!components) {
-            if (indms === true) return interaction.channel.send({ content: message })
-            else return interaction.followUp({ content: message, ephemeral: true })
-        } else {
-            if (indms === true) return interaction.channel.send({ content: message, components: [components] })
-            else return interaction.followUp({ content: message, ephemeral: true, components: [components] })
-        }
-
+        if (!components) return interaction.channel.send({ content: message })
+        else return interaction.channel.send({ content: message, components: [components] })
     }
+    //grab auction data
     let selectedah = listofauctions.find(x => x.id === id)
     let increment = selectedah.increment
-    let currenttopbidder = selectedah.topbidder
     let owner = selectedah.owner
     let notifications = selectedah.notification
     let username = await client.users.cache.get(authorid).username
@@ -456,10 +432,6 @@ module.exports.prebid = async function (id, interaction, authorid, indms) {
     messagecollector.on('collect', async m => {
         messagecollector.stop()
         let prebidamount = +m.content
-        if (indms === false) {
-            interaction.channel.messages.fetch(m.id)
-                .then(message => message.delete())
-        }
         //more bid checks
         if (!Number.isInteger(prebidamount)) return await interactionsend(redtext("Please only input a whole number!"))
         if (prebidamount > 9999) return await interactionsend(redtext("Invalid value! Please enter numbers below 10000."))
@@ -517,9 +489,9 @@ module.exports.prebid = async function (id, interaction, authorid, indms) {
                             j.deferUpdate()
                             collector.stop()
                             const selection = j.customId
-                            if (selection === 'minamount') module.exports.bidmin(id, j, msguser, true)
-                            else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser, true)
-                            else if (selection === 'prebid') module.exports.prebid(id, j, msguser, true)
+                            if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
+                            else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
+                            else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
                         })
                     }
                 } else {
@@ -548,9 +520,9 @@ module.exports.prebid = async function (id, interaction, authorid, indms) {
                             j.deferUpdate()
                             collector.stop()
                             const selection = j.customId
-                            if (selection === 'minamount') module.exports.bidmin(id, j, msguser, true)
-                            else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser, true)
-                            else if (selection === 'prebid') module.exports.prebid(id, j, msguser, true)
+                            if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
+                            else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
+                            else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
                         })
                     }
 
@@ -561,6 +533,7 @@ module.exports.prebid = async function (id, interaction, authorid, indms) {
 }
 
 module.exports.prebidcheck = async function (id) {
+    //grab auction information
     let selectedah = listofauctions.find(x => x.id === id)
     let increment = selectedah.increment
     let owner = selectedah.owner
@@ -570,10 +543,12 @@ module.exports.prebidcheck = async function (id) {
     let prebids = selectedah.prebids
     let notifications = selectedah.notification
     let prebidamount = prebids[0].amount
+    //if there are no prebids, do nothing
     if (prebidamount === 0) return
     let prebiduser = prebids[0].user
     let username = await client.users.cache.get(prebiduser).username
     if (currentbid + increment <= prebidamount) {
+        //if prebid is higher than current bid, immediately bid for min. increment
         if (endtime - Math.round(Date.now() / 1000) <= antisnipe) selectedah.endtime = Math.round(Date.now() / 1000) + antisnipe
         if (currentbid + (increment * 2) > prebidamount) nextbidamount = prebidamount
         else nextbidamount = currentbid + increment
@@ -599,17 +574,17 @@ module.exports.prebidcheck = async function (id) {
             const msguser = notifications[i]
             if (msguser === owner) continue
             else if (msguser === prebiduser) continue
-            let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbidamount} HAR!`), embeds: [module.exports.postbidembedgen(id, nextbidamount, authorid)], components: [ahembedrow] }
+            let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbidamount} HAR!`), embeds: [module.exports.postbidembedgen(id, nextbidamount, prebiduser)], components: [ahembedrow] }
             let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
             collector.on('collect', async j => {
                 j.deferUpdate()
                 collector.stop()
                 const selection = j.customId
-                if (selection === 'minamount') module.exports.bidmin(id, j, msguser, true)
-                else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser, true)
-                else if (selection === 'prebid') module.exports.prebid(id, j, msguser, true)
+                if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
+                else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
+                else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
             })
         }
-    } else return
+    } else return //else do nothing
 }

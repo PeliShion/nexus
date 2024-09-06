@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const fs = require("fs")
 const { redtext, greentext, miscembed } = require("../../functions/functions.js")
-const { modroleid, logchannelid, botchannelid } = require("../../data/settings.json");
+const { modroleid, logchannelid, botchannelid, newaucchannelid } = require("../../data/settings.json");
 
 
 module.exports = {
@@ -18,6 +18,7 @@ module.exports = {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
         let selectedid = interaction.options.getInteger("id") //collecting argument from the command
         let selectedah = listofauctions.find(x => x.id === selectedid) //search through the auction data
+        let msgid = selectedah.msgid
         if (!selectedah) return await interaction.reply({ content: redtext("Could not find an auction with ID " + selectedid + "!"), ephemeral: true })
         let ahowner = selectedah.owner
         //check if the user running the command is valid to delete the auction.
@@ -31,6 +32,7 @@ module.exports = {
             } else continue
         }
         interaction.reply({ content: greentext("Deleted auction #" + selectedid + "!"), ephemeral: true })
+        client.channels.cache.get(newaucchannelid).messages.fetch(msgid).then(message => message.delete())
         let deleteauclog = miscembed()
             .setTitle(`Auction #${selectedid} deleted`)
             .setDescription(`Deleted by <@${interaction.user.id}>`)

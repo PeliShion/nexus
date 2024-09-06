@@ -35,7 +35,7 @@
     {
         "id": 50,
         "owner": "230457976798969866",
-        "active": true,
+        "active": false,
         "cp": 1,
         "class": "flame",
         "minbid": 15,
@@ -139,10 +139,10 @@
         "increment": 1,
         "rarity": "legendary",
         "starttime": 1725566406,
-        "endtime": 1725739206,
+        "endtime": 1725744553,
         "antisnipe": 86400,
         "antisnipestring": "24h",
-        "topbidder": "230457976798969866",
+        "topbidder": "676780937438167041",
         "bids": [
             {
                 "user": 0,
@@ -151,6 +151,10 @@
             {
                 "user": "230457976798969866",
                 "bid": 32
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 33
             }
         ],
         "prebids": [
@@ -159,12 +163,13 @@
                 "amount": 0
             }
         ],
-        "currentbid": 32,
+        "currentbid": 33,
         "notification": [
             "377462701644972034",
-            "230457976798969866"
+            "230457976798969866",
+            "676780937438167041"
         ],
-        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1281343119085797406/image.png?ex=66db5f45&is=66da0dc5&hm=1af33d6dbbd08ce627535bb0a342be81492cd9d168e25403e2e6e661cabe365b&",
+        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1281343119085797406/image.png?ex=66dcb0c5&is=66db5f45&hm=74a9c3d9813f76ff71b5d74da8f29f7e2418b1b3ee335d6b737a1991b33967e1&",
         "msgid": "1281343158575300789"
     },
     {
@@ -246,7 +251,7 @@
         "endtime": 1725757358,
         "antisnipe": 3600,
         "antisnipestring": "1h",
-        "topbidder": "332437496589975552",
+        "topbidder": "676780937438167041",
         "bids": [
             {
                 "user": 0,
@@ -275,15 +280,19 @@
             {
                 "user": "332437496589975552",
                 "bid": 13
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 14
             }
         ],
         "prebids": [
             {
-                "user": 0,
-                "amount": 0
+                "user": "676780937438167041",
+                "amount": 16
             }
         ],
-        "currentbid": 13,
+        "currentbid": 14,
         "notification": [
             "773350778546421762",
             "296417274959757315",
@@ -395,5 +404,56 @@
         ],
         "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1281683851638472930/image.png?ex=66dc9c9a&is=66db4b1a&hm=57d1aba870db28d65dc49ab214c3143ec6fe60cfb9e173aa53748d352ffed2b6&",
         "msgid": "1281683914343059466"
+    },
+    {
+        "id": 60,
+        "owner": "696253522580209695",
+        "active": true,
+        "cp": 2,
+        "class": "flame",
+        "minbid": 15,
+        "increment": 1,
+        "rarity": "epic",
+        "starttime": 1725656077,
+        "endtime": 1725742477,
+        "antisnipe": 43200,
+        "antisnipestring": "12h",
+        "topbidder": "242489858860384258",
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 15
+            },
+            {
+                "user": "242489858860384258",
+                "bid": 30
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 32
+            },
+            {
+                "user": "242489858860384258",
+                "bid": 64
+            }
+        ],
+        "prebids": [
+            {
+                "user": 0,
+                "amount": 0
+            }
+        ],
+        "currentbid": 64,
+        "notification": [
+            "696253522580209695",
+            "676780937438167041",
+            "242489858860384258"
+        ],
+        "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1281719221570637845/image.png?ex=66dcbd8b&is=66db6c0b&hm=dfcd68d40c9b19e3304cfe5f446dc2dbb5e21fbe1b4c8af117c34c7f262dd4d7&",
+        "msgid": "1281719268681060386"
     }
 ]

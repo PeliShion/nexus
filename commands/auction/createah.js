@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
 const fs = require("fs")
+const fetch = require('node-fetch')
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { capfirstletter, redtext, greentext, miscembed } = require('../../functions/functions.js')
 const { newaucchannelid, logchannelid, botchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
@@ -65,6 +66,11 @@ module.exports = {
                         .setDescription("Legnth of antisnipe in m or h. If time is below x, reset the time to x. Set to 0m for no antisnipe")
                         .setRequired(true)
                         .setMaxLength(3))
+            .addBooleanOption(option => {
+                  option.setName("anonymity")
+                        .setDescription("Users bidding on this auctions are anonymous if true")
+                        .setRequired(true)
+            })
             .addAttachmentOption(option =>
                   option.setName("image")
                         .setDescription("Image of the charm")
@@ -87,7 +93,8 @@ module.exports = {
             let cp = interaction.options.getInteger("cp")
             let auctionlength = interaction.options.getString("length").toLowerCase()
             let antisnipelength = interaction.options.getString("antisnipelength").toLowerCase()
-            let image = interaction.options.getAttachment("image").url
+            let imagelink = interaction.options.getAttachment("image").url
+            let anonymity = interaction.options.getBoolean("anonymity")
 
             let antisnipelengthins = 0
             let colorhex = colors[charmclass] //color of the embed
@@ -123,7 +130,7 @@ module.exports = {
                         { name: "Increments:", value: increment.toString() + " HAR", inline: true },
                         { name: "Tags", value: tagsdisplay, inline: true },
                   )
-                  .setImage(image)
+                  .setImage(imagelink)
                   .setTimestamp()
                   .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
 
@@ -139,6 +146,10 @@ module.exports = {
             confirmed.on('collect', async i => {
                   const selection = i.customId
                   if (selection === "confirm") {
+
+                        await fetch(imagelink).then(res => {
+                              res.body.pipe(fs.createWriteStream(`./images/${(curaucid + 1)}.png`))
+                        })
                         //if collected confirm, increase the auciton id, save it, send the embed to new-auctions channel, and push the data to auctions.json
                         curaucid++
                         msgid = 0
@@ -161,13 +172,13 @@ module.exports = {
                                     { name: "Increments:", value: increment.toString() + " HAR", inline: true },
                                     { name: "Tags", value: tagsdisplay, inline: true },
                               )
-                              .setImage(image)
+                              .setImage(imagelink)
                               .setTimestamp()
                               .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
 
                         let newaucchannel = await client.channels.fetch(newaucchannelid)
-                        await newaucchannel.send({ embeds: [auctionembedsend], components: [detailrow] }).then((message) => msgid = message.id)
-                        
+                        await newaucchannel.send({ embeds: [auctionembedsend], components: [detailrow]}).then((message) => msgid = message.id)
+
                         let auctionobject = {
                               "id": curaucid,
                               "owner": interaction.user.id,
@@ -181,6 +192,7 @@ module.exports = {
                               "endtime": endtime,
                               "antisnipe": antisnipelengthins,
                               "antisnipestring": antisnipelength,
+                              "anonymity": anonymity,
                               "topbidder": 0,
                               "bids": [
                                     {
@@ -197,7 +209,6 @@ module.exports = {
                               "currentbid": 0,
                               "notification": [interaction.user.id],
                               "tags": tags?.toLowerCase().split(","),
-                              "image": image,
                               "msgid": msgid
                         }
                         listofauctions.push(auctionobject)

@@ -1,4 +1,4 @@
-const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType } = require('discord.js')
+const { AttachmentBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType } = require('discord.js')
 const { redtext, bluetext } = require('../../functions/functions.js')
 const { embedgen, biddms } = require('../../functions/ahmanager.js')
 const { botchannelid } = require("../../data/settings.json");
@@ -97,12 +97,12 @@ module.exports = {
             if (i === listofauctions.length - 1) {
                 //at the end of auction data, check if there were no valid auctions at all
                 if (firstid === 0) return await interaction.editReply({ content: redtext(`No auctions found with the criteria!`) })
-
+                let attachment = new AttachmentBuilder(`./images/${firstid}.png`, {name: `${firstid}.png`})
                 //create an action row with the string menu options we added earlier
                 const row = new ActionRowBuilder()
                     .addComponents(selections)
 
-                const response = await interaction.editReply({ content: bluetext(`Indexed ${listofauctions.length}, found ${match} matches.`), embeds: [embedgen(firstid)], ephemeral: true, components: [row, detailrow] })
+                const response = await interaction.editReply({ content: bluetext(`Indexed ${listofauctions.length}, found ${match} matches.`), embeds: [embedgen(firstid)], ephemeral: true, components: [row, detailrow], files:[attachment] })
                 //2 component collectors for string menu and button
                 const ahcollect = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 180_000 });
                 const checkauccollect = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 180_000 });
@@ -111,7 +111,8 @@ module.exports = {
                     //if string menu was collected, change the embed to what the user has picked
                     i.deferUpdate()
                     currentselection = +i.values[0]
-                    await interaction.editReply({ embeds: [embedgen(currentselection)] })
+                    let attachment = new AttachmentBuilder(`./images/${currentselection}.png`, {name: `${currentselection}.png`})
+                    await interaction.editReply({ embeds: [embedgen(currentselection)], files:[attachment] })
                 })
 
                 checkauccollect.on('collect', async i => {

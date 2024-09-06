@@ -1,4 +1,4 @@
-const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, ComponentType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js')
+const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, AttachmentBuilder, ComponentType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js')
 const { redtext, bluetext } = require('../../functions/functions.js')
 const { embedgen, biddms } = require("../../functions/ahmanager.js")
 const { botchannelid } = require("../../data/settings.json");
@@ -38,8 +38,8 @@ module.exports = {
             //if id was inputted, search the auction for the specific id and display the data + bid buttons
             let selectedah = listofauctions.find(x => x.id === id)
             if (!selectedah) return await interaction.editReply({ content: redtext("Could not find an auction with ID " + id + "!"), ephemeral: true })
-
-            const response = await interaction.editReply({ content: "", embeds: [embedgen(id)], components: [detailrow], ephemeral: true })
+            let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
+            const response = await interaction.editReply({ content: "", embeds: [embedgen(id)], components: [detailrow], ephemeral: true, files:[attachment] })
             const collector = response.createMessageComponentCollector({ time: 60_000 })
                 //create a collector and send them to dms
             collector.on('collect', async i => {
@@ -74,11 +74,11 @@ module.exports = {
                 if (i === listofauctions.length - 1) {
                     //when it reaches the end of the data, check if there is a valid auction from the user
                     if (firstid === 0) return await interaction.editReply({ content: redtext(`There are no auctions from that user!`) })
-
+                    let attachment = new AttachmentBuilder(`./images/${firstid}.png`, {name: `${firstid}.png`})
                     //turn the options we added into actionrow, include it in a message alongside show auction button
                     const row = new ActionRowBuilder()
                         .addComponents(selections)
-                    const response = await interaction.editReply({ content: bluetext(`Indexed ${listofauctions.length}, found ${match} matches.`), embeds: [embedgen(firstid)], ephemeral: true, components: [row, detailrow] })
+                    const response = await interaction.editReply({ content: bluetext(`Indexed ${listofauctions.length}, found ${match} matches.`), embeds: [embedgen(firstid)], ephemeral: true, components: [row, detailrow], files:[attachment] })
 
                     //2 separate collectors for 2 components (string menu, and button)
                     const ahcollect = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 180_000 });
@@ -88,7 +88,8 @@ module.exports = {
                         //if string menu was collected, change the embed displayed to the chosen auction
                         i.deferUpdate()
                         currentselection = +i.values[0]
-                        await interaction.editReply({ embeds: [embedgen(currentselection)] })
+                        let attachment = new AttachmentBuilder(`./images/${currentselection}.png`, {name: `${currentselection}.png`})
+                        await interaction.editReply({ embeds: [embedgen(currentselection)], files:[attachment] })
                     })
 
                     checkauccollect.on('collect', async i => {

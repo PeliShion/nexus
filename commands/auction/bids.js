@@ -48,8 +48,9 @@ module.exports = {
 
         //for the first page, loop the bids array object and add fields to bidsembed
         for (i = bidlength - 1; i > bidlength - 6; i--) {
+            biduser = ""
             if (anonymity === true) biduser = "Anonymous"
-            else `<@${bidarray[i].user}>`
+            else biduser = `<@${bidarray[i].user}>`
             bidsembed.addFields({ name: `Bid #${i}`, value: `${bidarray[i].bid} HAR by ${biduser}` })
             if (i === 1 || i === bidlength - 5) {
                 interaction.editReply({ content: bluetext(`Found ${bidlength - 1} bids`), embeds: [bidsembed], components: [arrowrow] })

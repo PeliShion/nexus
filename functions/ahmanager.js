@@ -274,7 +274,7 @@ module.exports.postbidembedgen = function (id) {
     let charmclass = selectedah.class
     let anonymity = selectedah.anonymity
     if(anonymity === true) topbidder = "Anonymous"
-    else topbidder = `<@${selectedah.topbidder}`
+    else topbidder = `<@${selectedah.topbidder}>`
     let currentbid = selectedah.currentbid
     let colorhex = colors[charmclass]
 

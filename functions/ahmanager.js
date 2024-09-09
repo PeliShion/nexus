@@ -154,7 +154,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
 
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
     else if (currenttopbidder === authorid) return await interactionsend(redtext("You are already the top bidder!"))
-    //else if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
+    else if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
     const collectorFilter = (m) => m.author.id === authorid
     await interactionsend(bluetext(`How much would you like to bid on auction #${id}? Please type the amount in number.`))
     const messagecollector = interaction.channel.createMessageCollector({ filter: collectorFilter, time: 60_000 });
@@ -494,9 +494,9 @@ module.exports.prebid = async function (id, interaction, authorid) {
                 if (prebidamount > existingprebid) {
                     selectedah.prebids[0].amount = prebidamount
                     selectedah.prebids[0].user = authorid
-                    if (currentbid >= existingprebid) nextcurbid = currentbid + increment
+                    if (currentbid === 0) nextcurbid = minbid
+                    else if (currentbid >= existingprebid) nextcurbid = currentbid + increment
                     else if (existingprebid + increment > prebidamount) nextcurbid = prebidamount
-                    else if (currentbid == 0) nextcurbid = minbid
                     else nextcurbid = existingprebid + increment
                     selectedah.currentbid = nextcurbid
                     selectedah.topbidder = authorid

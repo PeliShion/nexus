@@ -6,6 +6,7 @@ const { auccheck, biddms, bancheck } = require('./functions/ahmanager.js');
 const { redtext } = require('./functions/functions.js');
 global.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildPresences, GatewayIntentBits.DirectMessages] });
 global.listofauctions = JSON.parse(fs.readFileSync("./data/auctions.json"))
+global.alluserdata = JSON.parse(fs.readFileSync("./data/userdata.json"))
 client.commands = new Collection();
 
 const confirmation = new ButtonBuilder()
@@ -58,6 +59,19 @@ client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 	const command = interaction.client.commands.get(interaction.commandName);
 	console.log(`${interaction.user.username} used ${interaction.commandName}`)
+	// let userdata = alluserdata.find(x => x.userid === interaction.user.id)
+	// if(!userdata) {
+	// 	let userdataobject = {
+	// 		"userid": interaction.user.id,
+	// 		"auctionswon": 0,
+	// 		"auctionbids": 0,
+	// 		"auctionhosts": 0,
+	// 		"totalharspent": 0,
+	// 		"currentlybiddingauction": [],
+	// 		"currentlyhostingauction": []
+	// 	}
+	//   alluserdata.push(userdataobject)
+	// }
 	let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
 	let bannedusers = settings.bannedusers
 	for(i = 0; i < bannedusers.length; i++) {

@@ -2,7 +2,7 @@
     {
         "id": 48,
         "owner": "176019636649852928",
-        "active": true,
+        "active": false,
         "cp": 3,
         "class": "flame",
         "minbid": 12,
@@ -75,7 +75,7 @@
     {
         "id": 51,
         "owner": "905539303180992542",
-        "active": true,
+        "active": false,
         "cp": 1,
         "class": "steel",
         "minbid": 20,
@@ -135,17 +135,17 @@
     {
         "id": 52,
         "owner": "377462701644972034",
-        "active": true,
+        "active": false,
         "cp": 1,
         "class": "steel",
         "minbid": 32,
         "increment": 1,
         "rarity": "legendary",
         "starttime": 1725566406,
-        "endtime": 1725744553,
+        "endtime": 1725811157,
         "antisnipe": 86400,
         "antisnipestring": "24h",
-        "topbidder": "676780937438167041",
+        "topbidder": "230457976798969866",
         "bids": [
             {
                 "user": 0,
@@ -158,15 +158,75 @@
             {
                 "user": "676780937438167041",
                 "bid": 33
+            },
+            {
+                "user": "230457976798969866",
+                "bid": 34
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 35
+            },
+            {
+                "user": "230457976798969866",
+                "bid": 48
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 49
+            },
+            {
+                "user": "230457976798969866",
+                "bid": 50
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 51
+            },
+            {
+                "user": "230457976798969866",
+                "bid": 52
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 53
+            },
+            {
+                "user": "230457976798969866",
+                "bid": 54
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 55
+            },
+            {
+                "user": "230457976798969866",
+                "bid": 56
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 57
+            },
+            {
+                "user": "230457976798969866",
+                "bid": 64
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 65
+            },
+            {
+                "user": "230457976798969866",
+                "bid": 66
             }
         ],
         "prebids": [
             {
-                "user": 0,
-                "amount": 0
+                "user": "676780937438167041",
+                "amount": 64
             }
         ],
-        "currentbid": 33,
+        "currentbid": 66,
         "notification": [
             "377462701644972034",
             "230457976798969866",
@@ -179,7 +239,7 @@
     {
         "id": 54,
         "owner": "905539303180992542",
-        "active": true,
+        "active": false,
         "cp": 2,
         "class": "steel",
         "minbid": 10,
@@ -247,7 +307,7 @@
     {
         "id": 56,
         "owner": "773350778546421762",
-        "active": true,
+        "active": false,
         "cp": 1,
         "class": "steel",
         "minbid": 8,
@@ -313,7 +373,7 @@
     {
         "id": 57,
         "owner": "688676313166381056",
-        "active": true,
+        "active": false,
         "cp": 2,
         "class": "wind",
         "minbid": 6,
@@ -350,7 +410,7 @@
     {
         "id": 58,
         "owner": "414060013951385601",
-        "active": true,
+        "active": false,
         "cp": 1,
         "class": "flame",
         "minbid": 5,
@@ -394,11 +454,15 @@
         "endtime": 1725906844,
         "antisnipe": 43200,
         "antisnipestring": "12h",
-        "topbidder": 0,
+        "topbidder": "242489858860384258",
         "bids": [
             {
                 "user": 0,
                 "bid": 0
+            },
+            {
+                "user": "242489858860384258",
+                "bid": 25
             }
         ],
         "prebids": [
@@ -407,9 +471,10 @@
                 "amount": 0
             }
         ],
-        "currentbid": 0,
+        "currentbid": 25,
         "notification": [
-            "695894089018638388"
+            "695894089018638388",
+            "242489858860384258"
         ],
         "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1281683851638472930/image.png?ex=66dc9c9a&is=66db4b1a&hm=57d1aba870db28d65dc49ab214c3143ec6fe60cfb9e173aa53748d352ffed2b6&",
         "msgid": "1281683914343059466",
@@ -418,14 +483,14 @@
     {
         "id": 60,
         "owner": "696253522580209695",
-        "active": true,
+        "active": false,
         "cp": 2,
         "class": "flame",
         "minbid": 15,
         "increment": 1,
         "rarity": "epic",
         "starttime": 1725656077,
-        "endtime": 1725742477,
+        "endtime": 1725744623,
         "antisnipe": 43200,
         "antisnipestring": "12h",
         "topbidder": "242489858860384258",
@@ -449,6 +514,14 @@
             {
                 "user": "242489858860384258",
                 "bid": 64
+            },
+            {
+                "user": "167055533956792320",
+                "bid": 65
+            },
+            {
+                "user": "242489858860384258",
+                "bid": 70
             }
         ],
         "prebids": [
@@ -457,14 +530,298 @@
                 "amount": 0
             }
         ],
-        "currentbid": 64,
+        "currentbid": 70,
         "notification": [
             "696253522580209695",
             "676780937438167041",
-            "242489858860384258"
+            "242489858860384258",
+            "167055533956792320"
         ],
         "image": "https://cdn.discordapp.com/ephemeral-attachments/1249388792356409396/1281719221570637845/image.png?ex=66dcbd8b&is=66db6c0b&hm=dfcd68d40c9b19e3304cfe5f446dc2dbb5e21fbe1b4c8af117c34c7f262dd4d7&",
         "msgid": "1281719268681060386",
         "anonymity": false
+    },
+    {
+        "id": 61,
+        "owner": "773379690823811112",
+        "active": false,
+        "cp": 3,
+        "class": "wind",
+        "minbid": 15,
+        "increment": 5,
+        "rarity": "legendary",
+        "starttime": 1725690495,
+        "endtime": 1725863295,
+        "antisnipe": 21600,
+        "antisnipestring": "6h",
+        "anonymity": false,
+        "topbidder": 0,
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            }
+        ],
+        "prebids": [
+            {
+                "user": 0,
+                "amount": 0
+            }
+        ],
+        "currentbid": 0,
+        "notification": [
+            "773379690823811112"
+        ],
+        "msgid": "1281863681604325387"
+    },
+    {
+        "id": 62,
+        "owner": "696253522580209695",
+        "active": false,
+        "cp": 2,
+        "class": "flame",
+        "minbid": 15,
+        "increment": 1,
+        "rarity": "legendary",
+        "starttime": 1725750586,
+        "endtime": 1725863569,
+        "antisnipe": 43200,
+        "antisnipestring": "12h",
+        "anonymity": true,
+        "topbidder": "377462701644972034",
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            },
+            {
+                "user": "377462701644972034",
+                "bid": 15
+            },
+            {
+                "user": "327910120581234698",
+                "bid": 20
+            },
+            {
+                "user": "377462701644972034",
+                "bid": 21
+            }
+        ],
+        "prebids": [
+            {
+                "user": "377462701644972034",
+                "amount": 28
+            }
+        ],
+        "currentbid": 28,
+        "notification": [
+            "696253522580209695",
+            "377462701644972034",
+            "327910120581234698"
+        ],
+        "msgid": "1282115671458578473"
+    },
+    {
+        "id": 63,
+        "owner": "696253522580209695",
+        "active": false,
+        "cp": 2,
+        "class": "flame",
+        "minbid": 15,
+        "increment": 1,
+        "rarity": "legendary",
+        "starttime": 1725750679,
+        "endtime": 1725837079,
+        "antisnipe": 43200,
+        "antisnipestring": "12h",
+        "anonymity": true,
+        "topbidder": 0,
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            }
+        ],
+        "prebids": [
+            {
+                "user": 0,
+                "amount": 0
+            }
+        ],
+        "currentbid": 0,
+        "notification": [
+            "696253522580209695"
+        ],
+        "msgid": "1282116039211221111"
+    },
+    {
+        "id": 64,
+        "owner": "773350778546421762",
+        "active": true,
+        "cp": 1,
+        "class": "shadow",
+        "minbid": 24,
+        "increment": 3,
+        "rarity": "legendary",
+        "starttime": 1725763186,
+        "endtime": 1726022386,
+        "antisnipe": 7200,
+        "antisnipestring": "2h",
+        "anonymity": false,
+        "topbidder": "695894089018638388",
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            },
+            {
+                "user": "1187984132819648573",
+                "bid": 24
+            },
+            {
+                "user": "377462701644972034",
+                "bid": 27
+            },
+            {
+                "user": "1187984132819648573",
+                "bid": 30
+            },
+            {
+                "user": "377462701644972034",
+                "bid": 35
+            },
+            {
+                "user": "1187984132819648573",
+                "bid": 43
+            },
+            {
+                "user": "695894089018638388",
+                "bid": 62
+            },
+            {
+                "user": "1187984132819648573",
+                "bid": 65
+            },
+            {
+                "user": "377462701644972034",
+                "bid": 67
+            },
+            {
+                "user": "377462701644972034",
+                "bid": 70
+            },
+            {
+                "user": "1187984132819648573",
+                "bid": 73
+            },
+            {
+                "user": "377462701644972034",
+                "bid": 73
+            },
+            {
+                "user": "695894089018638388",
+                "bid": 76
+            },
+            {
+                "user": "377462701644972034",
+                "bid": 80
+            },
+            {
+                "user": "695894089018638388",
+                "bid": 90
+            }
+        ],
+        "prebids": [
+            {
+                "user": "377462701644972034",
+                "amount": 80
+            }
+        ],
+        "currentbid": 90,
+        "notification": [
+            "773350778546421762",
+            "1187984132819648573",
+            "377462701644972034",
+            "695894089018638388"
+        ],
+        "msgid": "1282168509094428745"
+    },
+    {
+        "id": 65,
+        "owner": "1017349737059450940",
+        "active": true,
+        "cp": 2,
+        "class": "shadow",
+        "minbid": 12,
+        "increment": 1,
+        "rarity": "epic",
+        "starttime": 1725817588,
+        "endtime": 1725903988,
+        "antisnipe": 43200,
+        "antisnipestring": "12h",
+        "anonymity": true,
+        "topbidder": "676780937438167041",
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            },
+            {
+                "user": "676780937438167041",
+                "bid": 12
+            }
+        ],
+        "prebids": [
+            {
+                "user": 0,
+                "amount": 0
+            }
+        ],
+        "currentbid": 12,
+        "notification": [
+            "1017349737059450940",
+            "676780937438167041"
+        ],
+        "msgid": "1282396704720556063"
+    },
+    {
+        "id": 66,
+        "owner": "381142043990163457",
+        "active": true,
+        "cp": 3,
+        "class": "steel",
+        "minbid": 20,
+        "increment": 1,
+        "rarity": "legendary",
+        "starttime": 1725886999,
+        "endtime": 1726146199,
+        "antisnipe": 1200,
+        "antisnipestring": "20m",
+        "anonymity": false,
+        "topbidder": 0,
+        "bids": [
+            {
+                "user": 0,
+                "bid": 0
+            }
+        ],
+        "prebids": [
+            {
+                "user": 0,
+                "amount": 0
+            }
+        ],
+        "currentbid": 0,
+        "notification": [
+            "381142043990163457"
+        ],
+        "tags": [
+            "rapid fire",
+            " rapid fire arrows",
+            " rapid fire cooldown",
+            " rapid fire cd",
+            " rapid fire firerate"
+        ],
+        "msgid": "1282687829679538270"
     }
 ]

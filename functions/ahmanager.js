@@ -470,7 +470,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                 if (prebidamount > existingprebid) {
                     selectedah.prebids[0].amount = prebidamount
                     selectedah.prebids[0].user = authorid
-                    if (currentbid > existingprebid + increment) nextcurbid = currentbid + increment
+                    if (currentbid >= existingprebid) nextcurbid = currentbid + increment
                     else if (existingprebid + increment > prebidamount) nextcurbid = prebidamount
                     else if (currentbid == 0) nextcurbid = minbid
                     else nextcurbid = existingprebid + increment
@@ -566,7 +566,7 @@ module.exports.prebidcheck = async function (id) {
     let prebiduser = prebids[0].user
     let anonymity = selectedah.anonymity
     if(anonymity === true) username = "Anonymous"
-    else username = await client.users.cache.get(authorid).username
+    else username = await client.users.cache.get(prebiduser).username
     if (currentbid + increment <= prebidamount) {
         //if prebid is higher than current bid, immediately bid for min. increment
         if (endtime - Math.round(Date.now() / 1000) <= antisnipe) selectedah.endtime = Math.round(Date.now() / 1000) + antisnipe

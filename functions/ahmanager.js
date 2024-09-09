@@ -237,6 +237,18 @@ module.exports.biddms = async function (id, authorid) {
     let increment = selectedah.increment
     let endtime = selectedah.endtime
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
+    let userdata = alluserdata.find(x => x.userid === id)
+    if(!userdata) {
+        let userdataobject = {
+            "userid": id,
+            "auctionswon": 0,
+            "auctionbids": 0,
+            "auctionhosts": 0,
+            "totalharspent": 0,
+        }
+      alluserdata.push(userdataobject)
+      fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
+    }
 
     //check if there is any bid, if there is next bid = current bid + increments, if not minimum bid
     if (currentbid < minbid) nextbid = minbid

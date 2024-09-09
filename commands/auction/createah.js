@@ -147,7 +147,6 @@ module.exports = {
             confirmed.on('collect', async i => {
                   const selection = i.customId
                   if (selection === "confirm") {
-
                         await fetch(imagelink).then(res => {
                               res.body.pipe(fs.createWriteStream(`./images/${(curaucid + 1)}.png`))
                         })
@@ -155,6 +154,8 @@ module.exports = {
                         curaucid++
                         msgid = 0
                         settings.currentauctionid = curaucid
+                        let userdata = alluserdata.find(x => x.userid === interaction.user.id)
+                        userdata.auctionhosts++
                         const showdetails = new ButtonBuilder()
                               .setCustomId(`${curaucid}`)
                               .setLabel("Show Auction Details")
@@ -215,6 +216,7 @@ module.exports = {
                         listofauctions.push(auctionobject)
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                         fs.writeFileSync("./data/settings.json", JSON.stringify(settings, null, 4))
+                        fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
                         await i.update({ content: greentext("Auction Created! ID: " + (curaucid)), components: [], ephemeral: true })
                         let auccreatelog = miscembed()
                               .setTitle(`New auction (ID #${curaucid})`)

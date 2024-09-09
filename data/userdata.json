@@ -4,8 +4,6 @@
         "auctionswon": 3553878247328,
         "auctionbids": 111,
         "auctionhosts": 1,
-        "totalharspent": 333,
-        "currentlybiddingauction": [1, 2, 3],
-        "currentlyhostingauction": [1, 2, 3]
+        "totalharspent": 333
     }
 ]

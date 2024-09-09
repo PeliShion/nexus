@@ -64,10 +64,12 @@ module.exports = {
                         firstid = id
                         currentselection = id
                     }
+                    if (!ahcheck.tags) tagtext = "Tags: None"
+                    else tagtext = `Tags: ${ahcheck.tags.join()}`
                     selections.addOptions(
                         new StringSelectMenuOptionBuilder()
                             .setLabel(`Auction #${id}`)
-                            .setDescription(`View auction #${id}`)
+                            .setDescription(tagtext)
                             .setValue(`${id}`),
                     )
                 }

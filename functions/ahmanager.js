@@ -52,9 +52,9 @@ module.exports.bidmin = async function (id, interaction, authorid) {
     let antisnipe = selectedah.antisnipe
     if (nextbid < minbid) nextbid = minbid
     let anonymity = selectedah.anonymity
-    if(anonymity === true) username = "Anonymous"
+    if (anonymity === true) username = "Anonymous"
     else username = await client.users.cache.get(authorid).username
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
+    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
     let bidminamount = new ButtonBuilder()
         .setCustomId('minamount')
@@ -82,7 +82,9 @@ module.exports.bidmin = async function (id, interaction, authorid) {
 
             //extend the time of the auction to antisnipe length if the time is below antisnipe length
             if (endtime - Math.round(Date.now() / 1000) <= antisnipe) selectedah.endtime = Math.round(Date.now() / 1000) + antisnipe
-
+            let userdata = alluserdata.find(x => x.userid === authorid)
+            userdata.auctionbids++
+            fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
             //update the current bid and top bidder, and push the bid to bids array, and if the user was not notified prior (if this is their first bid), add them to notification
             selectedah.currentbid = nextbid
             selectedah.topbidder = authorid
@@ -101,7 +103,7 @@ module.exports.bidmin = async function (id, interaction, authorid) {
                 const msguser = notifications[i]
                 if (msguser === owner) continue
                 if (msguser === authorid) continue
-                let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files:[attachment] }
+                let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                 let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                 const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
 
@@ -126,7 +128,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
     let interactionsend = function (message, components) {
         if (!components) return interaction.channel.send({ content: message })
         else return interaction.channel.send({ content: message, components: [components] })
-        }
+    }
     let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
     let bannedusers = settings.bannedusers
     for (i = 0; i < bannedusers.length; i++) {
@@ -140,7 +142,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
     let owner = selectedah.owner
     let notifications = selectedah.notification
     let anonymity = selectedah.anonymity
-    if(anonymity === true) username = "Anonymous"
+    if (anonymity === true) username = "Anonymous"
     else username = await client.users.cache.get(authorid).username
     let nextbid = selectedah.currentbid + increment
     let currentbid = selectedah.currentbid
@@ -148,7 +150,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
     let endtime = selectedah.endtime
     let antisnipe = selectedah.antisnipe
     if (currentbid == 0) nextbid = minbid
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
+    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
     else if (currenttopbidder === authorid) return await interactionsend(redtext("You are already the top bidder!"))
@@ -175,6 +177,9 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
             if (i.customId === "confirm") {
                 if (selectedah.currentbid + selectedah.increment > customamountbid) return await interactionsend(redtext("Failed to bid! Maybe someone else bid before you?"))
                 if (endtime - Math.round(Date.now() / 1000) <= antisnipe) selectedah.endtime = Math.round(Date.now() / 1000) + antisnipe
+                let userdata = alluserdata.find(x => x.userid === authorid)
+                userdata.auctionbids++
+                fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
                 selectedah.currentbid = customamountbid
                 selectedah.topbidder = authorid
                 selectedah.bids.push({ "user": authorid, "bid": customamountbid })
@@ -200,7 +205,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
                     const msguser = notifications[i]
                     if (msguser === owner) continue
                     else if (msguser === authorid) continue
-                    let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${customamountbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files:[attachment] }
+                    let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${customamountbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                     let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                     const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
                     collector.on('collect', async j => {
@@ -231,7 +236,7 @@ module.exports.biddms = async function (id, authorid) {
     let minbid = selectedah.minbid
     let increment = selectedah.increment
     let endtime = selectedah.endtime
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
+    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
     //check if there is any bid, if there is next bid = current bid + increments, if not minimum bid
     if (currentbid < minbid) nextbid = minbid
@@ -248,7 +253,7 @@ module.exports.biddms = async function (id, authorid) {
 
     //send the user dm with the buttons, if the user chooses to bid, run the function
     //if sending dm fails, send them an error message in bot channel
-    const response = await client.users.send(authorid, { embeds: [module.exports.embedgen(id)], components: [ahembedrow], files:[attachment] }).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${authorid}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+    const response = await client.users.send(authorid, { embeds: [module.exports.embedgen(id)], components: [ahembedrow], files: [attachment] }).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${authorid}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
     const collector = response.createMessageComponentCollector({ time: 60_000 })
 
     collector.on('collect', async i => {
@@ -273,12 +278,12 @@ module.exports.postbidembedgen = function (id) {
     let antisnipestring = selectedah.antisnipestring
     let charmclass = selectedah.class
     let anonymity = selectedah.anonymity
-    if(anonymity === true) topbidder = "Anonymous"
+    if (anonymity === true) topbidder = "Anonymous"
     else topbidder = `<@${selectedah.topbidder}>`
     let currentbid = selectedah.currentbid
     let colorhex = colors[charmclass]
 
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
+    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
     let tagsarr = selectedah.tags
     if (tagsarr === undefined) tags = "None"
     else tags = tagsarr.join()
@@ -322,14 +327,14 @@ module.exports.embedgen = function (id) {
 
     //if there are no bidders, current top bidder becomes none
     if (currenttopbidder === 0) topbiddertext = "None"
-    else if(anonymity === true) topbiddertext = `${currentbid} HAR Anonymous`
+    else if (anonymity === true) topbiddertext = `${currentbid} HAR Anonymous`
     else topbiddertext = `${currentbid} HAR <@${currenttopbidder}>`
 
     let tagsarr = selectedah.tags
     if (tagsarr === undefined) tags = "None"
     else tags = tagsarr.join()
 
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
+    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
     let auctionembed = new EmbedBuilder()
         .setTitle(capfirstletter(charmclass) + " Charm | Auction ID: #" + id)
         .setColor(colorhex)
@@ -379,6 +384,10 @@ module.exports.auccheck = async function () {
             for (let j = 0; j < notifusers.length; j++) {
                 let msguser = notifusers[j]
                 if (msguser === auctopbidder) {
+                    let userdata = alluserdata.find(x => x.userid === auctopbidder)
+                    userdata.auctionswon++
+                    userdata.totalharspent = userdata.totalharspent + curbid
+                    fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
                     client.users.send(msguser, (`> You won the auction #${auctionid} for ${curbid} HAR! Please contact <@${aucowner}> to collect your charm!`)).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> You won the auction #${auctionid} for ${curbid} HAR! Please contact <@${aucowner}> to collect your charm!\nPlease enable DMs with the bot!`)))
                 } else if (msguser === aucowner) {
                     if (auctopbidder === 0) client.users.send(msguser, (`> Your auction #${auctionid} has ended but with no bids!`)).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended but with no bids!\nPlease enable DMs with the bot!`)))
@@ -400,7 +409,7 @@ module.exports.auccheck = async function () {
 module.exports.bancheck = async function (timenow) {
     let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
     let bannedusers = settings.bannedusers
-    if(!bannedusers) return
+    if (!bannedusers) return
     for (i = 0; i < bannedusers.length; i++) {
         let bancheck = bannedusers[i].end
         let user = bannedusers[i].user
@@ -428,7 +437,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
     let owner = selectedah.owner
     let notifications = selectedah.notification
     let anonymity = selectedah.anonymity
-    if(anonymity === true) username = "Anonymous"
+    if (anonymity === true) username = "Anonymous"
     else username = await client.users.cache.get(authorid).username
     let nextbid = selectedah.currentbid + increment
     let currentbid = selectedah.currentbid
@@ -436,7 +445,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
     let endtime = selectedah.endtime
     let antisnipe = selectedah.antisnipe
     if (currentbid == 0) nextbid = minbid
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
+    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
     //usual auction checks
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
@@ -457,6 +466,10 @@ module.exports.prebid = async function (id, interaction, authorid) {
         bidconfirmcollector.on('collect', async i => {
             bidconfirmcollector.stop()
             i.deferUpdate()
+            let userdata = alluserdata.find(x => x.userid === authorid)
+            userdata.auctionbids++
+            if(!userdata.currentlybiddingauction.includes(id)) userdata.currentlybiddingauction.push(id)
+            fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
             if (i.customId === "confirm") {
                 await interactionsend(greentext(`Autobid Successful!`))
                 //if confirmed, bid immediately and add the user to "autobid" on the auction.
@@ -498,7 +511,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         const msguser = notifications[i]
                         if (msguser === owner) continue
                         else if (msguser === authorid) continue
-                        let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextcurbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files:[attachment] }
+                        let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextcurbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                         let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                         const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
                         collector.on('collect', async j => {
@@ -524,13 +537,13 @@ module.exports.prebid = async function (id, interaction, authorid) {
 
                     const ahembedrow = new ActionRowBuilder()
                         .addComponents(bidminamount, bidcustomamount, bidprebid)
-                    
+
                     module.exports.updateembed(id)
                     for (i = 0; i < notifications.length; i++) {
                         const msguser = notifications[i]
                         if (msguser === owner) continue
                         else if (msguser === authorid) continue
-                        let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextcurbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files:[attachment] }
+                        let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextcurbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                         let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                         const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
                         collector.on('collect', async j => {
@@ -559,13 +572,13 @@ module.exports.prebidcheck = async function (id) {
     let endtime = selectedah.endtime
     let prebids = selectedah.prebids
     let notifications = selectedah.notification
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
+    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
     let prebidamount = prebids[0].amount
     //if there are no prebids, do nothing
     if (prebidamount === 0) return
     let prebiduser = prebids[0].user
     let anonymity = selectedah.anonymity
-    if(anonymity === true) username = "Anonymous"
+    if (anonymity === true) username = "Anonymous"
     else username = await client.users.cache.get(prebiduser).username
     if (currentbid + increment <= prebidamount) {
         //if prebid is higher than current bid, immediately bid for min. increment
@@ -575,6 +588,9 @@ module.exports.prebidcheck = async function (id) {
         selectedah.currentbid = nextbidamount
         selectedah.topbidder = prebiduser
         selectedah.bids.push({ "user": prebiduser, "bid": nextbidamount })
+        let userdata = alluserdata.find(x => x.userid === prebiduser)
+        userdata.auctionbids++
+        fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
         let prebidlog = miscembed()
             .setTitle(`Bid on auction #${id}`)
             .setDescription(`Bidder: <@${prebiduser}>\nAmount: ${nextbidamount} HAR (This is an autobid)`)
@@ -596,7 +612,7 @@ module.exports.prebidcheck = async function (id) {
             const msguser = notifications[i]
             if (msguser === owner) continue
             else if (msguser === prebiduser) continue
-            let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbidamount} HAR! (This is an autobid)`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files:[attachment] }
+            let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbidamount} HAR! (This is an autobid)`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
             let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
             collector.on('collect', async j => {
@@ -614,11 +630,11 @@ module.exports.prebidcheck = async function (id) {
 module.exports.updateembed = async function (id) {
     let selectedah = listofauctions.find(x => x.id === id)
     let msgid = selectedah.msgid
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
+    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
     const showdetails = new ButtonBuilder()
         .setCustomId(`${id}`)
         .setLabel("Show Auction Details")
         .setStyle(ButtonStyle.Success)
     const detailrow = new ActionRowBuilder().addComponents(showdetails)
-    client.channels.cache.get(newaucchannelid).messages.fetch(msgid).then(message => message.edit({ embeds: [module.exports.postbidembedgen(id)], components:[detailrow], files:[attachment]}))
+    client.channels.cache.get(newaucchannelid).messages.fetch(msgid).then(message => message.edit({ embeds: [module.exports.postbidembedgen(id)], components: [detailrow], files: [attachment] }))
 }

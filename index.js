@@ -45,6 +45,18 @@ client.once(Events.ClientReady, () => {
 		const collector = channel.createMessageComponentCollector()
 		collector.on('collect', async i => {
 			i.deferUpdate()
+			let userdata = alluserdata.find(x => x.userid === i.user.id)
+			if(!userdata) {
+				let userdataobject = {
+					"userid": i.user.id,
+					"auctionswon": 0,
+					"auctionbids": 0,
+					"auctionhosts": 0,
+					"totalharspent": 0,
+				}
+			  alluserdata.push(userdataobject)
+			  fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
+			}
 			let collected = +i.customId
 			biddms(collected, i.user.id)
 		})
@@ -59,19 +71,18 @@ client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 	const command = interaction.client.commands.get(interaction.commandName);
 	console.log(`${interaction.user.username} used ${interaction.commandName}`)
-	// let userdata = alluserdata.find(x => x.userid === interaction.user.id)
-	// if(!userdata) {
-	// 	let userdataobject = {
-	// 		"userid": interaction.user.id,
-	// 		"auctionswon": 0,
-	// 		"auctionbids": 0,
-	// 		"auctionhosts": 0,
-	// 		"totalharspent": 0,
-	// 		"currentlybiddingauction": [],
-	// 		"currentlyhostingauction": []
-	// 	}
-	//   alluserdata.push(userdataobject)
-	// }
+	let userdata = alluserdata.find(x => x.userid === interaction.user.id)
+	if(!userdata) {
+		let userdataobject = {
+			"userid": interaction.user.id,
+			"auctionswon": 0,
+			"auctionbids": 0,
+			"auctionhosts": 0,
+			"totalharspent": 0,
+		}
+	  alluserdata.push(userdataobject)
+	  fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
+	}
 	let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
 	let bannedusers = settings.bannedusers
 	for(i = 0; i < bannedusers.length; i++) {

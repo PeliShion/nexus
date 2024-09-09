@@ -468,7 +468,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
             i.deferUpdate()
             let userdata = alluserdata.find(x => x.userid === authorid)
             userdata.auctionbids++
-            if(!userdata.currentlybiddingauction.includes(id)) userdata.currentlybiddingauction.push(id)
             fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
             if (i.customId === "confirm") {
                 await interactionsend(greentext(`Autobid Successful!`))

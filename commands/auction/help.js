@@ -56,6 +56,7 @@ module.exports = {
                 { name: "**getah**", value: "Gets auction by ID or User" },
                 { name: "**bids**", value: "View the bids on the auction" },
                 { name: "**deleteah**", value: "Deletes an auction if there are no bids and you are the owner" },
+                { name: "**me**", value: "Look at your auction stats"}
             )
             .setTimestamp()
             .setColor(0xadd8e6)

@@ -20,7 +20,8 @@ module.exports = {
         .addUserOption(option =>
             option.setName("user")
                 .setDescription("User you would like to search")
-        ),
+        )
+        .setDMPermission(false),
 
     async execute(interaction) {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})

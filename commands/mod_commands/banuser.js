@@ -19,7 +19,9 @@ module.exports = {
         .addStringOption(option =>
             option.setName("reason")
                 .setDescription("Reason of the ban")
-        ),
+        )
+        .setDMPermission(false),
+        
     async execute(interaction) {
         let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
         let bannedusers = settings.bannedusers

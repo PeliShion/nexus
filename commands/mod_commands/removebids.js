@@ -19,7 +19,8 @@ module.exports = {
         .addBooleanOption(option =>
             option.setName("autobid")
                 .setDescription("Remove autobid? Setting this to true will only remove the autobid")
-        ),
+        )
+        .setDMPermission(false),
 
     async execute(interaction) {
         //check if the user running the command has permission to remove bids

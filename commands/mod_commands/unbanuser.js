@@ -10,7 +10,9 @@ module.exports = {
             option.setName("user")
                 .setDescription("User you would like to unban")
                 .setRequired(true)
-        ),
+        )
+        .setDMPermission(false),
+        
     async execute(interaction) {
         let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
         let bannedusers = settings.bannedusers

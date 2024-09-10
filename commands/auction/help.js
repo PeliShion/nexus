@@ -4,7 +4,8 @@ const { redtext } = require('../../functions/functions.js')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("help")
-        .setDescription("Displays information and list of commands the bot has"),
+        .setDescription("Displays information and list of commands the bot has")
+        .setDMPermission(false),
 
     async execute(interaction) {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})

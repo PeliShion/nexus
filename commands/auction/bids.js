@@ -22,6 +22,7 @@ module.exports = {
             option.setName("id")
                 .setDescription("ID of the auction you want to check")
                 .setRequired(true)
+                .setDMPermission(false)
         ),
 
     async execute(interaction) {

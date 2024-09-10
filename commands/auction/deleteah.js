@@ -12,6 +12,7 @@ module.exports = {
             option.setName("id")
                 .setDescription("ID of the auction you want to delete")
                 .setRequired(true)
+                .setDMPermission(false)
         ),
 
     async execute(interaction) {

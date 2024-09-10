@@ -49,7 +49,8 @@ module.exports = {
         .addStringOption(option =>
             option.setName("tags")
                 .setDescription("Tags For The Charm, Separated Using Commas To Search For Multiple Tags")
-        ),
+        )
+        .setDMPermission(false),
 
     async execute(interaction) {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})

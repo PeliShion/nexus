@@ -6,7 +6,8 @@ const { modroleid } = require("../../data/settings.json");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('purgeah')
-        .setDescription('Purges old auctions [Mod Only]'),
+        .setDescription('Purges old auctions [Mod Only]')
+        .setDMPermission(false),
 
     async execute(interaction) {
         //check if the user running the command has permission to purge

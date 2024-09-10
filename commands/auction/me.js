@@ -24,7 +24,8 @@ const showmedetailrow = new ActionRowBuilder().addComponents(showhostedauction, 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("me")
-        .setDescription("Displays your auction stats"),
+        .setDescription("Displays your auction stats")
+        .setDMPermission(false),
 
     async execute(interaction) {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true })

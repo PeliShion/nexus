@@ -11,7 +11,8 @@ module.exports = {
             option.setName("id")
                 .setDescription("ID of the auction to update")
                 .setRequired(true)
-        ),
+        )
+        .setDMPermission(false),
 
     async execute(interaction) {
         if (interaction.user.id !== "492965189038374933" && !interaction.member.roles.cache.has(modroleid)) return await interaction.reply({ content: redtext("You need to be a moderator to use this command!"), ephemeral: true })

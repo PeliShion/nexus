@@ -9,11 +9,11 @@ module.exports = {
       data: new SlashCommandBuilder()
             .setName('createah')
             .setDescription('Create a new auction')
+            .setDMPermission(false)
             .addStringOption(option =>
                   option.setName("rarity")
                         .setDescription("Rarity of the Charm")
                         .setRequired(true)
-                        .setDMPermission(false)
                         .addChoices(
                               { name: "Common", value: "common" },
                               { name: "Uncommon", value: "uncommon" },

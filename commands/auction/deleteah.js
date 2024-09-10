@@ -12,8 +12,8 @@ module.exports = {
             option.setName("id")
                 .setDescription("ID of the auction you want to delete")
                 .setRequired(true)
-                .setDMPermission(false)
-        ),
+        )
+        .setDMPermission(false),
 
     async execute(interaction) {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})

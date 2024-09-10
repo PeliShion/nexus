@@ -67,7 +67,7 @@ module.exports.bidmin = async function (id, interaction, authorid) {
     //multiple checks to see if the user can bid
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
     if (currenttopbidder === authorid) return await interactionsend(redtext("You are already the top bidder!"))
-    //if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
+    if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
 
     //confirmation of if the user wants to bid
     const bidconfirmresponse = await interactionsend(bluetext(`Are you sure you want to bid ${nextbid} HAR on auction #${id}?`), confirmrow)

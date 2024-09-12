@@ -127,7 +127,7 @@ module.exports = {
                   )
                   .setImage(imagelink)
                   .setTimestamp()
-                  .setFooter({ text: footertext, iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
+                  .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
 
             await interaction.reply({ embeds: [auctionembed], ephemeral: true })
 

@@ -67,10 +67,6 @@ module.exports = {
                         .setDescription("Legnth of antisnipe in m or h. If time is below x, reset the time to x. Set to 0m for no antisnipe")
                         .setRequired(true)
                         .setMaxLength(3))
-            .addBooleanOption(option => 
-                  option.setName("anonymity")
-                        .setDescription("Users bidding on this auctions are anonymous if true")
-                        .setRequired(true))
             .addAttachmentOption(option =>
                   option.setName("image")
                         .setDescription("Image of the charm")
@@ -94,10 +90,7 @@ module.exports = {
             let auctionlength = interaction.options.getString("length").toLowerCase()
             let antisnipelength = interaction.options.getString("antisnipelength").toLowerCase()
             let imagelink = interaction.options.getAttachment("image").url
-            let anonymity = interaction.options.getBoolean("anonymity")
 
-            if(anonymity === true) footertext = `This auction's bids are anonymous!`
-            else footertext = `This auction's bids are public!`
             let antisnipelengthins = 0
             let colorhex = colors[charmclass] //color of the embed
             let currenttime = Math.round(Date.now() / 1000)
@@ -177,7 +170,7 @@ module.exports = {
                               )
                               .setImage(imagelink)
                               .setTimestamp()
-                              .setFooter({ text: footertext, iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
+                              .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
 
                         let newaucchannel = await client.channels.fetch(newaucchannelid)
                         await newaucchannel.send({ embeds: [auctionembedsend], components: [detailrow]}).then((message) => msgid = message.id)
@@ -195,7 +188,7 @@ module.exports = {
                               "endtime": endtime,
                               "antisnipe": antisnipelengthins,
                               "antisnipestring": antisnipelength,
-                              "anonymity": anonymity,
+                              "anonymity": false,
                               "topbidder": 0,
                               "bids": [
                                     {

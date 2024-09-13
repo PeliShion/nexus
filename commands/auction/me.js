@@ -33,16 +33,16 @@ module.exports = {
         const infoembed = new EmbedBuilder()
             .setTitle("Your information")
             .addFields(
-                { name: "**Auctions Won**", value: `${userdata.auctionswon}`},
-                { name: "**Number Of Bids**", value: `${userdata.auctionbids}`},
-                { name: "**Total HAR Spent**", value: `${userdata.totalharspent}`},
-                { name: "**Auction Hosts**:", value: `${userdata.auctionhosts}`}
-
+                { name: "**Auctions Won**", value: `${userdata.auctionswon}`, inline:true},
+                { name: "**Number Of Bids**", value: `${userdata.auctionbids}`, inline:true},
+                { name: "**Total HAR Spent**", value: `${userdata.totalharspent}`, inline:true},
+                { name: "**Auction Hosts**:", value: `${userdata.auctionhosts}`, inline:true},
+                { name: "More stats coming soon", value: "maybe", inline:true}
             )
+            .setThumbnail(interaction.user.avatarURL())
             .setTimestamp()
             .setColor(0xadd8e6)
             .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
-
         const inforeply = await interaction.reply({ embeds: [infoembed], ephemeral: true, components: [showmedetailrow] })
         const infocollect = inforeply.createMessageComponentCollector({ time: 60_000 })
         let selections = new StringSelectMenuBuilder()

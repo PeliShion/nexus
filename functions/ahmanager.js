@@ -288,7 +288,7 @@ module.exports.biddms = async function (id, authorid) {
         if (selection === "minamount") module.exports.bidmin(id, i, authorid)
         else if (selection === "customamount") module.exports.bidcustom(id, i, authorid)
         else if (selection === 'prebid') module.exports.prebid(id, i, authorid)
-        else if (selection === 'togglenotif') module.exports.togglenotif(id, i, msguser) 
+        else if (selection === 'togglenotif') module.exports.togglenotif(id, i, authorid) 
     })
 }
 

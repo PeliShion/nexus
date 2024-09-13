@@ -39,6 +39,12 @@ module.exports.disabledbuttons = function (bid) {
         .setStyle(ButtonStyle.Primary)
         .setDisabled(true)
 
+    let graytoggle = new ButtonBuilder()
+        .setCustomId('togglenotif')
+        .setLabel("Toggle notification")
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(true)
+
     return new ActionRowBuilder()
-            .addComponents(graybidmin, graybidcustom, graybidprebid)
+            .addComponents(graybidmin, graybidcustom, graybidprebid, graytoggle)
 }

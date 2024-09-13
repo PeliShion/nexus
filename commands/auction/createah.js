@@ -204,6 +204,7 @@ module.exports = {
                               ],
                               "currentbid": 0,
                               "notification": [interaction.user.id],
+                              "blocknotif": ["0"],
                               "tags": tags?.toLowerCase().split(","),
                               "msgid": msgid
                         }

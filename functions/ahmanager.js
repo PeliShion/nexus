@@ -28,7 +28,7 @@ module.exports.togglenotif = async function (id, interaction, authorid) {
     }
     else {
         selectedah.blocknotif.push(authorid)
-        await interaction.channel.send({ content: greentext("You will be notified whgen you get outbidded again.")})
+        await interaction.channel.send({ content: greentext("You will be notified when you get outbidded again.")})
     }
     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 }

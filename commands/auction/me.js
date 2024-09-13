@@ -36,8 +36,7 @@ module.exports = {
                 { name: "**Auctions Won**", value: `${userdata.auctionswon}`, inline:true},
                 { name: "**Number Of Bids**", value: `${userdata.auctionbids}`, inline:true},
                 { name: "**Total HAR Spent**", value: `${userdata.totalharspent}`, inline:true},
-                { name: "**Auction Hosts**:", value: `${userdata.auctionhosts}`, inline:true},
-                { name: "More stats coming soon", value: "maybe", inline:true}
+                { name: "**Auction Hosts**", value: `${userdata.auctionhosts}`, inline:true},
             )
             .setThumbnail(interaction.user.avatarURL())
             .setTimestamp()

@@ -630,7 +630,8 @@ module.exports.prebidcheck = async function (id) {
     if (prebidamount === 0) return
     let prebiduser = prebids[0].user
     let anonymity = selectedah.anonymity
-    await client.guilds.fetch("313066655494438922").members.fetch()
+    let guild = await client.guilds.fetch("313066655494438922")
+    guild.members.fetch()
     if (anonymity === true) username = "Anonymous"
     else username = await client.users.cache.get(prebiduser).username
     if (currentbid + increment <= prebidamount) {

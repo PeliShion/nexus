@@ -397,6 +397,7 @@ module.exports.auccheck = async function () {
             let auctopbidder = currentcheck.topbidder
             let aucowner = currentcheck.owner
             let curbid = currentcheck.currentbid
+            await client.guilds.fetch("313066655494438922").members.fetch()
             let ownerusername = await client.users.cache.get(aucowner).username
             if(auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
@@ -628,6 +629,7 @@ module.exports.prebidcheck = async function (id) {
     if (prebidamount === 0) return
     let prebiduser = prebids[0].user
     let anonymity = selectedah.anonymity
+    await client.guilds.fetch("313066655494438922").members.fetch()
     if (anonymity === true) username = "Anonymous"
     else username = await client.users.cache.get(prebiduser).username
     if (currentbid + increment <= prebidamount) {

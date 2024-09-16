@@ -399,7 +399,7 @@ module.exports.auccheck = async function () {
             let curbid = currentcheck.currentbid
             let ownerusername = await client.users.cache.get(aucowner).username
             let topbidusername = await client.users.cache.get(auctopbidder).username
-            let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
+            let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             //check if an auction has ended
             //if it has, send the owner, top bidder, and other bidders notifications
             //if it fails to dm, send it in bot channel instead
@@ -426,7 +426,7 @@ module.exports.auccheck = async function () {
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
         }
         else if (isauctionactive === true && (auctionendtime - currenttime) < 3600 && (auctionendtime - currenttime) > 3540) {
-            let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
+            let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             for (let j = 0; j < notifusers.length; j++) {
                 //check if an auction has an hour left, and if it is, send users notification
                 let msguser = notifusers[j]

@@ -482,6 +482,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
     //usual auction checks
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
     else if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
+    else if(authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount > currentbid) return await interactionsend(redtext(`You already have the highest autobid submitted! Amount: ${selectedah.prebids[0].amount}`))
     const collectorFilter = (m) => m.author.id === authorid
     await interactionsend(bluetext(`How much would you like to autobid on auction #${id}? Please type the amount in number.`))
     const messagecollector = interaction.channel.createMessageCollector({ filter: collectorFilter, time: 60_000 });
@@ -522,6 +523,8 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     selectedah.topbidder = authorid
                     selectedah.bids.push({ "user": authorid, "bid": nextcurbid })
                     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
+
+                    if(existingprebid > currentbid) await interactionsend(bluetext(`There was another autobid submitted, so your bid has been adjusted accordingly to beat it!`))
 
                     let bidminamount = new ButtonBuilder()
                         .setCustomId('minamount')
@@ -564,10 +567,12 @@ module.exports.prebid = async function (id, interaction, authorid) {
                 } else {
                     if (existingprebid < prebidamount + increment) nextcurbid = existingprebid
                     else nextcurbid = prebidamount + increment
+                    await interactionsend(bluetext(`There was another autobid submitted, which beat yours! The current bid is now ${nextcurbid}.`))
                     selectedah.currentbid = nextcurbid
                     selectedah.topbidder = prebiduser
                     selectedah.bids.push({ "user": prebiduser, "bid": nextcurbid })
                     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
+                    let prebidusername = await client.users.cache.get(prebiduser).username
 
                     let bidminamount = new ButtonBuilder()
                         .setCustomId('minamount')
@@ -584,7 +589,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         .setColor(0xCCCCFF)
                     let bidcustomlog = miscembed()
                         .setTitle(`Bid on auction #${id}`)
-                        .setDescription(`Bidder: <@${authorid}>\nAmount: ${nextcurbid} HAR`)
+                        .setDescription(`Bidder: <@${selectedah.topbidder}>\nAmount: ${nextcurbid} HAR`)
                         .setColor(0xCCCCFF)
 
                     await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))
@@ -595,7 +600,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         if (msguser === owner) continue
                         else if (msguser === authorid) continue
                         else if (selectedah.blocknotif.includes(msguser)) continue
-                        let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextcurbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+                        let sendmessage = { content: bluetext(`You have been outbidded by ${prebidusername} for ${nextcurbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                         let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                         const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
                         collector.on('collect', async j => {

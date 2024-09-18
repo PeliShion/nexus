@@ -1,6 +1,7 @@
-const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
+const { SlashCommandBuilder, AttachmentBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
 const fs = require("fs")
 const fetch = require('node-fetch')
+const mergeImg = require('merge-img')
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { capfirstletter, redtext, greentext, miscembed } = require('../../functions/functions.js')
 const { newaucchannelid, logchannelid, botchannelid } = JSON.parse(fs.readFileSync("./data/settings.json"))
@@ -71,6 +72,10 @@ module.exports = {
                   option.setName("image")
                         .setDescription("Image of the charm")
                         .setRequired(true))
+            .addAttachmentOption(option =>
+                  option.setName('image2')
+                        .setDescription('Additional image for upgrades etc. This image will be on the right of first image')
+            )
             .addStringOption(option => (
                   option.setName("tags")
                         .setDescription("Other tags (charm effects, rolls, etc. Used for people to look up the charm). Separated using comma.")
@@ -90,7 +95,18 @@ module.exports = {
             let auctionlength = interaction.options.getString("length").toLowerCase()
             let antisnipelength = interaction.options.getString("antisnipelength").toLowerCase()
             let imagelink = interaction.options.getAttachment("image").url
-
+            let image2link = interaction.options.getAttachment('image2')
+            let tempfilename = `${interaction.user.id + (curaucid + 1)}`
+            if (image2link) {
+                  let img = await mergeImg([imagelink, image2link.url])
+                  await img.write(`./tempimg/${tempfilename}.png`)
+                  await new Promise(r => setTimeout(r, 1000));
+            } else {
+                  await fetch(imagelink).then(res => {
+                        res.body.pipe(fs.createWriteStream(`./tempimg/${tempfilename}.png`))
+                  })
+                  await new Promise(r => setTimeout(r, 1000))
+            }
             let antisnipelengthins = 0
             let colorhex = colors[charmclass] //color of the embed
             let currenttime = Math.round(Date.now() / 1000)
@@ -112,6 +128,7 @@ module.exports = {
             if (tags === null) tagsdisplay = "None"
             else tagsdisplay = tags
 
+            let tempattachment = new AttachmentBuilder(`./tempimg/${tempfilename}.png`, { name: `${tempfilename}.png` })
             //preview embed
             let auctionembed = new EmbedBuilder()
                   .setTitle(capfirstletter(charmclass) + " Charm | Auction ID: #" + (curaucid + 1))
@@ -125,11 +142,11 @@ module.exports = {
                         { name: "Increments:", value: increment.toString() + " HAR", inline: true },
                         { name: "Tags", value: tagsdisplay, inline: true },
                   )
-                  .setImage(imagelink)
+                  .setImage(`attachment://${tempattachment.name}`)
                   .setTimestamp()
                   .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
 
-            await interaction.reply({ embeds: [auctionembed], ephemeral: true })
+            await interaction.reply({ embeds: [auctionembed], ephemeral: true, files: [tempattachment] })
 
             if (!tags) listoftags = "None"
             else listoftags = tags.split(",")
@@ -141,9 +158,6 @@ module.exports = {
             confirmed.on('collect', async i => {
                   const selection = i.customId
                   if (selection === "confirm") {
-                        await fetch(imagelink).then(res => {
-                              res.body.pipe(fs.createWriteStream(`./images/${(curaucid + 1)}.png`))
-                        })
                         //if collected confirm, increase the auciton id, save it, send the embed to new-auctions channel, and push the data to auctions.json
                         curaucid++
                         msgid = 0
@@ -155,7 +169,6 @@ module.exports = {
                               .setLabel("Show Auction Details")
                               .setStyle(ButtonStyle.Success)
                         const detailrow = new ActionRowBuilder().addComponents(showdetails)
-
                         let auctionembedsend = new EmbedBuilder()
                               .setTitle(capfirstletter(charmclass) + " Charm | Auction ID: #" + curaucid)
                               .setColor(colorhex)
@@ -168,12 +181,12 @@ module.exports = {
                                     { name: "Increments:", value: increment.toString() + " HAR", inline: true },
                                     { name: "Tags", value: tagsdisplay, inline: true },
                               )
-                              .setImage(imagelink)
+                              .setImage(`attachment://${tempattachment.name}`)
                               .setTimestamp()
                               .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
 
                         let newaucchannel = await client.channels.fetch(newaucchannelid)
-                        await newaucchannel.send({ embeds: [auctionembedsend], components: [detailrow]}).then((message) => msgid = message.id)
+                        await newaucchannel.send({ embeds: [auctionembedsend], files: [tempattachment], components: [detailrow] }).then((message) => msgid = message.id)
 
                         let auctionobject = {
                               "id": curaucid,
@@ -212,6 +225,7 @@ module.exports = {
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                         fs.writeFileSync("./data/settings.json", JSON.stringify(settings, null, 4))
                         fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
+                        fs.renameSync(`./tempimg/${tempfilename}.png`, `./images/${curaucid}.png`)
                         await i.update({ content: greentext("Auction Created! ID: " + (curaucid)), components: [], ephemeral: true })
                         let auccreatelog = miscembed()
                               .setTitle(`New auction (ID #${curaucid})`)

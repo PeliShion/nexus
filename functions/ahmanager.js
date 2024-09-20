@@ -431,7 +431,9 @@ module.exports.auccheck = async function () {
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             for (let j = 0; j < notifusers.length; j++) {
                 //check if an auction has an hour left, and if it is, send users notification
+                let aucowner = currentcheck.owner
                 let msguser = notifusers[j]
+                if(msguser === aucowner) continue
                 client.users.send(msguser, { content: bluetext(`The auction #${auctionid} is going to end in an hour!`), embeds:[module.exports.embedgen(auctionid)], files:[attachment]}).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             }
         }

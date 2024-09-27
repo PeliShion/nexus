@@ -4,6 +4,7 @@ const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { redtext, greentext, bluetext, capfirstletter, disabledbuttons, miscembed } = require("./functions.js")
 const { botchannelid, logchannelid, newaucchannelid } = require("../data/settings.json")
 const { isAsyncFunction } = require('util/types')
+const { error } = require('console')
 
 const bidcustomamount = new ButtonBuilder()
     .setCustomId('customamount')
@@ -320,7 +321,7 @@ module.exports.postbidembedgen = function (id) {
         .setColor(colorhex)
         .addFields(
             { name: "Seller", value: `<@${owner}>`, inline: true },
-            { name: "Ends in:", value: `<t:${endtime}:R>`, inline: true },
+            { name: "Ends:", value: `<t:${endtime}:R>`, inline: true },
             { name: "Anti-snipe Length", value: antisnipestring, inline: true },
             { name: "\u200B", value: "\u200B" },
             { name: "Current Bid", value: currentbid.toString() + " HAR " + topbidder, inline: true },
@@ -367,7 +368,7 @@ module.exports.embedgen = function (id) {
         .setColor(colorhex)
         .addFields(
             { name: "Seller", value: `<@${owner}>`, inline: true },
-            { name: "Ends in:", value: endtext, inline: true },
+            { name: "Ends:", value: endtext, inline: true },
             { name: "Anti-snipe Length", value: antisnipestring, inline: true },
             { name: "\u200B", value: "\u200B" },
             { name: "Current Bid", value: topbiddertext, inline: true },
@@ -377,7 +378,6 @@ module.exports.embedgen = function (id) {
         .setImage(`attachment://${attachment.name}`)
         .setTimestamp()
         .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
-
     return auctionembed;
 }
 
@@ -439,7 +439,7 @@ module.exports.auccheck = async function () {
             }
         }
         else if (isauctionactive === false && (currenttime - auctionendtime) > 43200 && currentcheck.msgid !== "deleted") {
-            await client.channels.cache.get(newaucchannelid).messages.fetch(currentcheck.msgid).then(message => message.delete())
+            await client.channels.cache.get(newaucchannelid).messages.fetch(currentcheck.msgid).then(message => message.delete()).catch((err) => console.log(error))
             currentcheck.msgid = "deleted"
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
         }

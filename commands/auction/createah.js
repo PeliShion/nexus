@@ -81,6 +81,7 @@ module.exports = {
                         .setDescription("Other tags (charm effects, rolls, etc. Used for people to look up the charm). Separated using comma.")
             )),
       async execute(interaction) {
+            interaction.deferReply()
             if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true })
             //check current auciton ID
             let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
@@ -135,7 +136,7 @@ module.exports = {
                   .setColor(colorhex)
                   .addFields(
                         { name: "Seller", value: `<@${interaction.user.id}>`, inline: true },
-                        { name: "Ends in:", value: `<t:${endtime}:R>`, inline: true },
+                        { name: "Ends:", value: `<t:${endtime}:R>`, inline: true },
                         { name: "Anti-snipe Length", value: antisnipelength, inline: true },
                         { name: "\u200B", value: "\u200B" },
                         { name: "Minimum Bid", value: `${startingbid} HAR`, inline: true },
@@ -174,7 +175,7 @@ module.exports = {
                               .setColor(colorhex)
                               .addFields(
                                     { name: "Seller", value: `<@${interaction.user.id}>`, inline: true },
-                                    { name: "Ends in:", value: `<t:${endtime}:R>`, inline: true },
+                                    { name: "Ends:", value: `<t:${endtime}:R>`, inline: true },
                                     { name: "Anti-snipe Length", value: antisnipelength, inline: true },
                                     { name: "\u200B", value: "\u200B" },
                                     { name: "Minimum Bid", value: `${startingbid} HAR`, inline: true },

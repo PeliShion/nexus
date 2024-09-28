@@ -81,7 +81,7 @@ module.exports = {
                         .setDescription("Other tags (charm effects, rolls, etc. Used for people to look up the charm). Separated using comma.")
             )),
       async execute(interaction) {
-            interaction.deferReply()
+            interaction.deferReply({ ephemeral: true })
             if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true })
             //check current auciton ID
             let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
@@ -147,7 +147,7 @@ module.exports = {
                   .setTimestamp()
                   .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
 
-            await interaction.reply({ embeds: [auctionembed], ephemeral: true, files: [tempattachment] })
+            await interaction.editReply({ embeds: [auctionembed], ephemeral: true, files: [tempattachment] })
 
             if (!tags) listoftags = "None"
             else listoftags = tags.split(",")

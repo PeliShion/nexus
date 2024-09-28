@@ -115,16 +115,16 @@ module.exports = {
             //turn auction length and antisnipe length into seconds to store them
             if (auctionlength.includes("h")) ahlengthinsec = +(auctionlength.replace(/[a-zA-Z]/g, "")) * 3600
             else if (auctionlength.includes("d")) ahlengthinsec = +(auctionlength.replace(/[a-zA-Z]/g, "")) * 86400
-            else return await interaction.reply({ content: redtext("Please input a valid time for auction length in h or d!"), ephemeral: true })
+            else return await interaction.editReply({ content: redtext("Please input a valid time for auction length in h or d!"), ephemeral: true })
             if (antisnipelength.includes("m")) antisnipelengthins = +(antisnipelength.replace(/[a-zA-Z]/g, "")) * 60
             else if (antisnipelength.includes("h")) antisnipelengthins = +(antisnipelength.replace(/[a-zA-Z]/g, "")) * 3600
-            else return await interaction.reply({ content: redtext("Please input a valid antisnipe length in m or h! Leave it as 0m if you would not want an anitisnipe."), ephemeral: true })
+            else return await interaction.editReply({ content: redtext("Please input a valid antisnipe length in m or h! Leave it as 0m if you would not want an anitisnipe."), ephemeral: true })
 
             //various checks to check if the auction being created is valid or not
-            if (tags && tags.length > 100) return await interaction.reply({ content: redtext("Please enter less than 100 characters for the tag!"), ephemeral: true })
-            if (ahlengthinsec <= 0 || startingbid <= 0 || increment <= 0 || antisnipelengthins < 0) return await interaction.reply({ content: redtext(`Please use numbers above 0 for numbers!`), ephemeral: true })
-            else if (ahlengthinsec > 604800) return await interaction.reply({ content: redtext("Auction length has to be less than 1 week!"), ephemeral: true })
-            else if (antisnipelengthins > 86400) return await interaction.reply({ content: redtext(`Antisnipe length has to be less than 24 hours!`), ephemeral: true })
+            if (tags && tags.length > 100) return await interaction.editReply({ content: redtext("Please enter less than 100 characters for the tag!"), ephemeral: true })
+            if (ahlengthinsec <= 0 || startingbid <= 0 || increment <= 0 || antisnipelengthins < 0) return await interaction.editReply({ content: redtext(`Please use numbers above 0 for numbers!`), ephemeral: true })
+            else if (ahlengthinsec > 604800) return await interaction.editReply({ content: redtext("Auction length has to be less than 1 week!"), ephemeral: true })
+            else if (antisnipelengthins > 86400) return await interaction.editReply({ content: redtext(`Antisnipe length has to be less than 24 hours!`), ephemeral: true })
             let endtime = currenttime + ahlengthinsec
             if (tags === null) tagsdisplay = "None"
             else tagsdisplay = tags

@@ -26,11 +26,11 @@ module.exports.togglenotif = async function (id, interaction, authorid) {
     let index = selectedah.blocknotif.indexOf(authorid);
     if (index !== -1) {
         selectedah.blocknotif.splice(index, 1);
-        await interaction.channel.send({ content: greentext("You will be notified when you get outbidded again.") })
+        await interaction.channel.send({ content: greentext("You will be notified when you get outbidded again for this auction.") })
     }
     else {
         selectedah.blocknotif.push(authorid)
-        await interaction.channel.send({ content: greentext("You will no longer be notified when outbidded.") })
+        await interaction.channel.send({ content: greentext("You will no longer be notified when outbidded on this auction.") })
     }
     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 }

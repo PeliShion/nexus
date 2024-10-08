@@ -575,7 +575,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                 } else {
                     if (existingprebid < prebidamount + increment) nextcurbid = existingprebid
                     else nextcurbid = prebidamount + increment
-                    await interactionsend(bluetext(`There was another autobid submitted, which beat yours! The current bid is now ${nextcurbid}.`))
+                    await interactionsend(bluetext(`There was another autobid submitted, which beat or was equal to yours! The current bid is now ${nextcurbid}.`))
                     selectedah.currentbid = nextcurbid
                     selectedah.topbidder = prebiduser
                     selectedah.bids.push({ "user": prebiduser, "bid": nextcurbid })
@@ -606,7 +606,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     for (i = 0; i < notifications.length; i++) {
                         const msguser = notifications[i]
                         if (msguser === owner) continue
-                        else if (msguser === authorid) continue
+                        else if (msguser === selectedah.topbidder) continue
                         else if (selectedah.blocknotif.includes(msguser)) continue
                         let sendmessage = { content: bluetext(`You have been outbidded by ${prebidusername} for ${nextcurbid} HAR!`), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                         let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))

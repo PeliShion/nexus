@@ -63,8 +63,6 @@ module.exports.bidmin = async function (id, interaction, authorid) {
     let antisnipe = selectedah.antisnipe
     if (nextbid < minbid) nextbid = minbid
     let anonymity = selectedah.anonymity
-    if (anonymity === true) username = "Anonymous"
-    else username = await client.users.cache.get(authorid).username
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
     let bidminamount = new ButtonBuilder()
@@ -99,6 +97,8 @@ module.exports.bidmin = async function (id, interaction, authorid) {
             //update the current bid and top bidder, and push the bid to bids array, and if the user was not notified prior (if this is their first bid), add them to notification
             selectedah.currentbid = nextbid
             selectedah.topbidder = authorid
+            if (anonymity === true) username = "Anonymous"
+            else username = await client.users.cache.get(selectedah.topbidder).username
             selectedah.bids.push({ "user": authorid, "bid": nextbid })
             if (!selectedah.notification.includes(authorid)) selectedah.notification.push(authorid)
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
@@ -155,8 +155,6 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
     let owner = selectedah.owner
     let notifications = selectedah.notification
     let anonymity = selectedah.anonymity
-    if (anonymity === true) username = "Anonymous"
-    else username = await client.users.cache.get(authorid).username
     let nextbid = selectedah.currentbid + increment
     let currentbid = selectedah.currentbid
     let minbid = selectedah.minbid
@@ -196,6 +194,8 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
                 selectedah.currentbid = customamountbid
                 selectedah.topbidder = authorid
                 selectedah.bids.push({ "user": authorid, "bid": customamountbid })
+                if (anonymity === true) username = "Anonymous"
+                else username = await client.users.cache.get(selectedah.topbidder).username
                 if (!selectedah.notification.includes(authorid)) selectedah.notification.push(authorid)
                 let bidcustomlog = miscembed()
                     .setTitle(`Bid on auction #${id}`)
@@ -477,8 +477,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
     let owner = selectedah.owner
     let notifications = selectedah.notification
     let anonymity = selectedah.anonymity
-    if (anonymity === true) username = "Anonymous"
-    else username = await client.users.cache.get(authorid).username
     let nextbid = selectedah.currentbid + increment
     let currentbid = selectedah.currentbid
     let minbid = selectedah.minbid
@@ -530,6 +528,8 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     selectedah.currentbid = nextcurbid
                     selectedah.topbidder = authorid
                     selectedah.bids.push({ "user": authorid, "bid": nextcurbid })
+                    if (anonymity === true) username = "Anonymous"
+                    else username = await client.users.cache.get(selectedah.topbidder).username
                     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 
                     if (existingprebid > currentbid) await interactionsend(bluetext(`There was another autobid submitted, so your bid has been adjusted accordingly to beat it!`))

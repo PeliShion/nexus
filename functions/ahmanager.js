@@ -499,7 +499,9 @@ module.exports.prebid = async function (id, interaction, authorid) {
         if (!Number.isInteger(prebidamount)) return await interactionsend(redtext("Please only input a whole number!"))
         if (prebidamount > 9999) return await interactionsend(redtext("Invalid value! Please enter numbers below 10000."))
         if (nextbid > prebidamount) return await interactionsend(redtext("You cannot bid lower than the next minimum bid!"))
-        const bidconfirmresponsecustom = await interactionsend(bluetext(`Are you sure you want to immediately bid ${nextbid} HAR and autobid ${prebidamount} HAR on auction #${id}?`), confirmrow)
+        if (authorid === selectedah.prebids[0].user) autobidconfirmmsg = bluetext(`Are you sure you want to overwrite your existing prebid of ${selectedah.prebids[0].amount} HAR to ${prebidamount} HAR on auction #${id}?`)
+        else autobidconfirmmsg = bluetext(`Are you sure you want to immediately bid ${nextbid} HAR and autobid ${prebidamount} HAR on auction #${id}?`)
+        const bidconfirmresponsecustom = await interactionsend(autobidconfirmmsg, confirmrow)
         const bidconfirmcollector = bidconfirmresponsecustom.createMessageComponentCollector({ time: 60_000 })
         bidconfirmcollector.on('collect', async i => {
             bidconfirmcollector.stop()
@@ -508,6 +510,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
             userdata.auctionbids++
             fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
             if (i.customId === "confirm") {
+                if (authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount >= prebidamount) return await interactionsend(redtext(`You cannot lower your autobid!`))  
                 await interactionsend(greentext(`Autobid Successful!`))
                 //if confirmed, bid immediately and add the user to "autobid" on the auction.
                 //if the existing autobid is larger than the one that has been bid, automatically bid up until previous one's maximum
@@ -521,8 +524,8 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     if (authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount < prebidamount) {
                         selectedah.prebids[0].amount = prebidamount
                         selectedah.prebids[0].user = authorid
-                        await interactionsend(greentext(`Your previous autobid has been overwritten!`))
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
+                        module.exports.updateembed(id)
                         let prebidsubmitlog = miscembed()
                         .setTitle(`Autobid submitted for auction ${id}`)
                         .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
@@ -584,8 +587,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                             })
                         }
                     }
-                } else if(authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount > prebidamount) return await interactionsend(redtext(`You cannot lower your autobid!`))  
-                else {
+                } else {
                     if (existingprebid < prebidamount + increment) nextcurbid = existingprebid
                     else nextcurbid = prebidamount + increment
                     await interactionsend(bluetext(`There was another autobid submitted, which beat or was equal to yours! The current bid is now ${nextcurbid}.`))

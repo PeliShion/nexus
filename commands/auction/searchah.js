@@ -1,5 +1,5 @@
 const { AttachmentBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType } = require('discord.js')
-const { redtext, bluetext } = require('../../functions/functions.js')
+const { redtext, bluetext, genmessagelink } = require('../../functions/functions.js')
 const { embedgen, biddms } = require('../../functions/ahmanager.js')
 const { botchannelid } = require("../../data/settings.json");
 
@@ -113,7 +113,7 @@ module.exports = {
                     i.deferUpdate()
                     currentselection = +i.values[0]
                     let attachment = new AttachmentBuilder(`./images/${currentselection}.png`, {name: `${currentselection}.png`})
-                    await interaction.editReply({ embeds: [embedgen(currentselection)], files:[attachment] })
+                    await interaction.editReply({ content: genmessagelink(id), embeds: [embedgen(currentselection)], files:[attachment] })
                 })
 
                 checkauccollect.on('collect', async i => {

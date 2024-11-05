@@ -1,5 +1,5 @@
 const { ButtonBuilder, ButtonStyle, SlashCommandBuilder, ActionRowBuilder, AttachmentBuilder, ComponentType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js')
-const { redtext, bluetext } = require('../../functions/functions.js')
+const { redtext, bluetext, genmessagelink } = require('../../functions/functions.js')
 const { embedgen, biddms } = require("../../functions/ahmanager.js")
 const { botchannelid } = require("../../data/settings.json");
 
@@ -40,7 +40,7 @@ module.exports = {
             let selectedah = listofauctions.find(x => x.id === id)
             if (!selectedah) return await interaction.editReply({ content: redtext("Could not find an auction with ID " + id + "!"), ephemeral: true })
             let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
-            const response = await interaction.editReply({ content: "", embeds: [embedgen(id)], components: [detailrow], ephemeral: true, files:[attachment] })
+            const response = await interaction.editReply({ content: genmessagelink(id), embeds: [embedgen(id)], components: [detailrow], ephemeral: true, files:[attachment] })
             const collector = response.createMessageComponentCollector({ time: 60_000 })
                 //create a collector and send them to dms
             collector.on('collect', async i => {

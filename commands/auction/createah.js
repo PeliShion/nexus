@@ -218,7 +218,7 @@ module.exports = {
                               ],
                               "currentbid": 0,
                               "notification": [interaction.user.id],
-                              "blocknotif": ["0"],
+                              "blocknotif": ["0", interaction.user.id],
                               "tags": tags?.toLowerCase().split(","),
                               "msgid": msgid
                         }

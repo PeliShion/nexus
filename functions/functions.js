@@ -48,3 +48,10 @@ module.exports.disabledbuttons = function (bid) {
     return new ActionRowBuilder()
             .addComponents(graybidmin, graybidcustom, graybidprebid, graytoggle)
 }
+
+module.exports.genmessagelink = function(id) {
+    let selectedah = listofauctions.find(x => x.id === id)
+    let msgid = selectedah.msgid
+    if (msgid === "deleted") return "Original embed message deleted"
+    else return "Message link: https://discord.com/channels/1237333802611638326/1237333900372475945/" + msgid
+}

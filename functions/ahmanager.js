@@ -435,7 +435,7 @@ module.exports.auccheck = async function () {
                 let aucowner = currentcheck.owner
                 let msguser = notifusers[j]
                 if (msguser === aucowner) continue
-                client.users.send(msguser, { content: bluetext(`The auction #${auctionid} is going to end in an hour!`) + `\n` + genmessagelink(currentcheck), embeds: [module.exports.embedgen(auctionid)], files: [attachment] }).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+                client.users.send(msguser, { content: bluetext(`The auction #${auctionid} is going to end in an hour!`) + `\n` + genmessagelink(auctionid), embeds: [module.exports.embedgen(auctionid)], files: [attachment] }).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             }
         }
         else if (isauctionactive === false && (currenttime - auctionendtime) > 43200 && currentcheck.msgid !== "deleted") {

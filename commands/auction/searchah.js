@@ -113,7 +113,7 @@ module.exports = {
                     i.deferUpdate()
                     currentselection = +i.values[0]
                     let attachment = new AttachmentBuilder(`./images/${currentselection}.png`, {name: `${currentselection}.png`})
-                    await interaction.editReply({ content: genmessagelink(id), embeds: [embedgen(currentselection)], files:[attachment] })
+                    await interaction.editReply({ content: genmessagelink(currentselection), embeds: [embedgen(currentselection)], files:[attachment] })
                 })
 
                 checkauccollect.on('collect', async i => {

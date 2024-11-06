@@ -499,7 +499,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
         if (!Number.isInteger(prebidamount)) return await interactionsend(redtext("Please only input a whole number!"))
         if (prebidamount > 9999) return await interactionsend(redtext("Invalid value! Please enter numbers below 10000."))
         if (nextbid > prebidamount) return await interactionsend(redtext("You cannot bid lower than the next minimum bid!"))
-        if (authorid === selectedah.prebids[0].user) autobidconfirmmsg = bluetext(`Are you sure you want to overwrite your existing prebid of ${selectedah.prebids[0].amount} HAR to ${prebidamount} HAR on auction #${id}?`)
+        if (authorid === selectedah.prebids[0].user && prebidamount > currentbid) autobidconfirmmsg = bluetext(`Are you sure you want to overwrite your existing prebid of ${selectedah.prebids[0].amount} HAR to ${prebidamount} HAR on auction #${id}?`)
         else autobidconfirmmsg = bluetext(`Are you sure you want to immediately bid ${nextbid} HAR and autobid ${prebidamount} HAR on auction #${id}?`)
         const bidconfirmresponsecustom = await interactionsend(autobidconfirmmsg, confirmrow)
         const bidconfirmcollector = bidconfirmresponsecustom.createMessageComponentCollector({ time: 60_000 })
@@ -521,7 +521,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                 let existingprebid = prebids[0].amount
                 let prebiduser = prebids[0].user
                 if (prebidamount > existingprebid) {
-                    if (authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount < prebidamount) {
+                    if (authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount < prebidamount && selectedah.prebids[0].amount >= currentbid) {
                         selectedah.prebids[0].amount = prebidamount
                         selectedah.prebids[0].user = authorid
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));

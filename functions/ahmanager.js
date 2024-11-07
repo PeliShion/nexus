@@ -98,7 +98,7 @@ module.exports.bidmin = async function (id, interaction, authorid) {
             selectedah.currentbid = nextbid
             selectedah.topbidder = authorid
             if (anonymity === true) username = "Anonymous"
-            else username = await client.users.cache.get(selectedah.topbidder).username
+            else username = await client.users.cache.get(currenttopbidder).username
             selectedah.bids.push({ "user": authorid, "bid": nextbid })
             if (!selectedah.notification.includes(authorid)) selectedah.notification.push(authorid)
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
@@ -195,7 +195,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
                 selectedah.topbidder = authorid
                 selectedah.bids.push({ "user": authorid, "bid": customamountbid })
                 if (anonymity === true) username = "Anonymous"
-                else username = await client.users.cache.get(selectedah.topbidder).username
+                else username = await client.users.cache.get(currenttopbidder).username
                 if (!selectedah.notification.includes(authorid)) selectedah.notification.push(authorid)
                 let bidcustomlog = miscembed()
                     .setTitle(`Bid on auction #${id}`)
@@ -482,6 +482,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
     let minbid = selectedah.minbid
     let endtime = selectedah.endtime
     let antisnipe = selectedah.antisnipe
+    let currenttopbidder = selectedah.topbidder
     if (currentbid == 0) nextbid = minbid
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
@@ -543,7 +544,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         selectedah.topbidder = authorid
                         selectedah.bids.push({ "user": authorid, "bid": nextcurbid })
                         if (anonymity === true) username = "Anonymous"
-                        else username = await client.users.cache.get(selectedah.topbidder).username
+                        else username = await client.users.cache.get(currenttopbidder).username
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
     
                         if (existingprebid > currentbid) await interactionsend(bluetext(`There was another autobid submitted, so your bid has been adjusted accordingly to beat it!`))

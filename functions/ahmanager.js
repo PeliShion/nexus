@@ -62,7 +62,6 @@ module.exports.bidmin = async function (id, interaction, authorid) {
     let endtime = selectedah.endtime
     let antisnipe = selectedah.antisnipe
     if (nextbid < minbid) nextbid = minbid
-    let anonymity = selectedah.anonymity
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
     let bidminamount = new ButtonBuilder()
@@ -97,8 +96,6 @@ module.exports.bidmin = async function (id, interaction, authorid) {
             //update the current bid and top bidder, and push the bid to bids array, and if the user was not notified prior (if this is their first bid), add them to notification
             selectedah.currentbid = nextbid
             selectedah.topbidder = authorid
-            if (anonymity === true) username = "Anonymous"
-            else username = await client.users.cache.get(currenttopbidder).username
             selectedah.bids.push({ "user": authorid, "bid": nextbid })
             if (!selectedah.notification.includes(authorid)) selectedah.notification.push(authorid)
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
@@ -115,7 +112,7 @@ module.exports.bidmin = async function (id, interaction, authorid) {
                 if (msguser === owner) continue
                 if (msguser === authorid) continue
                 if (selectedah.blocknotif.includes(msguser)) continue
-                let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+                let sendmessage = { content: bluetext(`You have been outbidded for ${nextbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                 let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                 const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
 
@@ -154,7 +151,6 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
     let currenttopbidder = selectedah.topbidder
     let owner = selectedah.owner
     let notifications = selectedah.notification
-    let anonymity = selectedah.anonymity
     let nextbid = selectedah.currentbid + increment
     let currentbid = selectedah.currentbid
     let minbid = selectedah.minbid
@@ -194,8 +190,6 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
                 selectedah.currentbid = customamountbid
                 selectedah.topbidder = authorid
                 selectedah.bids.push({ "user": authorid, "bid": customamountbid })
-                if (anonymity === true) username = "Anonymous"
-                else username = await client.users.cache.get(currenttopbidder).username
                 if (!selectedah.notification.includes(authorid)) selectedah.notification.push(authorid)
                 let bidcustomlog = miscembed()
                     .setTitle(`Bid on auction #${id}`)
@@ -219,7 +213,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
                     if (msguser === owner) continue
                     else if (msguser === authorid) continue
                     else if (selectedah.blocknotif.includes(msguser)) continue
-                    let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${customamountbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+                    let sendmessage = { content: bluetext(`You have been outbidded for ${customamountbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                     let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                     const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
                     collector.on('collect', async j => {
@@ -476,7 +470,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
     let increment = selectedah.increment
     let owner = selectedah.owner
     let notifications = selectedah.notification
-    let anonymity = selectedah.anonymity
     let nextbid = selectedah.currentbid + increment
     let currentbid = selectedah.currentbid
     let minbid = selectedah.minbid
@@ -543,8 +536,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         selectedah.currentbid = nextcurbid
                         selectedah.topbidder = authorid
                         selectedah.bids.push({ "user": authorid, "bid": nextcurbid })
-                        if (anonymity === true) username = "Anonymous"
-                        else username = await client.users.cache.get(currenttopbidder).username
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
     
                         if (existingprebid > currentbid) await interactionsend(bluetext(`There was another autobid submitted, so your bid has been adjusted accordingly to beat it!`))
@@ -574,7 +565,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                             if (msguser === owner) continue
                             else if (msguser === authorid) continue
                             else if (selectedah.blocknotif.includes(msguser)) continue
-                            let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+                            let sendmessage = { content: bluetext(`You have been outbidded for ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                             let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                             const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
                             collector.on('collect', async j => {
@@ -596,7 +587,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     selectedah.topbidder = prebiduser
                     selectedah.bids.push({ "user": prebiduser, "bid": nextcurbid })
                     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
-                    let prebidusername = await client.users.cache.get(prebiduser).username
 
                     let bidminamount = new ButtonBuilder()
                         .setCustomId('minamount')
@@ -624,7 +614,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         if (msguser === owner) continue
                         else if (msguser === selectedah.topbidder) continue
                         else if (selectedah.blocknotif.includes(msguser)) continue
-                        let sendmessage = { content: bluetext(`You have been outbidded by ${prebidusername} for ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+                        let sendmessage = { content: bluetext(`You have been outbidded for ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                         let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                         const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
                         collector.on('collect', async j => {
@@ -658,11 +648,8 @@ module.exports.prebidcheck = async function (id) {
     //if there are no prebids, do nothing
     if (prebidamount === 0) return
     let prebiduser = prebids[0].user
-    let anonymity = selectedah.anonymity
     let guild = await client.guilds.fetch("313066655494438922")
     guild.members.fetch()
-    if (anonymity === true) username = "Anonymous"
-    else username = await client.users.cache.get(prebiduser).username
     if (currentbid + increment <= prebidamount) {
         //if prebid is higher than current bid, immediately bid for min. increment
         if (endtime - Math.round(Date.now() / 1000) <= antisnipe) selectedah.endtime = Math.round(Date.now() / 1000) + antisnipe
@@ -697,7 +684,7 @@ module.exports.prebidcheck = async function (id) {
             if (msguser === owner) continue
             else if (msguser === prebiduser) continue
             else if (selectedah.blocknotif.includes(msguser)) continue
-            let sendmessage = { content: bluetext(`You have been outbidded by ${username} for ${nextbidamount} HAR! (This is an autobid)`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+            let sendmessage = { content: bluetext(`You have been outbidded for ${nextbidamount} HAR! (This is an autobid)`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
             let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
             collector.on('collect', async j => {

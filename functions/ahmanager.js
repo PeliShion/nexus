@@ -392,10 +392,8 @@ module.exports.auccheck = async function () {
             let auctopbidder = currentcheck.topbidder
             let aucowner = currentcheck.owner
             let curbid = currentcheck.currentbid
-            let guild = await client.guilds.fetch("313066655494438922")
-            guild.members.fetch()
-            let ownerusername = await client.users.cache.get(aucowner).username
-            if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username
+            let ownerusername = await client.users.fetch(aucowner).username
+            if (auctopbidder) topbidusername = await client.users.fetch(auctopbidder).username
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             //check if an auction has ended
             //if it has, send the owner, top bidder, and other bidders notifications

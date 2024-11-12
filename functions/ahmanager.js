@@ -379,6 +379,8 @@ module.exports.auccheck = async function () {
     //auction checks to see if they have ended
     //this is used in index.js, and ran every minute
     let currenttime = Math.round(Date.now() / 1000)
+    let guild = await client.guilds.fetch("313066655494438922")
+    guild.members.fetch()
     for (let i = 0; i < listofauctions.length; i++) {
         //loop through the auction data
         //set up variables
@@ -392,8 +394,8 @@ module.exports.auccheck = async function () {
             let auctopbidder = currentcheck.topbidder
             let aucowner = currentcheck.owner
             let curbid = currentcheck.currentbid
-            let ownerusername = await client.users.fetch(aucowner).username
-            if (auctopbidder) topbidusername = await client.users.fetch(auctopbidder).username
+            let ownerusername = await client.users.cache.get(aucowner).username
+            if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             //check if an auction has ended
             //if it has, send the owner, top bidder, and other bidders notifications

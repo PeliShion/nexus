@@ -395,7 +395,7 @@ module.exports.auccheck = async function () {
             let aucowner = currentcheck.owner
             let curbid = currentcheck.currentbid
             await client.users.fetch(aucowner)
-            await client.users.fetch(auctopbidder)
+            if (auctopbidder != 0) await client.users.fetch(auctopbidder)
             let ownerusername = await client.users.cache.get(aucowner).username
             if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })

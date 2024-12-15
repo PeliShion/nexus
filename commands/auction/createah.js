@@ -170,8 +170,9 @@ module.exports = {
                               .setLabel("Show Auction Details")
                               .setStyle(ButtonStyle.Success)
                         const detailrow = new ActionRowBuilder().addComponents(showdetails)
+                        let aucname = `${capfirstletter(charmclass)} Charm | Auction ID: #${curaucid}`
                         let auctionembedsend = new EmbedBuilder()
-                              .setTitle(capfirstletter(charmclass) + " Charm | Auction ID: #" + curaucid)
+                              .setTitle(aucname)
                               .setColor(colorhex)
                               .addFields(
                                     { name: "Seller", value: `<@${interaction.user.id}>`, inline: true },
@@ -192,6 +193,8 @@ module.exports = {
                         let auctionobject = {
                               "id": curaucid,
                               "owner": interaction.user.id,
+                              "ownerun": interaction.user.username,
+                              "aucname": aucname,
                               "active": true,
                               "cp": cp,
                               "class": charmclass,

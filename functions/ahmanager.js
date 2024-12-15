@@ -517,7 +517,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                 let existingprebid = prebids[0].amount
                 let prebiduser = prebids[0].user
                 if (prebidamount > existingprebid) {
-                    if (authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount < prebidamount && selectedah.prebids[0].amount >= currentbid) {
+                    if (authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount < prebidamount && selectedah.prebids[0].amount > currentbid) {
                         selectedah.prebids[0].amount = prebidamount
                         selectedah.prebids[0].user = authorid
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));

@@ -72,7 +72,7 @@ module.exports = {
                     bidsembed.setDescription(`Page ${page + 1}`)
                     for (i = bidlength - 1 - (page * 5); i > bidlength - 6 - (page * 5); i--) {
                         if (anonymity === true) biduser = "Anonymous"
-                        else `<@${bidarray[i].user}>`
+                        else biduser = `<@${bidarray[i].user}>`
                         bidsembed.addFields({ name: `Bid #${i}`, value: `${bidarray[i].bid} HAR by ${biduser}` })
                         if (i === 1 || i === bidlength - (page * 5 + 5)) {
                             interaction.editReply({ embeds: [bidsembed], components: [arrowrow] })

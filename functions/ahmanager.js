@@ -523,7 +523,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                         module.exports.updateembed(id)
                         let prebidsubmitlog = miscembed()
-                        .setTitle(`Autobid submitted for auction ${id}`)
+                        .setTitle(`Autobid updated for auction #${id}`)
                         .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
                         .setColor(0xCCCCFF)
                         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))

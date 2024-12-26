@@ -496,6 +496,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
         if (prebidamount > 9999) return await interactionsend(redtext("Invalid value! Please enter numbers below 10000."))
         if (nextbid > prebidamount) return await interactionsend(redtext("You cannot bid lower than the next minimum bid!"))
         if (authorid === selectedah.prebids[0].user && prebidamount > currentbid) autobidconfirmmsg = bluetext(`Are you sure you want to overwrite your existing prebid of ${selectedah.prebids[0].amount} HAR to ${prebidamount} HAR on auction #${id}?`)
+        else if (authorid === currenttopbidder) autobidconfirmmsg = bluetext(`Are you sure you want to set your autobid as ${prebidamount} HAR on auction #${id}?`)
         else autobidconfirmmsg = bluetext(`Are you sure you want to immediately bid ${nextbid} HAR and autobid ${prebidamount} HAR on auction #${id}?`)
         const bidconfirmresponsecustom = await interactionsend(autobidconfirmmsg, confirmrow)
         const bidconfirmcollector = bidconfirmresponsecustom.createMessageComponentCollector({ time: 60_000 })
@@ -524,6 +525,17 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         module.exports.updateembed(id)
                         let prebidsubmitlog = miscembed()
                         .setTitle(`Autobid updated for auction #${id}`)
+                        .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
+                        .setColor(0xCCCCFF)
+                        await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))
+                    }
+                    else if (authorid === currenttopbidder) {
+                        selectedah.prebids[0].amount = prebidamount
+                        selectedah.prebids[0].user = authorid
+                        fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
+                        module.exports.updateembed(id)
+                        let prebidsubmitlog = miscembed()
+                        .setTitle(`Autobid submitted for auction #${id}`)
                         .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
                         .setColor(0xCCCCFF)
                         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))

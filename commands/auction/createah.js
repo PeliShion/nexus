@@ -13,7 +13,7 @@ module.exports = {
             .setDMPermission(false)
             .addStringOption(option =>
                   option.setName("rarity")
-                        .setDescription("Rarity of the Charm")
+                        .setDescription("The Current Rarity of The Charm")
                         .setRequired(true)
                         .addChoices(
                               { name: "Common", value: "common" },

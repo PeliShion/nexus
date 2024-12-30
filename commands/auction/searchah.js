@@ -104,7 +104,7 @@ module.exports = {
                     )
                 }
             }
-            if (i === listofauctions.length - 1) {
+            if (i === listofauctions.length - 1 || match === 25) {
                 //at the end of auction data, check if there were no valid auctions at all
                 if (firstid === 0) return await interaction.editReply({ content: redtext(`No auctions found with the criteria!`) })
                 let attachment = new AttachmentBuilder(`./images/${firstid}.png`, {name: `${firstid}.png`})

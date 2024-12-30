@@ -325,7 +325,8 @@ module.exports.postbidembedgen = function (id) {
     let charmclass = selectedah.class
     let anonymity = selectedah.anonymity
     let ownerun = selectedah.ownerun
-    if(!ownerun) ownerun = " "
+    if(!ownerun) ownertext = " "
+    else ownertext = `(${ownerun})`
     if (anonymity === true) topbidder = "Anonymous"
     else topbidder = `<@${selectedah.topbidder}>`
     let currentbid = selectedah.currentbid
@@ -342,7 +343,7 @@ module.exports.postbidembedgen = function (id) {
         .setTitle(aucname + " | Auction ID: #" + id)
         .setColor(colorhex)
         .addFields(
-            { name: "Seller", value: `<@${owner}> (${ownerun})`, inline: true },
+            { name: "Seller", value: `<@${owner}> ${ownertext}`, inline: true },
             { name: "Ends", value: `<t:${endtime}:R>`, inline: true },
             { name: "Anti-snipe Length", value: antisnipestring, inline: true },
             { name: "\u200B", value: "\u200B" },
@@ -370,7 +371,8 @@ module.exports.embedgen = function (id) {
     let charmclass = selectedah.class
     let anonymity = selectedah.anonymity
     let ownerun = selectedah.ownerun
-    if(!ownerun) ownerun = " "
+    if(!ownerun) ownertext = " "
+    else ownertext = `(${ownerun})`
     let colorhex = colors[charmclass]
     let aucname = selectedah.aucname
     let rarity = selectedah.rarity
@@ -393,7 +395,7 @@ module.exports.embedgen = function (id) {
         .setTitle(aucname + " | Auction ID: #" + id)
         .setColor(colorhex)
         .addFields(
-            { name: "Seller", value: `<@${owner}> (${ownerun})`, inline: true },
+            { name: "Seller", value: `<@${owner}> ${ownertext}`, inline: true },
             { name: "Ends", value: endtext, inline: true },
             { name: "Anti-snipe Length", value: antisnipestring, inline: true },
             { name: "\u200B", value: "\u200B" },

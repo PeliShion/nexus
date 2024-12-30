@@ -79,6 +79,7 @@ module.exports = {
         
         for (let i = 0; i < listofauctions.length; i++) {
             let ahcheck = listofauctions[i]
+            if(match >= 25) continue
             //loop through the auctions and add options to string menu on match
             //let numberoftagsmatching = ahcheck.tags?.filter(value => tags?.includes(value.replace(/\s/g, '')).length === tags?.replace(/\s/g, '').length)
             if ((ahcheck.rarity === rarity || rarity == null) && (ahcheck.cp === cp || cp == null) && (ahcheck.class === charmclass || charmclass == null)) {

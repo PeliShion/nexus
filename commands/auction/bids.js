@@ -59,7 +59,7 @@ module.exports = {
             }
         }
 
-        const arrowcollector = await bidmenu.createMessageComponentCollector({ time: 60_000 }) //creation of the collector of left/right arrow buttons
+        const arrowcollector = await bidmenu.createMessageComponentCollector({ time: 600_000 }) //creation of the collector of left/right arrow buttons
         arrowcollector.on('collect', async i => {
             let selection = i.customId
             i.deferUpdate()

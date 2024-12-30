@@ -160,7 +160,7 @@ module.exports = {
 
             //send a confirmation message and create a collector for the button attached
             const response = await interaction.followUp({ content: `__Rarity: ${rarity}, class: ${charmclass}, charm power: ${cp}__\nAre you sure you want to create this auction? It cannot be edited once it is made!`, ephemeral: true, components: [confirmrow] })
-            const confirmed = await response.createMessageComponentCollector({ time: 60_000 })
+            const confirmed = await response.createMessageComponentCollector({ time: 600_000 })
 
             confirmed.on('collect', async i => {
                   const selection = i.customId

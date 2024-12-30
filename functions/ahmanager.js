@@ -81,7 +81,7 @@ module.exports.bidmin = async function (id, interaction, authorid) {
 
     //confirmation of if the user wants to bid
     const bidconfirmresponse = await interactionsend(bluetext(`Are you sure you want to bid ${nextbid} HAR on auction #${id}?`), confirmrow)
-    const bidconfirmcollector = bidconfirmresponse.createMessageComponentCollector({ time: 60_000 })
+    const bidconfirmcollector = bidconfirmresponse.createMessageComponentCollector({ time: 600_000 })
 
     bidconfirmcollector.on('collect', async i => {
         i.deferUpdate()
@@ -178,7 +178,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
     else if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
     const collectorFilter = (m) => m.author.id === authorid
     await interactionsend(bluetext(`How much would you like to bid on auction #${id}? Please type the amount in number.`))
-    const messagecollector = interaction.channel.createMessageCollector({ filter: collectorFilter, time: 60_000 });
+    const messagecollector = interaction.channel.createMessageCollector({ filter: collectorFilter, time: 600_000 });
 
     messagecollector.on('collect', async m => {
         messagecollector.stop()
@@ -191,7 +191,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
 
         //confirmation message if they are sure they want to bid
         const bidconfirmresponsecustom = await interactionsend(bluetext(`Are you sure you want to bid ${customamountbid} HAR on auction #${id}?`), confirmrow)
-        const bidconfirmcollector = bidconfirmresponsecustom.createMessageComponentCollector({ time: 60_000 })
+        const bidconfirmcollector = bidconfirmresponsecustom.createMessageComponentCollector({ time: 600_000 })
         bidconfirmcollector.on('collect', async i => {
             bidconfirmcollector.stop()
             i.deferUpdate()
@@ -299,7 +299,7 @@ module.exports.biddms = async function (id, authorid) {
     //send the user dm with the buttons, if the user chooses to bid, run the function
     //if sending dm fails, send them an error message in bot channel
     const response = await client.users.send(authorid, { content: genmessagelink(id), embeds: [module.exports.embedgen(id)], components: [ahembedrow], files: [attachment] }).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${authorid}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
-    const collector = response.createMessageComponentCollector({ time: 60_000 })
+    const collector = response.createMessageComponentCollector({ time: 600_000 })
 
     collector.on('collect', async i => {
         i.deferUpdate()
@@ -536,7 +536,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
     else if (authorid === owner) return await interactionsend(redtext("You cannot bid on your own auction!"))
     const collectorFilter = (m) => m.author.id === authorid
     await interactionsend(bluetext(`How much would you like to autobid on auction #${id}? Please type the amount in number.`))
-    const messagecollector = interaction.channel.createMessageCollector({ filter: collectorFilter, time: 60_000 });
+    const messagecollector = interaction.channel.createMessageCollector({ filter: collectorFilter, time: 600_000 });
 
     messagecollector.on('collect', async m => {
         messagecollector.stop()
@@ -549,7 +549,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
         else if (authorid === currenttopbidder) autobidconfirmmsg = bluetext(`Are you sure you want to set your autobid as ${prebidamount} HAR on auction #${id}?`)
         else autobidconfirmmsg = bluetext(`Are you sure you want to immediately bid ${nextbid} HAR and autobid ${prebidamount} HAR on auction #${id}?`)
         const bidconfirmresponsecustom = await interactionsend(autobidconfirmmsg, confirmrow)
-        const bidconfirmcollector = bidconfirmresponsecustom.createMessageComponentCollector({ time: 60_000 })
+        const bidconfirmcollector = bidconfirmresponsecustom.createMessageComponentCollector({ time: 600_000 })
         bidconfirmcollector.on('collect', async i => {
             bidconfirmcollector.stop()
             i.deferUpdate()

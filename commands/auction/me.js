@@ -43,7 +43,7 @@ module.exports = {
             .setColor(0xadd8e6)
             .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
         const inforeply = await interaction.reply({ embeds: [infoembed], ephemeral: true, components: [showmedetailrow] })
-        const infocollect = inforeply.createMessageComponentCollector({ time: 60_000 })
+        const infocollect = inforeply.createMessageComponentCollector({ time: 600_000 })
         let selections = new StringSelectMenuBuilder()
             .setCustomId("option")
             .setPlaceholder("Select an option")

@@ -41,7 +41,7 @@ module.exports = {
             if (!selectedah) return await interaction.editReply({ content: redtext("Could not find an auction with ID " + id + "!"), ephemeral: true })
             let attachment = new AttachmentBuilder(`./images/${id}.png`, {name: `${id}.png`})
             const response = await interaction.editReply({ content: genmessagelink(id), embeds: [embedgen(id)], components: [detailrow], ephemeral: true, files:[attachment] })
-            const collector = response.createMessageComponentCollector({ time: 60_000 })
+            const collector = response.createMessageComponentCollector({ time: 600_000 })
                 //create a collector and send them to dms
             collector.on('collect', async i => {
                 i.deferUpdate()

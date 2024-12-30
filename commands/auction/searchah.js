@@ -50,10 +50,10 @@ module.exports = {
         //     option.setName("tags")
         //         .setDescription("Tags For The Charm, Separated Using Commas To Search For Multiple Tags")
         // )
-        .addBooleanOption(option => {
+        .addBooleanOption(option => 
             option.setName("expired")
                   .setDescription("Include expired auction in the result?")
-        })
+        )
         .setDMPermission(false),
 
     async execute(interaction) {

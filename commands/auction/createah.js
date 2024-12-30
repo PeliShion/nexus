@@ -72,11 +72,11 @@ module.exports = {
                   option.setName("image")
                         .setDescription("Image of the charm")
                         .setRequired(true))
-            .addStringOption(option => {
+            .addStringOption(option => 
                   option.setName("name")
                         .setDescription("Name of the embed")
                         .setMaxLength(30)
-            })
+            )
             .addAttachmentOption(option =>
                   option.setName('image2')
                         .setDescription('Additional image for upgrades etc. This image will be on the right of first image')

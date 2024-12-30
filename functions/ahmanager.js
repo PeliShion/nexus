@@ -325,6 +325,7 @@ module.exports.postbidembedgen = function (id) {
     let charmclass = selectedah.class
     let anonymity = selectedah.anonymity
     let ownerun = selectedah.ownerun
+    if(!ownerun) ownerun = " "
     if (anonymity === true) topbidder = "Anonymous"
     else topbidder = `<@${selectedah.topbidder}>`
     let currentbid = selectedah.currentbid
@@ -369,6 +370,7 @@ module.exports.embedgen = function (id) {
     let charmclass = selectedah.class
     let anonymity = selectedah.anonymity
     let ownerun = selectedah.ownerun
+    if(!ownerun) ownerun = " "
     let colorhex = colors[charmclass]
     let aucname = selectedah.aucname
     let rarity = selectedah.rarity

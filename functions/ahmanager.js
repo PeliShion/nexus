@@ -479,6 +479,11 @@ module.exports.auccheck = async function () {
             console.log(`#${auctionid} has been deleted as it had no bids for 48 hours`)
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             await client.users.send(aucowner, { content: bluetext(`Auction #${auctionid} had no bids for 48 hours, and has been deleted!`), embeds: [module.exports.embedgen(auctionid)], files: [attachment]})
+            let aucendlog = miscembed()
+                .setTitle(`Auction #${auctionid} deleted`)
+                .setDescription(`Owner: <@${aucowner}> | No bids after 48 hours`)
+                .setColor(0xffff00)
+            await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [aucendlog] }))
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
         }
     }

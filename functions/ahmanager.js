@@ -474,6 +474,7 @@ module.exports.auccheck = async function () {
             await client.channels.cache.get(newaucchannelid).messages.fetch(currentcheck.msgid).then(message => message.delete()).catch((err) => console.log(err))
             currentcheck.msgid = "deleted"
             currentcheck.active = false
+            console.log(`#${auctionid} has been deleted as it had no bids for 48 hours`)
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             await client.users.send(aucowner, { content: bluetext(`Auction #${auctionid} had no bids for 48 hours, and has been deleted!`), embeds: [module.exports.embedgen(auctionid)], files: [attachment]})
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));

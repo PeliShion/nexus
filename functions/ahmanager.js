@@ -1,9 +1,8 @@
-const { ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js')
+const { ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, AttachmentBuilder, escapeNumberedList } = require('discord.js')
 const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { redtext, greentext, bluetext, capfirstletter, disabledbuttons, miscembed, genmessagelink } = require("./functions.js")
 const { botchannelid, logchannelid, newaucchannelid } = require("../data/settings.json")
-const { isAsyncFunction } = require('util/types')
 const { error } = require('console')
 
 const bidcustomamount = new ButtonBuilder()
@@ -45,6 +44,7 @@ module.exports.bidmin = async function (id, interaction, authorid) {
     }
 
     //turning all the relevant data into variables
+    console.log(`${interaction.user.username} is minbidding on #${id}`)
     let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
     let bannedusers = settings.bannedusers
     for (i = 0; i < bannedusers.length; i++) {
@@ -109,9 +109,12 @@ module.exports.bidmin = async function (id, interaction, authorid) {
             for (i = 0; i < notifications.length; i++) {
                 //send a notification to everyone who is participating in the auction
                 const msguser = notifications[i]
-                if (msguser === owner) continue
                 if (msguser === authorid) continue
                 if (selectedah.blocknotif.includes(msguser)) continue
+
+                let ownermessage = { content: bluetext(`Your auction #${id} now has ${nextbid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+                if (msguser === owner) return await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
+
                 let sendmessage = { content: bluetext(`You have been outbidded for ${nextbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                 let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                 const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
@@ -139,6 +142,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
         if (!components) return interaction.channel.send({ content: message })
         else return interaction.channel.send({ content: message, components: [components] })
     }
+    console.log(`${interaction.user.username} is custom bidding on #${id}`)
     let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
     let bannedusers = settings.bannedusers
     for (i = 0; i < bannedusers.length; i++) {
@@ -210,9 +214,12 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
 
                 for (i = 0; i < notifications.length; i++) {
                     const msguser = notifications[i]
-                    if (msguser === owner) continue
-                    else if (msguser === authorid) continue
+                    if (msguser === authorid) continue
                     else if (selectedah.blocknotif.includes(msguser)) continue
+
+                    let ownermessage = { content: bluetext(`Your auction #${id} now has ${customamountbid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+                    if (msguser === owner) return await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
+                    
                     let sendmessage = { content: bluetext(`You have been outbidded for ${customamountbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                     let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                     const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
@@ -300,27 +307,30 @@ module.exports.postbidembedgen = function (id) {
     let antisnipestring = selectedah.antisnipestring
     let charmclass = selectedah.class
     let anonymity = selectedah.anonymity
+    let ownerun = selectedah.ownerun
     if (anonymity === true) topbidder = "Anonymous"
     else topbidder = `<@${selectedah.topbidder}>`
     let currentbid = selectedah.currentbid
+    let rarity = selectedah.rarity
     let colorhex = colors[charmclass]
+    let aucname = selectedah.aucname
 
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
-    let tagsarr = selectedah.tags
-    if (tagsarr === undefined) tags = "None"
-    else tags = tagsarr.join()
+    // let tagsarr = selectedah.tags
+    // if (tagsarr === undefined) tags = "None"
+    // else tags = tagsarr.join()
 
     let newahembed = new EmbedBuilder()
-        .setTitle(capfirstletter(charmclass) + " Charm | Auction ID: #" + id)
+        .setTitle(aucname + " | Auction ID: #" + id)
         .setColor(colorhex)
         .addFields(
-            { name: "Seller", value: `<@${owner}>`, inline: true },
-            { name: "Ends:", value: `<t:${endtime}:R>`, inline: true },
+            { name: "Seller", value: `<@${owner}> (${ownerun})`, inline: true },
+            { name: "Ends", value: `<t:${endtime}:R>`, inline: true },
             { name: "Anti-snipe Length", value: antisnipestring, inline: true },
             { name: "\u200B", value: "\u200B" },
             { name: "Current Bid", value: currentbid.toString() + " HAR " + topbidder, inline: true },
-            { name: "Increment:", value: increment.toString() + " HAR", inline: true },
-            { name: "Tags:", value: tags, inline: true },
+            { name: "Increment", value: increment.toString() + " HAR", inline: true },
+            { name: "Rarity", value: rarity, inline: true },
         )
         .setImage(`attachment://${attachment.name}`)
         .setTimestamp()
@@ -341,7 +351,9 @@ module.exports.embedgen = function (id) {
     let antisnipestring = selectedah.antisnipestring
     let charmclass = selectedah.class
     let anonymity = selectedah.anonymity
+    let ownerun = selectedah.ownerun
     let colorhex = colors[charmclass]
+    let aucname = selectedah.aucname
 
     //if the auction has ended, ends in text displays ended
     if (Math.round(Date.now() / 1000) > endtime) endtext = "__Ended__"
@@ -352,22 +364,22 @@ module.exports.embedgen = function (id) {
     else if (anonymity === true) topbiddertext = `${currentbid} HAR Anonymous`
     else topbiddertext = `${currentbid} HAR <@${currenttopbidder}>`
 
-    let tagsarr = selectedah.tags
-    if (tagsarr === undefined) tags = "None"
-    else tags = tagsarr.join()
+    // let tagsarr = selectedah.tags
+    // if (tagsarr === undefined) tags = "None"
+    // else tags = tagsarr.join()
 
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
     let auctionembed = new EmbedBuilder()
-        .setTitle(capfirstletter(charmclass) + " Charm | Auction ID: #" + id)
+        .setTitle(aucname + " | Auction ID: #" + id)
         .setColor(colorhex)
         .addFields(
-            { name: "Seller", value: `<@${owner}>`, inline: true },
-            { name: "Ends:", value: endtext, inline: true },
+            { name: "Seller", value: `<@${owner}> (${ownerun})`, inline: true },
+            { name: "Ends", value: endtext, inline: true },
             { name: "Anti-snipe Length", value: antisnipestring, inline: true },
             { name: "\u200B", value: "\u200B" },
             { name: "Current Bid", value: topbiddertext, inline: true },
-            { name: "Increment:", value: increment.toString() + " HAR", inline: true },
-            { name: "Tags:", value: tags, inline: true },
+            { name: "Increment", value: increment.toString() + " HAR", inline: true },
+            { name: "Rarity", value: rarity, inline: true },
         )
         .setImage(`attachment://${attachment.name}`)
         .setTimestamp()
@@ -390,10 +402,11 @@ module.exports.auccheck = async function () {
         let auctionendtime = currentcheck.endtime
         let notifusers = currentcheck.notification
         let auctionid = currentcheck.id
+        let curbid = currentcheck.currentbid
+        let starttime = currentcheck.starttime
+        let aucowner = currentcheck.owner
         if (isauctionactive === true && auctionendtime < currenttime) {
             let auctopbidder = currentcheck.topbidder
-            let aucowner = currentcheck.owner
-            let curbid = currentcheck.currentbid
             await client.users.fetch(aucowner)
             if (auctopbidder != 0) await client.users.fetch(auctopbidder)
             let ownerusername = await client.users.cache.get(aucowner).username
@@ -418,7 +431,7 @@ module.exports.auccheck = async function () {
                     fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
                     client.users.send(msguser, ({ content: bluetext(`You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!\nPlease enable DMs with the bot!`)))
                 } else if (msguser === aucowner) {
-                    if (auctopbidder === 0) client.users.send(msguser, ({ content: redtext(`Your auction #${auctionid} has ended but with no bids!`) })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended but with no bids!\nPlease enable DMs with the bot!`)))
+                    if (auctopbidder === 0) client.users.send(msguser, ({ content: redtext(`Your auction #${auctionid} has ended but with no bids!`), embeds:[module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended but with no bids!\nPlease enable DMs with the bot!`)))
                     else client.users.send(msguser, ({ content: bluetext(`Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbidusername} to sell your charm.`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbidusername} to sell your charm.\nPlease enable DMs with the bot!`)))
                 } else client.users.send(msguser, ({ content: redtext(`The auction #${auctionid} has ended with ${curbid} HAR as top bid! You unfortunately did not win the auction.`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             }
@@ -435,8 +448,16 @@ module.exports.auccheck = async function () {
             }
         }
         else if (isauctionactive === false && (currenttime - auctionendtime) > 43200 && currentcheck.msgid !== "deleted") {
-            await client.channels.cache.get(newaucchannelid).messages.fetch(currentcheck.msgid).then(message => message.delete()).catch((err) => console.log(error))
+            await client.channels.cache.get(newaucchannelid).messages.fetch(currentcheck.msgid).then(message => message.delete()).catch((err) => console.log(err))
             currentcheck.msgid = "deleted"
+            fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
+        }
+        else if (isauctionactive === true && curbid === 0 && (currenttime > starttime + 172800)) {
+            await client.channels.cache.get(newaucchannelid).messages.fetch(currentcheck.msgid).then(message => message.delete()).catch((err) => console.log(err))
+            currentcheck.msgid = "deleted"
+            currentcheck.active = false
+            let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
+            await client.users.send(aucowner, { content: bluetext(`Auction #${auctionid} had no bids for 48 hours, and has been deleted!`), embeds: [module.exports.embedgen(auctionid)], files: [attachment]})
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
         }
     }
@@ -468,6 +489,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
         else return interaction.channel.send({ content: message, components: [components] })
     }
     //grab auction data
+    console.log(`${interaction.user.username} is autobidding on #${id}`)
     let selectedah = listofauctions.find(x => x.id === id)
     let increment = selectedah.increment
     let owner = selectedah.owner
@@ -576,9 +598,12 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         module.exports.updateembed(id)
                         for (i = 0; i < notifications.length; i++) {
                             const msguser = notifications[i]
-                            if (msguser === owner) continue
-                            else if (msguser === authorid) continue
+                            if (msguser === authorid) continue
                             else if (selectedah.blocknotif.includes(msguser)) continue
+
+                            let ownermessage = { content: bluetext(`Your auction #${id} now has ${nextcurbid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+                            if (msguser === owner) return await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
+                            
                             let sendmessage = { content: bluetext(`You have been outbidded for ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                             let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                             const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
@@ -602,6 +627,10 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     selectedah.bids.push({ "user": prebiduser, "bid": nextcurbid })
                     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 
+                    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
+                    let prebidtriggermsg = { content: greentext(`Your autobid on auction #${id} has triggered, bidding ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment] }
+                    await client.users.send(prebiduser, prebidtriggermsg)
+                    
                     let bidminamount = new ButtonBuilder()
                         .setCustomId('minamount')
                         .setLabel(`Bid ${nextcurbid + increment} HAR`)
@@ -625,9 +654,12 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     module.exports.updateembed(id)
                     for (i = 0; i < notifications.length; i++) {
                         const msguser = notifications[i]
-                        if (msguser === owner) continue
-                        else if (msguser === selectedah.topbidder) continue
+                        if (msguser === selectedah.topbidder) continue
                         else if (selectedah.blocknotif.includes(msguser)) continue
+
+                        let ownermessage = { content: bluetext(`Your auction #${id} now has ${nextcurbid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+                        if (msguser === owner) return await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
+                        
                         let sendmessage = { content: bluetext(`You have been outbidded for ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
                         let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
                         const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
@@ -695,9 +727,12 @@ module.exports.prebidcheck = async function (id) {
 
         for (i = 0; i < notifications.length; i++) {
             const msguser = notifications[i]
-            if (msguser === owner) continue
-            else if (msguser === prebiduser) continue
+            if (msguser === prebiduser) continue
             else if (selectedah.blocknotif.includes(msguser)) continue
+
+            let ownermessage = { content: bluetext(`Your auction #${id} now has ${nextbidamount} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+            if (msguser === owner) return await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
+
             let sendmessage = { content: bluetext(`You have been outbidded for ${nextbidamount} HAR! (This is an autobid)`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
             let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })

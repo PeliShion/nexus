@@ -62,16 +62,18 @@ module.exports = {
                     if (ahcheck.owner === interaction.user.id && ahcheck.active === true) {
                         match++
                         let id = ahcheck.id
+                        let aucname = ahcheck.aucname
+                        if(!aucname) aucname = "Name not found"
                         if (match === 1) {
                             firstid = id
                             currentselection = id
                         }
-                        if (!ahcheck.tags) tagtext = "Tags: None"
-                        else tagtext = `Tags: ${ahcheck.tags.join()}`
+                        // if (!ahcheck.tags) tagtext = "Tags: None"
+                        // else tagtext = `Tags: ${ahcheck.tags.join()}`
                         selections.addOptions(
                             new StringSelectMenuOptionBuilder()
                                 .setLabel(`Auction #${id}`)
-                                .setDescription(tagtext)
+                                .setDescription(`"${aucname}"`)
                                 .setValue(`${id}`),
                         )
                     }
@@ -114,16 +116,18 @@ module.exports = {
                     if (ahcheck.bids.some(u => u.user === interaction.user.id) && ahcheck.active === true) {
                         match++
                         let id = ahcheck.id
+                        let aucname = ahcheck.aucname
+                        if(!aucname) aucname = "Name not found"
                         if (match === 1) {
                             firstid = id
                             currentselection = id
                         }
-                        if (!ahcheck.tags) tagtext = "Tags: None"
-                        else tagtext = `Tags: ${ahcheck.tags.join()}`
+                        // if (!ahcheck.tags) tagtext = "Tags: None"
+                        // else tagtext = `Tags: ${ahcheck.tags.join()}`
                         selections.addOptions(
                             new StringSelectMenuOptionBuilder()
                                 .setLabel(`Auction #${id}`)
-                                .setDescription(tagtext)
+                                .setDescription(`"${aucname}"`)
                                 .setValue(`${id}`),
                         )
                     }

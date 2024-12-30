@@ -46,17 +46,22 @@ module.exports = {
                     { name: "4", value: 4 },
                     { name: "5", value: 5 }
                 ))
-        .addStringOption(option =>
-            option.setName("tags")
-                .setDescription("Tags For The Charm, Separated Using Commas To Search For Multiple Tags")
-        )
+        // .addStringOption(option =>
+        //     option.setName("tags")
+        //         .setDescription("Tags For The Charm, Separated Using Commas To Search For Multiple Tags")
+        // )
+        .addBooleanOption(option => {
+            option.setName("expired")
+                  .setDescription("Include expired auction in the result?")
+        })
         .setDMPermission(false),
 
     async execute(interaction) {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
         //turn collected arguments into variables
         let rarity = interaction.options?.getString("rarity")
-        let tags = interaction.options.getString("tags")?.toLowerCase().replace(/\s/g, '').split(",")
+        //let tags = interaction.options.getString("tags")?.toLowerCase().replace(/\s/g, '').split(",")
+        let expire = interaction.options?.getBoolean("expired")
         let cp = interaction.options?.getInteger("cp")
         let charmclass = interaction.options?.getString("class")
         let match = 0
@@ -69,31 +74,35 @@ module.exports = {
             .setPlaceholder("Select an option")
 
         //check if none of the variables are collected
-        if (!rarity && !cp && !tags && !charmclass) return await interaction.reply({ content: redtext("You need to enter at least 1 argument to search for charms!"), ephemeral: true })
+        if (!rarity && !cp && !charmclass) return await interaction.reply({ content: redtext("You need to enter at least 1 argument to search for charms!"), ephemeral: true })
         await interaction.reply({ content: bluetext("Searching..."), ephemeral: true })//sending this so it can be editreplyed later
         
         for (let i = 0; i < listofauctions.length; i++) {
             let ahcheck = listofauctions[i]
             //loop through the auctions and add options to string menu on match
-            let numberoftagsmatching = ahcheck.tags?.filter(value => tags?.includes(value.replace(/\s/g, '')).length === tags?.replace(/\s/g, '').length)
-            if ((ahcheck.rarity === rarity || rarity == null) && (ahcheck.cp === cp || cp == null) && (ahcheck.class === charmclass || charmclass == null) && (numberoftagsmatching || tags == null) && ahcheck.active === true) {
-                match++
-                let id = ahcheck.id
-                if (match === 1) {
-                    //checks for the first match to display first before the user picks anything
-                    firstid = id
-                    currentselection = id
+            //let numberoftagsmatching = ahcheck.tags?.filter(value => tags?.includes(value.replace(/\s/g, '')).length === tags?.replace(/\s/g, '').length)
+            if ((ahcheck.rarity === rarity || rarity == null) && (ahcheck.cp === cp || cp == null) && (ahcheck.class === charmclass || charmclass == null)) {
+                if(ahcheck.active === true || expire === true) {
+                    match++
+                    let id = ahcheck.id
+                    let aucname = ahcheck.aucname
+                    if(!aucname) aucname = "Name not found"
+                    if (match === 1) {
+                        //checks for the first match to display first before the user picks anything
+                        firstid = id
+                        currentselection = id
+                    }
+    
+                    // if (!ahcheck.tags) tagtext = "Tags: None"
+                    // else tagtext = `Tags: ${ahcheck.tags.join()}`
+    
+                    selections.addOptions(
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel(`Auction #${id}`)
+                            .setDescription(`"${aucname}"`)
+                            .setValue(`${id}`),
+                    )
                 }
-
-                if (!ahcheck.tags) tagtext = "Tags: None"
-                else tagtext = `Tags: ${ahcheck.tags.join()}`
-
-                selections.addOptions(
-                    new StringSelectMenuOptionBuilder()
-                        .setLabel(`Auction #${id}`)
-                        .setDescription(tagtext)
-                        .setValue(`${id}`),
-                )
             }
             if (i === listofauctions.length - 1) {
                 //at the end of auction data, check if there were no valid auctions at all

@@ -72,14 +72,19 @@ module.exports = {
                   option.setName("image")
                         .setDescription("Image of the charm")
                         .setRequired(true))
+            .addStringOption(option => {
+                  option.setName("name")
+                        .setDescription("Name of the embed")
+                        .setMaxLength(30)
+            })
             .addAttachmentOption(option =>
                   option.setName('image2')
                         .setDescription('Additional image for upgrades etc. This image will be on the right of first image')
-            )
-            .addStringOption(option => (
-                  option.setName("tags")
-                        .setDescription("Other tags (charm effects, rolls, etc. Used for people to look up the charm). Separated using comma.")
-            )),
+            ),
+            // .addStringOption(option => (
+            //       option.setName("tags")
+            //             .setDescription("Other tags (charm effects, rolls, etc. Used for people to look up the charm). Separated using comma.")
+            // )),
       async execute(interaction) {
             interaction.deferReply({ ephemeral: true })
             if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true })
@@ -90,13 +95,14 @@ module.exports = {
             let rarity = interaction.options.getString("rarity")
             let startingbid = interaction.options.getInteger("startingbid")
             let increment = interaction.options.getInteger("increment")
-            let tags = interaction.options.getString("tags")
+            //let tags = interaction.options.getString("tags")
             let charmclass = interaction.options.getString("class")
             let cp = interaction.options.getInteger("cp")
             let auctionlength = interaction.options.getString("length").toLowerCase()
             let antisnipelength = interaction.options.getString("antisnipelength").toLowerCase()
             let imagelink = interaction.options.getAttachment("image").url
             let image2link = interaction.options.getAttachment('image2')
+            let aucname = interaction.options.getString('name')
             let tempfilename = `${interaction.user.id + (curaucid + 1)}`
             if (image2link) {
                   let img = await mergeImg([imagelink, image2link.url])
@@ -121,27 +127,27 @@ module.exports = {
             else return await interaction.editReply({ content: redtext("Please input a valid antisnipe length in m or h! Leave it as 0m if you would not want an anitisnipe."), ephemeral: true })
 
             //various checks to check if the auction being created is valid or not
-            if (tags && tags.length > 100) return await interaction.editReply({ content: redtext("Please enter less than 100 characters for the tag!"), ephemeral: true })
+            //if (tags && tags.length > 100) return await interaction.editReply({ content: redtext("Please enter less than 100 characters for the tag!"), ephemeral: true })
             if (ahlengthinsec <= 0 || startingbid <= 0 || increment <= 0 || antisnipelengthins < 0) return await interaction.editReply({ content: redtext(`Please use numbers above 0 for numbers!`), ephemeral: true })
             else if (ahlengthinsec > 604800) return await interaction.editReply({ content: redtext("Auction length has to be less than 1 week!"), ephemeral: true })
             else if (antisnipelengthins > 86400) return await interaction.editReply({ content: redtext(`Antisnipe length has to be less than 24 hours!`), ephemeral: true })
             let endtime = currenttime + ahlengthinsec
-            if (tags === null) tagsdisplay = "None"
-            else tagsdisplay = tags
-
+            // if (tags === null) tagsdisplay = "None"
+            // else tagsdisplay = tags
+            if(!aucname) aucname = `${capfirstletter(charmclass)} Charm`
             let tempattachment = new AttachmentBuilder(`./tempimg/${tempfilename}.png`, { name: `${tempfilename}.png` })
             //preview embed
             let auctionembed = new EmbedBuilder()
-                  .setTitle(capfirstletter(charmclass) + " Charm | Auction ID: #" + (curaucid + 1))
+                  .setTitle(aucname + " | Auction ID: #" + (curaucid + 1))
                   .setColor(colorhex)
                   .addFields(
-                        { name: "Seller", value: `<@${interaction.user.id}>`, inline: true },
+                        { name: "Seller", value: `<@${interaction.user.id}> (${interaction.user.username})`, inline: true },
                         { name: "Ends:", value: `<t:${endtime}:R>`, inline: true },
                         { name: "Anti-snipe Length", value: antisnipelength, inline: true },
                         { name: "\u200B", value: "\u200B" },
                         { name: "Minimum Bid", value: `${startingbid} HAR`, inline: true },
                         { name: "Increments:", value: increment.toString() + " HAR", inline: true },
-                        { name: "Tags", value: tagsdisplay, inline: true },
+                        { name: "Rarity", value: rarity, inline: true },
                   )
                   .setImage(`attachment://${tempattachment.name}`)
                   .setTimestamp()
@@ -149,8 +155,8 @@ module.exports = {
 
             await interaction.editReply({ embeds: [auctionembed], ephemeral: true, files: [tempattachment] })
 
-            if (!tags) listoftags = "None"
-            else listoftags = tags.split(",")
+            // if (!tags) listoftags = "None"
+            // else listoftags = tags.split(",")
 
             //send a confirmation message and create a collector for the button attached
             const response = await interaction.followUp({ content: `__Rarity: ${rarity}, class: ${charmclass}, charm power: ${cp}__\nAre you sure you want to create this auction? It cannot be edited once it is made!`, ephemeral: true, components: [confirmrow] })
@@ -170,18 +176,17 @@ module.exports = {
                               .setLabel("Show Auction Details")
                               .setStyle(ButtonStyle.Success)
                         const detailrow = new ActionRowBuilder().addComponents(showdetails)
-                        let aucname = `${capfirstletter(charmclass)} Charm | Auction ID: #${curaucid}`
                         let auctionembedsend = new EmbedBuilder()
-                              .setTitle(aucname)
+                              .setTitle(aucname + " | Auction ID: #" + (curaucid))
                               .setColor(colorhex)
                               .addFields(
-                                    { name: "Seller", value: `<@${interaction.user.id}>`, inline: true },
-                                    { name: "Ends:", value: `<t:${endtime}:R>`, inline: true },
+                                    { name: "Seller", value: `<@${interaction.user.id}> (${interaction.user.username})`, inline: true },
+                                    { name: "Ends", value: `<t:${endtime}:R>`, inline: true },
                                     { name: "Anti-snipe Length", value: antisnipelength, inline: true },
                                     { name: "\u200B", value: "\u200B" },
                                     { name: "Minimum Bid", value: `${startingbid} HAR`, inline: true },
-                                    { name: "Increments:", value: increment.toString() + " HAR", inline: true },
-                                    { name: "Tags", value: tagsdisplay, inline: true },
+                                    { name: "Increments", value: increment.toString() + " HAR", inline: true },
+                                    { name: "Rarity", value: rarity, inline: true },
                               )
                               .setImage(`attachment://${tempattachment.name}`)
                               .setTimestamp()
@@ -222,7 +227,7 @@ module.exports = {
                               "currentbid": 0,
                               "notification": [interaction.user.id],
                               "blocknotif": ["0", interaction.user.id],
-                              "tags": tags?.toLowerCase().split(","),
+                              "tags": "None",
                               "msgid": msgid
                         }
                         listofauctions.push(auctionobject)

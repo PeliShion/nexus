@@ -10,7 +10,7 @@ module.exports = {
     async execute(interaction) {
         if (interaction.user.id !== "492965189038374933") return await interaction.reply({ content: redtext("You need to be a moderator to use this command!"), ephemeral: true })
         for (let i = 1100; i < 1248; i++) {
-            let ahcheck = listofauctions.find(x => x.id === id)
+            let ahcheck = listofauctions.find(x => x.id === i)
             if(!ahcheck) continue
             console.log(ahcheck.id)
             if(ahcheck.active === true) {

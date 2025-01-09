@@ -180,7 +180,7 @@ module.exports = {
                               .setTitle(aucname + " | Auction ID: #" + (curaucid))
                               .setColor(colorhex)
                               .addFields(
-                                    { name: "Seller", value: `<@${interaction.user.id}> (${interaction.user.username})`, inline: true },
+                                    { name: "Seller", value: `<@${interaction.user.id}> \`${interaction.user.username}\``, inline: true },
                                     { name: "Ends", value: `<t:${endtime}:R>`, inline: true },
                                     { name: "Anti-snipe Length", value: antisnipelength, inline: true },
                                     { name: "\u200B", value: "\u200B" },

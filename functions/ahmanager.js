@@ -326,7 +326,7 @@ module.exports.postbidembedgen = function (id) {
     let anonymity = selectedah.anonymity
     let ownerun = selectedah.ownerun
     if(!ownerun) ownertext = " "
-    else ownertext = `(${ownerun})`
+    else ownertext = `\`${ownerun}\``
     if (anonymity === true) topbidder = "Anonymous"
     else topbidder = `<@${selectedah.topbidder}>`
     let currentbid = selectedah.currentbid
@@ -372,7 +372,7 @@ module.exports.embedgen = function (id) {
     let anonymity = selectedah.anonymity
     let ownerun = selectedah.ownerun
     if(!ownerun) ownertext = " "
-    else ownertext = `(${ownerun})`
+    else ownertext = `\`${ownerun}\``
     let colorhex = colors[charmclass]
     let aucname = selectedah.aucname
     let rarity = selectedah.rarity
@@ -744,8 +744,6 @@ module.exports.prebidcheck = async function (id) {
     //if there are no prebids, do nothing
     if (prebidamount === 0) return
     let prebiduser = prebids[0].user
-    let guild = await client.guilds.fetch("313066655494438922")
-    guild.members.fetch()
     if (currentbid + increment <= prebidamount) {
         //if prebid is higher than current bid, immediately bid for min. increment
         if (endtime - Math.round(Date.now() / 1000) <= antisnipe) selectedah.endtime = Math.round(Date.now() / 1000) + antisnipe

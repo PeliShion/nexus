@@ -340,7 +340,7 @@ module.exports.postbidembedgen = function (id) {
     // else tags = tagsarr.join()
 
     let newahembed = new EmbedBuilder()
-        .setTitle(aucname + " | Auction ID: #" + id)
+        .setTitle(aucname + " | ID: #" + id)
         .setColor(colorhex)
         .addFields(
             { name: "Seller", value: `<@${owner}> ${ownertext}`, inline: true },
@@ -392,7 +392,7 @@ module.exports.embedgen = function (id) {
 
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
     let auctionembed = new EmbedBuilder()
-        .setTitle(aucname + " | Auction ID: #" + id)
+        .setTitle(aucname + " | ID: #" + id)
         .setColor(colorhex)
         .addFields(
             { name: "Seller", value: `<@${owner}> ${ownertext}`, inline: true },
@@ -615,7 +615,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                             .addComponents(bidminamount, bidcustomamount, bidprebid, togglenotif)
     
                         let prebidsubmitlog = miscembed()
-                            .setTitle(`Autobid submitted for auction ${id}`)
+                            .setTitle(`Autobid submitted for auction #${id}`)
                             .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
                             .setColor(0xCCCCFF)
                         let bidcustomlog = miscembed()
@@ -664,6 +664,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     await interactionsend(bluetext(`There was another autobid submitted, which beat or was equal to yours! The current bid is now ${nextcurbid}.`))
                     selectedah.currentbid = nextcurbid
                     selectedah.topbidder = prebiduser
+                    selectedah.bids.push({ "user": authorid, "bid": prebidamount})
                     selectedah.bids.push({ "user": prebiduser, "bid": nextcurbid })
                     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 
@@ -681,7 +682,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
 
 
                     let prebidsubmitlog = miscembed()
-                        .setTitle(`Autobid submitted for auction ${id}`)
+                        .setTitle(`Autobid submitted for auction #${id}`)
                         .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
                         .setColor(0xCCCCFF)
                     let bidcustomlog = miscembed()

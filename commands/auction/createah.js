@@ -138,7 +138,7 @@ module.exports = {
             let tempattachment = new AttachmentBuilder(`./tempimg/${tempfilename}.png`, { name: `${tempfilename}.png` })
             //preview embed
             let auctionembed = new EmbedBuilder()
-                  .setTitle(aucname + " | Auction ID: #" + (curaucid + 1))
+                  .setTitle(aucname + " | ID: #" + (curaucid + 1))
                   .setColor(colorhex)
                   .addFields(
                         { name: "Seller", value: `<@${interaction.user.id}> \`${interaction.user.username}\``, inline: true },
@@ -177,7 +177,7 @@ module.exports = {
                               .setStyle(ButtonStyle.Success)
                         const detailrow = new ActionRowBuilder().addComponents(showdetails)
                         let auctionembedsend = new EmbedBuilder()
-                              .setTitle(aucname + " | Auction ID: #" + (curaucid))
+                              .setTitle(aucname + " | ID: #" + (curaucid))
                               .setColor(colorhex)
                               .addFields(
                                     { name: "Seller", value: `<@${interaction.user.id}> \`${interaction.user.username}\``, inline: true },

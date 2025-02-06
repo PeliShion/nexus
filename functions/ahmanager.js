@@ -437,6 +437,11 @@ module.exports.auccheck = async function () {
             //check if an auction has ended
             //if it has, send the owner, top bidder, and other bidders notifications
             //if it fails to dm, send it in bot channel instead
+            if(curbid === 0) {
+                await client.channels.cache.get(newaucchannelid).messages.fetch(currentcheck.msgid).then(message => message.delete()).catch((err) => console.log(err))
+                currentcheck.msgid = "deleted"
+                fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
+            }
             let aucendlog = miscembed()
                 .setTitle(`Auction #${auctionid} ended`)
                 .setDescription(`Winner: <@${auctopbidder}>\nOwner: <@${aucowner}>\nAmount: ${curbid} HAR`)

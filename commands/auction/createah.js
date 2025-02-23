@@ -147,7 +147,7 @@ module.exports = {
                         { name: "\u200B", value: "\u200B" },
                         { name: "Minimum Bid", value: `${startingbid} HAR`, inline: true },
                         { name: "Increments:", value: increment.toString() + " HAR", inline: true },
-                        { name: "Rarity", value: rarity, inline: true },
+                        { name: "Rarity | Class", value: `${rarity} | ${charmclass}`, inline: true },
                   )
                   .setImage(`attachment://${tempattachment.name}`)
                   .setTimestamp()
@@ -186,7 +186,7 @@ module.exports = {
                                     { name: "\u200B", value: "\u200B" },
                                     { name: "Minimum Bid", value: `${startingbid} HAR`, inline: true },
                                     { name: "Increments", value: increment.toString() + " HAR", inline: true },
-                                    { name: "Rarity", value: rarity, inline: true },
+                                    { name: "Rarity | Class", value: `${rarity} | ${charmclass}`, inline: true },
                               )
                               .setImage(`attachment://${tempattachment.name}`)
                               .setTimestamp()

@@ -349,7 +349,7 @@ module.exports.postbidembedgen = function (id) {
             { name: "\u200B", value: "\u200B" },
             { name: "Current Bid", value: currentbid.toString() + " HAR " + topbidder, inline: true },
             { name: "Increment", value: increment.toString() + " HAR", inline: true },
-            { name: "Rarity", value: rarity, inline: true },
+            { name: "Rarity | Class", value: `${rarity} | ${charmclass}`, inline: true },
         )
         .setImage(`attachment://${attachment.name}`)
         .setTimestamp()
@@ -401,7 +401,7 @@ module.exports.embedgen = function (id) {
             { name: "\u200B", value: "\u200B" },
             { name: "Current Bid", value: topbiddertext, inline: true },
             { name: "Increment", value: increment.toString() + " HAR", inline: true },
-            { name: "Rarity", value: rarity, inline: true },
+            { name: "Rarity | Class", value: `${rarity} | ${charmclass}`, inline: true },
         )
         .setImage(`attachment://${attachment.name}`)
         .setTimestamp()

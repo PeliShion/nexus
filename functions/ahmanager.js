@@ -490,7 +490,7 @@ module.exports.auccheck = async function () {
             let aucendlog = miscembed()
                 .setTitle(`Auction #${auctionid} deleted`)
                 .setDescription(`Owner: <@${aucowner}> | No bids after 48 hours`)
-                .setColor(0xffff00)
+                .setColor(0xff0000)
             await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [aucendlog] }))
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
         }

@@ -13,11 +13,17 @@ module.exports = {
                 .setDescription("ID of the auction you want to delete")
                 .setRequired(true)
         )
+        .addStringOption(option => 
+            option.setName("reason")
+                  .setDescription("Reason for deleting the auction")
+        )
         .setDMPermission(false),
 
     async execute(interaction) {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true})
         let selectedid = interaction.options.getInteger("id") //collecting argument from the command
+        let reason = interaction.options.getString("reason")
+        if(!reason) reason = "No reason specified"
         let selectedah = listofauctions.find(x => x.id === selectedid) //search through the auction data
         let msgid = selectedah.msgid
         if (!selectedah) return await interaction.reply({ content: redtext("Could not find an auction with ID " + selectedid + "!"), ephemeral: true })
@@ -28,15 +34,16 @@ module.exports = {
         else for (i = 0; i < listofauctions.length; i++) {
             //if the user is allowed to delete, find the auction and splice out the data
             if (listofauctions[i].id === selectedid) {
-                listofauctions.splice(i, 1)
+                listofauctions[i].active = false
                 break
             } else continue
         }
+        if(interaction.user.id != ahowner) await client.users.send(ahowner, { content: redtext(`Auction #${auctionid} has been deleted! Reason: ${reason}`), embeds: [module.exports.embedgen(auctionid)], files: [attachment]})
         interaction.reply({ content: greentext("Deleted auction #" + selectedid + "!"), ephemeral: true })
         client.channels.cache.get(newaucchannelid).messages.fetch(msgid).then(message => message.delete())
         let deleteauclog = miscembed()
             .setTitle(`Auction #${selectedid} deleted`)
-            .setDescription(`Deleted by <@${interaction.user.id}>`)
+            .setDescription(`Deleted by <@${interaction.user.id}> | ${reason}`)
             .setColor(0xff0000)
         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [deleteauclog] }))
         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4))

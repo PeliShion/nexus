@@ -53,6 +53,7 @@ client.once(Events.ClientReady, () => {
 					"auctionbids": 0,
 					"auctionhosts": 0,
 					"totalharspent": 0,
+					"ign": "Not set"
 				}
 			  alluserdata.push(userdataobject)
 			  fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))

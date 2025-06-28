@@ -3,7 +3,6 @@ const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { redtext, greentext, bluetext, capfirstletter, disabledbuttons, miscembed, genmessagelink } = require("./functions.js")
 const { botchannelid, logchannelid, newaucchannelid } = require("../data/settings.json")
-const { error } = require('console')
 
 const bidcustomamount = new ButtonBuilder()
     .setCustomId('customamount')
@@ -36,6 +35,58 @@ module.exports.togglenotif = async function (id, interaction, authorid) {
     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 }
 
+module.exports.sendnotif = async function(id, bid, authorid) {
+    let selectedah = listofauctions.find(x => x.id === id);
+    let notifications = selectedah.notification
+    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
+
+    let bidamount = new ButtonBuilder()
+    .setCustomId('minamount')
+    .setLabel(`Bid ${bid} HAR`)
+    .setStyle(ButtonStyle.Primary);
+
+    const ahembedrow = new ActionRowBuilder()
+    .addComponents(bidminamount, bidamount, bidprebid, togglenotif)
+
+    for (i = 0; i < notifications.length; i++) {
+        //send a notification to everyone who is participating in the auction
+        const msguser = notifications[i]
+        if (msguser === authorid) continue
+        if (selectedah.blocknotif.includes(msguser)) continue
+        if (msguser === owner) {
+            let ownermessage = { content: bluetext(`Your auction #${id} now has ${bid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment], components: [notifrow] }
+            await client.users.send(msguser, ownermessage)
+            .then(ownermsg => {
+                const collector = ownermsg.createMessageComponentCollector({ time: 86400_00 })
+                collector.on('collect', async m => {
+                    m.deferUpdate()
+                    module.exports.togglenotif(id, m, msguser)
+                })
+            })
+            .catch((e) => console.log(e))
+        } 
+        else {
+            let sendmessage = { content: bluetext(`You have been outbidded for ${bid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+            await client.users.send(msguser, sendmessage)
+            .then(outbidresponse => {
+                const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
+                
+                collector.on('collect', async j => {
+                    //if the buttons in dms has been pressed, run function depending on what the user has chosen
+                    j.deferUpdate()
+                    const selection = j.customId
+                    collector.stop()
+                    if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
+                    else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
+                    else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
+                    else if (selection === 'togglenotif') module.exports.togglenotif(id, j, msguser)
+                })
+            })
+            .catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+        }
+    }
+}
+
 module.exports.bidmin = async function (id, interaction, authorid) {
     //function to run if a user chooses to bid next minimum bid.
 
@@ -57,22 +108,12 @@ module.exports.bidmin = async function (id, interaction, authorid) {
     let selectedah = listofauctions.find(x => x.id === id)
     let increment = selectedah.increment
     let owner = selectedah.owner
-    let notifications = selectedah.notification
     let nextbid = selectedah.currentbid + increment
     let currenttopbidder = selectedah.topbidder
     let minbid = selectedah.minbid
     let endtime = selectedah.endtime
     let antisnipe = selectedah.antisnipe
     if (nextbid < minbid) nextbid = minbid
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
-
-    let bidminamount = new ButtonBuilder()
-        .setCustomId('minamount')
-        .setLabel(`Bid ${nextbid + increment} HAR`)
-        .setStyle(ButtonStyle.Primary);
-
-    const ahembedrow = new ActionRowBuilder()
-        .addComponents(bidminamount, bidcustomamount, bidprebid, togglenotif)
 
     //multiple checks to see if the user can bid
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
@@ -108,38 +149,7 @@ module.exports.bidmin = async function (id, interaction, authorid) {
                 .setColor(0xCCCCFF)
             await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [bidminlog] }))
             await interactionsend(greentext(`Bid Successful!`))
-            for (i = 0; i < notifications.length; i++) {
-                //send a notification to everyone who is participating in the auction
-                const msguser = notifications[i]
-                if (msguser === authorid) continue
-                if (selectedah.blocknotif.includes(msguser)) continue
-
-                let ownermessage = { content: bluetext(`Your auction #${id} now has ${nextbid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment], components: [notifrow] }
-                if (msguser === owner) {
-                    let ownermsg = await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
-                    const collector = ownermsg.createMessageComponentCollector({ time: 86400_00 })
-                    collector.on('collect', async m => {
-                        m.deferUpdate()
-                        module.exports.togglenotif(id, m, msguser)
-                    })
-                } 
-                else {
-                    let sendmessage = { content: bluetext(`You have been outbidded for ${nextbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
-                    let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
-                    const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
-    
-                    collector.on('collect', async j => {
-                        //if the buttons in dms has been pressed, run function depending on what the user has chosen
-                        j.deferUpdate()
-                        const selection = j.customId
-                        collector.stop()
-                        if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
-                        else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
-                        else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
-                        else if (selection === 'togglenotif') module.exports.togglenotif(id, j, msguser)
-                    })
-                }
-            }
+            module.exports.sendnotif(id, nextbid, authorid);
             module.exports.prebidcheck(id)
             module.exports.updateembed(id)
         }
@@ -164,14 +174,12 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
     let increment = selectedah.increment
     let currenttopbidder = selectedah.topbidder
     let owner = selectedah.owner
-    let notifications = selectedah.notification
     let nextbid = selectedah.currentbid + increment
     let currentbid = selectedah.currentbid
     let minbid = selectedah.minbid
     let endtime = selectedah.endtime
     let antisnipe = selectedah.antisnipe
     if (currentbid == 0) nextbid = minbid
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
     else if (currenttopbidder === authorid) return await interactionsend(redtext("You are already the top bidder!"))
@@ -213,45 +221,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
                 await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [bidcustomlog] }))
                 fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                 await interactionsend(greentext(`Bid Successful!`))
-
-                let bidminamount = new ButtonBuilder()
-                    .setCustomId('minamount')
-                    .setLabel(`Bid ${customamountbid + increment} HAR`)
-                    .setStyle(ButtonStyle.Primary);
-
-                const ahembedrow = new ActionRowBuilder()
-                    .addComponents(bidminamount, bidcustomamount, bidprebid, togglenotif)
-
-                for (i = 0; i < notifications.length; i++) {
-                    const msguser = notifications[i]
-                    if (msguser === authorid) continue
-                    else if (selectedah.blocknotif.includes(msguser)) continue
-                    let ownermessage = { content: bluetext(`Your auction #${id} now has ${customamountbid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment], components: [notifrow] }
-                    if (msguser === owner) {
-                        let ownermsg = await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
-                        const collector = ownermsg.createMessageComponentCollector({ time: 86400_00 })
-                        collector.on('collect', async m => {
-                            m.deferUpdate()
-                            module.exports.togglenotif(id, m, msguser)
-                        })
-                    } 
-                    else {
-                        let sendmessage = { content: bluetext(`You have been outbidded for ${customamountbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
-                        let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
-                        const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
-        
-                        collector.on('collect', async j => {
-                            //if the buttons in dms has been pressed, run function depending on what the user has chosen
-                            j.deferUpdate()
-                            const selection = j.customId
-                            collector.stop()
-                            if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
-                            else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
-                            else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
-                            else if (selection === 'togglenotif') module.exports.togglenotif(id, j, msguser)
-                        })
-                    }
-                }
+                module.exports.sendnotif(id, nextbid, authorid);
                 module.exports.prebidcheck(id)
                 module.exports.updateembed(id)
             }
@@ -527,7 +497,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
     let selectedah = listofauctions.find(x => x.id === id)
     let increment = selectedah.increment
     let owner = selectedah.owner
-    let notifications = selectedah.notification
     let nextbid = selectedah.currentbid + increment
     let currentbid = selectedah.currentbid
     let minbid = selectedah.minbid
@@ -535,7 +504,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
     let antisnipe = selectedah.antisnipe
     let currenttopbidder = selectedah.topbidder
     if (currentbid == 0) nextbid = minbid
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
     //usual auction checks
     if (Math.round(Date.now() / 1000) > endtime) return await interactionsend(redtext("This auction has ended!"))
@@ -596,8 +564,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         .setColor(0xCCCCFF)
                         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))
                     }
-
-                    
                     else {
                         selectedah.prebids[0].amount = prebidamount
                         selectedah.prebids[0].user = authorid
@@ -612,14 +578,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
     
                         if (existingprebid > currentbid) await interactionsend(bluetext(`There was another autobid submitted, so your bid has been adjusted accordingly to beat it!`))
     
-                        let bidminamount = new ButtonBuilder()
-                            .setCustomId('minamount')
-                            .setLabel(`Bid ${nextcurbid + increment} HAR`)
-                            .setStyle(ButtonStyle.Primary);
-    
-                        const ahembedrow = new ActionRowBuilder()
-                            .addComponents(bidminamount, bidcustomamount, bidprebid, togglenotif)
-    
                         let prebidsubmitlog = miscembed()
                             .setTitle(`Autobid submitted for auction #${id}`)
                             .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
@@ -632,37 +590,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))
                         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [bidcustomlog] }))
                         module.exports.updateembed(id)
-                        for (i = 0; i < notifications.length; i++) {
-                            const msguser = notifications[i]
-                            if (msguser === authorid) continue
-                            else if (selectedah.blocknotif.includes(msguser)) continue
-
-                            let ownermessage = { content: bluetext(`Your auction #${id} now has ${nextcurbid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment], components: [notifrow] }
-                            if (msguser === owner) {
-                                let ownermsg = await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
-                                const collector = ownermsg.createMessageComponentCollector({ time: 86400_00 })
-                                collector.on('collect', async m => {
-                                    m.deferUpdate()
-                                    module.exports.togglenotif(id, m, msguser)
-                                })
-                            } 
-                            else {
-                                let sendmessage = { content: bluetext(`You have been outbidded for ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
-                                let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
-                                const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
-                
-                                collector.on('collect', async j => {
-                                    //if the buttons in dms has been pressed, run function depending on what the user has chosen
-                                    j.deferUpdate()
-                                    const selection = j.customId
-                                    collector.stop()
-                                    if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
-                                    else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
-                                    else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
-                                    else if (selection === 'togglenotif') module.exports.togglenotif(id, j, msguser)
-                                })
-                            }
-                        }
+                        module.exports.sendnotif(id, nextcurbid, authorid)
                     }
                 } else {
                     if (existingprebid < prebidamount + increment) nextcurbid = existingprebid
@@ -678,15 +606,6 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     let prebidtriggermsg = { content: greentext(`Your autobid on auction #${id} has triggered, bidding ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment] }
                     await client.users.send(prebiduser, prebidtriggermsg)
                     
-                    let bidminamount = new ButtonBuilder()
-                        .setCustomId('minamount')
-                        .setLabel(`Bid ${nextcurbid + increment} HAR`)
-                        .setStyle(ButtonStyle.Primary);
-
-                    const ahembedrow = new ActionRowBuilder()
-                        .addComponents(bidminamount, bidcustomamount, bidprebid, togglenotif)
-
-
                     let prebidsubmitlog = miscembed()
                         .setTitle(`Autobid submitted for auction #${id}`)
                         .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
@@ -699,37 +618,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))
                     await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [bidcustomlog] }))
                     module.exports.updateembed(id)
-                    for (i = 0; i < notifications.length; i++) {
-                        const msguser = notifications[i]
-                        if (msguser === selectedah.topbidder) continue
-                        else if (selectedah.blocknotif.includes(msguser)) continue
-
-                        let ownermessage = { content: bluetext(`Your auction #${id} now has ${nextcurbid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment], components: [notifrow] }
-                        if (msguser === owner) {
-                            let ownermsg = await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
-                            const collector = ownermsg.createMessageComponentCollector({ time: 86400_00 })
-                            collector.on('collect', async m => {
-                                m.deferUpdate()
-                                module.exports.togglenotif(id, m, msguser)
-                            })
-                        } 
-                        else {
-                            let sendmessage = { content: bluetext(`You have been outbidded for ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
-                            let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
-                            const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
-            
-                            collector.on('collect', async j => {
-                                //if the buttons in dms has been pressed, run function depending on what the user has chosen
-                                j.deferUpdate()
-                                const selection = j.customId
-                                collector.stop()
-                                if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
-                                else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
-                                else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
-                                else if (selection === 'togglenotif') module.exports.togglenotif(id, j, msguser)
-                            })
-                        }
-                    }
+                    module.exports.sendnotif(id, nextcurbid, authorid)
                 }
             }
         })
@@ -740,12 +629,10 @@ module.exports.prebidcheck = async function (id) {
     //grab auction information
     let selectedah = listofauctions.find(x => x.id === id)
     let increment = selectedah.increment
-    let owner = selectedah.owner
     let currentbid = selectedah.currentbid
     let antisnipe = selectedah.antisnipe
     let endtime = selectedah.endtime
     let prebids = selectedah.prebids
-    let notifications = selectedah.notification
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
     let prebidamount = prebids[0].amount
     //if there are no prebids, do nothing
@@ -770,47 +657,10 @@ module.exports.prebidcheck = async function (id) {
         let prebidtriggermsg = { content: greentext(`Your autobid on auction #${id} has triggered, bidding ${nextbidamount} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment] }
         await client.users.send(prebiduser, prebidtriggermsg)
         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
-        let bidminamount = new ButtonBuilder()
-            .setCustomId('minamount')
-            .setLabel(`Bid ${nextbidamount + increment} HAR`)
-            .setStyle(ButtonStyle.Primary);
-
-        const ahembedrow = new ActionRowBuilder()
-            .addComponents(bidminamount, bidcustomamount, bidprebid, togglenotif)
 
         module.exports.updateembed(id)
-
-        for (i = 0; i < notifications.length; i++) {
-            const msguser = notifications[i]
-            if (msguser === prebiduser) continue
-            else if (selectedah.blocknotif.includes(msguser)) continue
-
-            let ownermessage = { content: bluetext(`Your auction #${id} now has ${nextbidamount} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment], components: [notifrow] }
-            if (msguser === owner) {
-                let ownermsg = await client.users.send(msguser, ownermessage).catch((e) => console.log(e))
-                const collector = ownermsg.createMessageComponentCollector({ time: 86400_00 })
-                collector.on('collect', async m => {
-                    m.deferUpdate()
-                    module.exports.togglenotif(id, m, msguser)
-                })
-            } 
-            else {
-                let sendmessage = { content: bluetext(`You have been outbidded for ${nextbidamount} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
-                let outbidresponse = await client.users.send(msguser, sendmessage).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
-                const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
-
-                collector.on('collect', async j => {
-                    //if the buttons in dms has been pressed, run function depending on what the user has chosen
-                    j.deferUpdate()
-                    const selection = j.customId
-                    collector.stop()
-                    if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
-                    else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
-                    else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
-                    else if (selection === 'togglenotif') module.exports.togglenotif(id, j, msguser)
-                })
-            }
-        }
+        module.exports.sendnotif(id, nextbidamount, authorid)
+        
     } else return //else do nothing
 }
 

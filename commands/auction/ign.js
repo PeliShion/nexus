@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const { redtext } = require('../../functions/functions.js')
 const { botchannelid } = require("../../data/settings.json");
+const fs = require("fs")
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -22,15 +23,15 @@ module.exports = {
                 userdata.ign = "Not Set"
                 interaction.reply({ content: "The user has not set an ign.", ephemeral: true })
             }
-            else interaction.reply({ content: "Their ign is: `" + ign + "`"})
+            else interaction.reply({ content: "Their ign is: `" + ign + "`", ephemeral: true})
         } else {
             let owndata = alluserdata.find(x => x.userid === interaction.user.id)
             let ign = owndata.ign;
             if(!ign) {
                 owndata.ign = "Not Set";
-                interaction.reply("You have not set an ign.");
+                interaction.reply({ content: "You have not set an ign.", ephemeral: true});
             }
-            else interaction.reply({ content: "Your ign is: `" + ign + "`"})
+            else interaction.reply({ content: "Your ign is: `" + ign + "`", ephemeral: true})
         }
         fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
     }

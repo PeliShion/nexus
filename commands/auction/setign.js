@@ -1,10 +1,11 @@
 const { SlashCommandBuilder } = require('discord.js')
 const { redtext } = require('../../functions/functions.js')
 const { botchannelid } = require("../../data/settings.json");
+const fs = require("fs")
 
 module.exports = {
     data: new SlashCommandBuilder()
-          .setName("ign")
+          .setName("setign")
           .setDescription("Sets your ign")
           .setDMPermission(false)
           .addStringOption(option => 
@@ -18,7 +19,7 @@ module.exports = {
         let newign = interaction.options.getString("ign")
         let userdata = alluserdata.find(x => x.userid === interaction.user.id)
         userdata.ign = newign
-        interaction.reply("Your new ign has been set to: `" + ign + "`")
+        interaction.reply({ content: "Your new ign has been set to: `" + newign + "`", ephemeral: true})
         fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
     }
 }

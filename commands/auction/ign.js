@@ -18,7 +18,7 @@ module.exports = {
         let user = interaction.options?.getUser("user")
         if(user) {
             let userdata = alluserdata.find(x => x.userid === user.id)
-            let ign = userdata.ign;
+            let ign = userdata?.ign;
             if(!ign) {
                 userdata.ign = "Not Set"
                 interaction.reply({ content: "The user has not set an ign.", ephemeral: true })
@@ -26,7 +26,7 @@ module.exports = {
             else interaction.reply({ content: "Their ign is: `" + ign + "`", ephemeral: true})
         } else {
             let owndata = alluserdata.find(x => x.userid === interaction.user.id)
-            let ign = owndata.ign;
+            let ign = owndata?.ign;
             if(!ign) {
                 owndata.ign = "Not Set";
                 interaction.reply({ content: "You have not set an ign.", ephemeral: true});

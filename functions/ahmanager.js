@@ -38,22 +38,23 @@ module.exports.togglenotif = async function (id, interaction, authorid) {
 module.exports.sendnotif = async function(id, bid, authorid) {
     let selectedah = listofauctions.find(x => x.id === id);
     let notifications = selectedah.notification
+    let increment = selectedah.increment
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
-    let bidamount = new ButtonBuilder()
+    let bidminamount = new ButtonBuilder()
     .setCustomId('minamount')
-    .setLabel(`Bid ${bid} HAR`)
+    .setLabel(`Bid ${bid + increment} HAR`)
     .setStyle(ButtonStyle.Primary);
 
     const ahembedrow = new ActionRowBuilder()
-    .addComponents(bidminamount, bidamount, bidprebid, togglenotif)
+    .addComponents(bidminamount, bidcustomamount, bidprebid, togglenotif)
 
     for (i = 0; i < notifications.length; i++) {
         //send a notification to everyone who is participating in the auction
         const msguser = notifications[i]
         if (msguser === authorid) continue
         if (selectedah.blocknotif.includes(msguser)) continue
-        if (msguser === owner) {
+        if (msguser === selectedah.owner) {
             let ownermessage = { content: bluetext(`Your auction #${id} now has ${bid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment], components: [notifrow] }
             await client.users.send(msguser, ownermessage)
             .then(ownermsg => {
@@ -221,7 +222,7 @@ module.exports.bidcustom = async function (id, interaction, authorid) {
                 await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [bidcustomlog] }))
                 fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                 await interactionsend(greentext(`Bid Successful!`))
-                module.exports.sendnotif(id, nextbid, authorid);
+                module.exports.sendnotif(id, customamountbid, authorid);
                 module.exports.prebidcheck(id)
                 module.exports.updateembed(id)
             }
@@ -659,7 +660,7 @@ module.exports.prebidcheck = async function (id) {
         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 
         module.exports.updateembed(id)
-        module.exports.sendnotif(id, nextbidamount, authorid)
+        module.exports.sendnotif(id, nextbidamount, prebiduser)
         
     } else return //else do nothing
 }

@@ -9,17 +9,17 @@ module.exports = {
           .setDMPermission(false)
           .addStringOption(option => 
             option.setName("ign")
-                  .setDescription("User to search for using ign")
+                  .setDescription("User to search for using ign, case-insensitive")
                   .setRequired(true)
           ),
 
     async execute(interaction) {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true })
         let ign = interaction.options?.getString("ign")
-        let userdata = alluserdata.find(x => x.ign === ign)
+        let userdata = alluserdata.find(x => x.ign.toLowerCase() === ign.toLowerCase())
         if(!userdata) {
-            interaction.reply({ content: "The user has not set an ign.", ephemeral: true});
+            interaction.reply({ content: "Could not find a user with ign `" + ign + "`", ephemeral: true});
         }
-        else interaction.reply({ content: "Their ign is: `" + ign + "`", ephemeral: true})
+        else interaction.reply({ content: "Their Discord User is: <@" + userdata.userid + ">", ephemeral: true})
     }
 }

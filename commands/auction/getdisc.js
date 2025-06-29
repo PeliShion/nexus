@@ -16,7 +16,7 @@ module.exports = {
     async execute(interaction) {
         if (interaction.channel.id !== botchannelid) return await interaction.reply({ content: redtext("You can only use this bot in charms-discussion!"), ephemeral: true })
         let ign = interaction.options?.getString("ign")
-        let userdata = alluserdata.find(x => x.ign.toLowerCase() === ign.toLowerCase())
+        let userdata = alluserdata.find(x => x.ign?.toLowerCase() === ign.toLowerCase())
         if(!userdata) {
             interaction.reply({ content: "Could not find a user with ign `" + ign + "`", ephemeral: true});
         }

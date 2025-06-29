@@ -38,7 +38,6 @@ module.exports = {
                 break
             } else continue
         }
-        if(interaction.user.id != ahowner) await client.users.send(ahowner, { content: redtext(`Auction #${auctionid} has been deleted! Reason: ${reason}`), embeds: [module.exports.embedgen(auctionid)], files: [attachment]})
         interaction.reply({ content: greentext("Deleted auction #" + selectedid + "!"), ephemeral: true })
         client.channels.cache.get(newaucchannelid).messages.fetch(msgid).then(message => message.delete())
         let deleteauclog = miscembed()

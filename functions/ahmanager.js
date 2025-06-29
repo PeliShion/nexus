@@ -2,7 +2,7 @@ const { ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, AttachmentBu
 const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { redtext, greentext, bluetext, capfirstletter, disabledbuttons, miscembed, genmessagelink } = require("./functions.js")
-const { botchannelid, logchannelid, newaucchannelid } = require("../data/settings.json")
+const { botchannelid, logchannelid, newaucchannelid, guildid } = require("../data/settings.json")
 
 const bidcustomamount = new ButtonBuilder()
     .setCustomId('customamount')
@@ -385,7 +385,7 @@ module.exports.auccheck = async function () {
     //auction checks to see if they have ended
     //this is used in index.js, and ran every minute
     let currenttime = Math.round(Date.now() / 1000)
-    let guild = await client.guilds.fetch("313066655494438922")
+    let guild = await client.guilds.fetch(guildid)
     guild.members.fetch()
     for (let i = 0; i < listofauctions.length; i++) {
         //loop through the auction data
@@ -406,9 +406,9 @@ module.exports.auccheck = async function () {
             let ownerusername = await client.users.cache.get(aucowner).username
             let ownerdata = alluserdata.find(x => x.userid === aucowner)
             let winnerdata = alluserdata.find(x => x.userid === auctopbidder)
-            let ownerign = ownerdata.ign || "Not Set"
+            let ownerign = ownerdata?.ign || "Not Set"
             let winnerign; 
-            if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username, winnerign = winnerdata.ign || "Not Set"
+            if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username, winnerign = winnerdata?.ign || "Not Set"
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             //check if an auction has ended
             //if it has, send the owner, top bidder, and other bidders notifications
@@ -429,7 +429,7 @@ module.exports.auccheck = async function () {
                 let msguser = notifusers[j]
                 if (msguser === auctopbidder) {
                     winnerdata.auctionswon++
-                    winnerdata.totalharspent = userdata.totalharspent + curbid
+                    winnerdata.totalharspent = winnerdata.totalharspent + curbid
                     fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
                     client.users.send(msguser, ({ content: bluetext(`You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!\nTheir ign: ${ownerign}`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!\nPlease enable DMs with the bot!`)))
                 } else if (msguser === aucowner) {

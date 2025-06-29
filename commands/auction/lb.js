@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 const { redtext } = require('../../functions/functions.js')
 const { botchannelid } = require("../../data/settings.json");
 
@@ -23,10 +23,11 @@ module.exports = {
         let chosenLb = interaction.options.getString("stats")
         let searchKey;
         let unit;
-        if (chosenLb === "spent") searchKey = "totalharspent", unit = "HAR"
-        else if (chosenLb === "created") searchKey = "auctionhosts", unit = "Auctions"
-        else if (chosenLb === "bids") searchKey = "auctionbids", unit = "Bids"
-        else searchKey = "auctionswon", unit = "Auctions"
+        let title;
+        if (chosenLb === "spent") searchKey = "totalharspent", unit = "HAR", title = "Total HAR Spent on Auctions"
+        else if (chosenLb === "created") searchKey = "auctionhosts", unit = "Auctions", title = "Number of Auction Created"
+        else if (chosenLb === "bids") searchKey = "auctionbids", unit = "Bids", title = "Total Number of Bids"
+        else searchKey = "auctionswon", unit = "Auctions", title = "Number of Auctions Won"
 
         function generateLb(data, key, userId, top) {
             // Sort and filter valid entries
@@ -51,7 +52,7 @@ module.exports = {
             const userLine = (userIndex >= top) ? `\n...\n**#${userRank}** <@${userId}> — \`${userScore}\` ${unit}` : '';
 
             const embed = new EmbedBuilder()
-                .setTitle(`🏆 Leaderboard: ${key}`)
+                .setTitle("Leaderboard for " + title)
                 .setDescription(topList + userLine)
                 .setColor(0x00AE86)
                 .setTimestamp()

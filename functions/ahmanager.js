@@ -404,7 +404,11 @@ module.exports.auccheck = async function () {
             await client.users.fetch(aucowner)
             if (auctopbidder != 0) await client.users.fetch(auctopbidder)
             let ownerusername = await client.users.cache.get(aucowner).username
-            if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username
+            let ownerdata = alluserdata.find(x => x.userid === aucowner)
+            let winnerdata = alluserdata.find(x => x.userid === auctopbidder)
+            let ownerign = ownerdata.ign || "Not Set"
+            let winnerign; 
+            if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username, winnerign = winnerdata.ign || "Not Set"
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             //check if an auction has ended
             //if it has, send the owner, top bidder, and other bidders notifications
@@ -424,14 +428,13 @@ module.exports.auccheck = async function () {
             for (let j = 0; j < notifusers.length; j++) {
                 let msguser = notifusers[j]
                 if (msguser === auctopbidder) {
-                    let userdata = alluserdata.find(x => x.userid === auctopbidder)
-                    userdata.auctionswon++
-                    userdata.totalharspent = userdata.totalharspent + curbid
+                    winnerdata.auctionswon++
+                    winnerdata.totalharspent = userdata.totalharspent + curbid
                     fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
-                    client.users.send(msguser, ({ content: bluetext(`You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!\nPlease enable DMs with the bot!`)))
+                    client.users.send(msguser, ({ content: bluetext(`You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!\nTheir ign: ${ownerign}`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!\nPlease enable DMs with the bot!`)))
                 } else if (msguser === aucowner) {
                     if (auctopbidder === 0) client.users.send(msguser, ({ content: redtext(`Your auction #${auctionid} has ended but with no bids!`), embeds:[module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended but with no bids!\nPlease enable DMs with the bot!`)))
-                    else client.users.send(msguser, ({ content: bluetext(`Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbidusername} to sell your charm.`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbidusername} to sell your charm.\nPlease enable DMs with the bot!`)))
+                    else client.users.send(msguser, ({ content: bluetext(`Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbidusername} to sell your charm.\nTheir ign: ${winnerign}`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbidusername} to sell your charm.\nPlease enable DMs with the bot!`)))
                 } else client.users.send(msguser, ({ content: redtext(`The auction #${auctionid} has ended with ${curbid} HAR as top bid! You unfortunately did not win the auction.`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             }
             fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));

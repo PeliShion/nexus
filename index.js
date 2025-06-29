@@ -80,6 +80,7 @@ client.on(Events.InteractionCreate, async interaction => {
 			"auctionbids": 0,
 			"auctionhosts": 0,
 			"totalharspent": 0,
+			"ign": "Not Set",
 		}
 	  alluserdata.push(userdataobject)
 	  fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))

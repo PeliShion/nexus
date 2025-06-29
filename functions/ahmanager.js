@@ -241,14 +241,15 @@ module.exports.biddms = async function (id, authorid) {
     let increment = selectedah.increment
     let endtime = selectedah.endtime
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
-    let userdata = alluserdata.find(x => x.userid === id)
+    let userdata = alluserdata.find(x => x.userid === authorid)
     if (!userdata) {
         let userdataobject = {
-            "userid": id,
+            "userid": authorid,
             "auctionswon": 0,
             "auctionbids": 0,
             "auctionhosts": 0,
             "totalharspent": 0,
+            "ign": "Not Set",
         }
         alluserdata.push(userdataobject)
         fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))

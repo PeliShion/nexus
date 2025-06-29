@@ -91,6 +91,7 @@ module.exports = {
             //check current auciton ID
             let settings = JSON.parse(fs.readFileSync("./data/settings.json"))
             let curaucid = settings.currentauctionid
+            let tempid = curaucid + 1
             //turn the options collected into variables
             let rarity = interaction.options.getString("rarity")
             let startingbid = interaction.options.getInteger("startingbid")
@@ -103,7 +104,7 @@ module.exports = {
             let imagelink = interaction.options.getAttachment("image").url
             let image2link = interaction.options.getAttachment('image2')
             let aucname = interaction.options.getString('name')
-            let tempfilename = `${interaction.user.id + (curaucid + 1)}`
+            let tempfilename = `${interaction.user.id + (tempid)}`
             if (image2link) {
                   let img = await mergeImg([imagelink, image2link.url])
                   await img.write(`./tempimg/${tempfilename}.png`)
@@ -138,7 +139,7 @@ module.exports = {
             let tempattachment = new AttachmentBuilder(`./tempimg/${tempfilename}.png`, { name: `${tempfilename}.png` })
             //preview embed
             let auctionembed = new EmbedBuilder()
-                  .setTitle(aucname + " | ID: #" + (curaucid + 1))
+                  .setTitle(aucname + " | ID: #" + (tempid))
                   .setColor(colorhex)
                   .addFields(
                         { name: "Seller", value: `<@${interaction.user.id}> \`${interaction.user.username}\``, inline: true },
@@ -166,6 +167,7 @@ module.exports = {
                   const selection = i.customId
                   if (selection === "confirm") {
                         //if collected confirm, increase the auciton id, save it, send the embed to new-auctions channel, and push the data to auctions.json
+                        if(settings.currentauctionid >= tempid) curaucid = settings.currentauctionid
                         curaucid++
                         msgid = 0
                         settings.currentauctionid = curaucid

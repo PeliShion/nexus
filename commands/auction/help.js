@@ -55,7 +55,10 @@ module.exports = {
                 { name: "**createah**", value: "Creates an auction" },
                 { name: "**searchah**", value: "Searches auction for charms using arguments" },
                 { name: "**getah**", value: "Gets auction by ID or User" },
-                { name: "**bids**", value: "View the bids on the auction" },
+                { name: "**bids**", value: "View the bids on the auction"},
+                { name: "**lb**", value: "View leaderboards" },
+                { name: "**ign**", value: "View the ign of other players"},
+                { name: "**setign**", value: "Set ign of your own"},
                 { name: "**deleteah**", value: "Deletes an auction if there are no bids and you are the owner" },
                 { name: "**me**", value: "Look at your auction stats"}
             )

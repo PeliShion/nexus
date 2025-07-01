@@ -1,5 +1,6 @@
 data/settings.json
 data/auctions.json
 data/userdata.json
+commands/auction/template.js
 tempimg
 images

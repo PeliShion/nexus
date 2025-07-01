@@ -55,7 +55,7 @@ module.exports.sendnotif = async function(id, bid, authorid) {
         if (msguser === authorid) continue
         if (selectedah.blocknotif.includes(msguser)) continue
         if (msguser === selectedah.owner) {
-            let ownermessage = { content: bluetext(`Your auction #${id} now has ${bid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment], components: [notifrow] }
+            let ownermessage = { content: bluetext(`Your auction #${id} now has ${bid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.embedgen(id)], files: [attachment], components: [notifrow] }
             await client.users.send(msguser, ownermessage)
             .then(ownermsg => {
                 const collector = ownermsg.createMessageComponentCollector({ time: 86400_00 })
@@ -67,7 +67,7 @@ module.exports.sendnotif = async function(id, bid, authorid) {
             .catch((e) => console.log(e))
         } 
         else {
-            let sendmessage = { content: bluetext(`You have been outbidded for ${bid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], components: [ahembedrow], files: [attachment] }
+            let sendmessage = { content: bluetext(`You have been outbidded for ${bid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.embedgen(id)], components: [ahembedrow], files: [attachment] }
             await client.users.send(msguser, sendmessage)
             .then(outbidresponse => {
                 const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
@@ -284,51 +284,6 @@ module.exports.biddms = async function (id, authorid) {
     })
 }
 
-module.exports.postbidembedgen = function (id) {
-
-    //embed generator after the user bids.
-    //find the auction and set up variables
-
-    let selectedah = listofauctions.find(x => x.id === id)
-    let increment = selectedah.increment
-    let owner = selectedah.owner
-    let endtime = selectedah.endtime
-    let antisnipestring = selectedah.antisnipestring
-    let charmclass = selectedah.class
-    let anonymity = selectedah.anonymity
-    let ownerun = selectedah.ownerun
-    if(!ownerun) ownertext = " "
-    else ownertext = `\`${ownerun}\``
-    if (anonymity === true) topbidder = "Anonymous"
-    else topbidder = `<@${selectedah.topbidder}>`
-    let currentbid = selectedah.currentbid
-    let rarity = selectedah.rarity
-    let colorhex = colors[charmclass]
-    let aucname = selectedah.aucname
-
-    let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
-    // let tagsarr = selectedah.tags
-    // if (tagsarr === undefined) tags = "None"
-    // else tags = tagsarr.join()
-
-    let newahembed = new EmbedBuilder()
-        .setTitle(aucname + " | ID: #" + id)
-        .setColor(colorhex)
-        .addFields(
-            { name: "Seller", value: `<@${owner}> ${ownertext}`, inline: true },
-            { name: "Ends", value: `<t:${endtime}:R>`, inline: true },
-            { name: "Anti-snipe Length", value: antisnipestring, inline: true },
-            { name: "\u200B", value: "\u200B" },
-            { name: "Current Bid", value: currentbid.toString() + " HAR " + topbidder, inline: true },
-            { name: "Increment", value: increment.toString() + " HAR", inline: true },
-            { name: "Rarity | Class", value: `${rarity} | ${charmclass}`, inline: true },
-        )
-        .setImage(`attachment://${attachment.name}`)
-        .setTimestamp()
-        .setFooter({ text: "If there are any issues, DM @pe.li!", iconURL: "https://static.wikia.nocookie.net/monumentammo/images/8/80/ItemTexturePortable_Parrot_Bell.png" })
-
-    return newahembed;
-}
 
 module.exports.embedgen = function (id) {
     //embed generator to display auctions with id
@@ -608,7 +563,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 
                     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
-                    let prebidtriggermsg = { content: greentext(`Your autobid on auction #${id} has triggered, bidding ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment] }
+                    let prebidtriggermsg = { content: greentext(`Your autobid on auction #${id} has triggered, bidding ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.embedgen(id)], files: [attachment] }
                     await client.users.send(prebiduser, prebidtriggermsg)
                     
                     let prebidsubmitlog = miscembed()
@@ -659,7 +614,7 @@ module.exports.prebidcheck = async function (id) {
             .setDescription(`Bidder: <@${prebiduser}>\nAmount: ${nextbidamount} HAR (This is an autobid)`)
             .setColor(0xCCCCFF)
         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidlog] }))
-        let prebidtriggermsg = { content: greentext(`Your autobid on auction #${id} has triggered, bidding ${nextbidamount} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.postbidembedgen(id)], files: [attachment] }
+        let prebidtriggermsg = { content: greentext(`Your autobid on auction #${id} has triggered, bidding ${nextbidamount} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.embedgen(id)], files: [attachment] }
         await client.users.send(prebiduser, prebidtriggermsg)
         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 
@@ -678,5 +633,5 @@ module.exports.updateembed = async function (id) {
         .setLabel("Show Auction Details")
         .setStyle(ButtonStyle.Success)
     const detailrow = new ActionRowBuilder().addComponents(showdetails)
-    client.channels.cache.get(newaucchannelid).messages.fetch(msgid).then(message => message.edit({ embeds: [module.exports.postbidembedgen(id)], components: [detailrow], files: [attachment] }))
+    client.channels.cache.get(newaucchannelid).messages.fetch(msgid).then(message => message.edit({ embeds: [module.exports.embedgen(id)], components: [detailrow], files: [attachment] }))
 }

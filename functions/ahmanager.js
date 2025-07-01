@@ -2,7 +2,7 @@ const { ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, AttachmentBu
 const fs = require("fs")
 const colors = JSON.parse(fs.readFileSync("./data/colors.json"))
 const { redtext, greentext, bluetext, capfirstletter, disabledbuttons, miscembed, genmessagelink } = require("./functions.js")
-const { botchannelid, logchannelid, newaucchannelid, guildid } = require("../data/settings.json")
+const { botchannelid, logchannelid, newaucchannelid, expiredchid, guildid } = require("../data/settings.json")
 
 const bidcustomamount = new ButtonBuilder()
     .setCustomId('customamount')
@@ -284,7 +284,6 @@ module.exports.biddms = async function (id, authorid) {
     })
 }
 
-
 module.exports.embedgen = function (id) {
     //embed generator to display auctions with id
     //find the auction and set up variables
@@ -355,6 +354,8 @@ module.exports.auccheck = async function () {
         let starttime = currentcheck.starttime
         let aucowner = currentcheck.owner
         if (isauctionactive === true && auctionendtime < currenttime) {
+            let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
+            await client.channels.fetch(expiredchid).then(channel => channel.send({ embeds: [module.exports.embedgen((auctionid))], files: [attachment] }))
             let auctopbidder = currentcheck.topbidder
             await client.users.fetch(aucowner)
             if (auctopbidder != 0) await client.users.fetch(auctopbidder)
@@ -364,7 +365,6 @@ module.exports.auccheck = async function () {
             let ownerign = ownerdata?.ign || "Not Set"
             let winnerign; 
             if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username, winnerign = winnerdata?.ign || "Not Set"
-            let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
             //check if an auction has ended
             //if it has, send the owner, top bidder, and other bidders notifications
             //if it fails to dm, send it in bot channel instead

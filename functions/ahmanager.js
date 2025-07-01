@@ -364,6 +364,9 @@ module.exports.auccheck = async function () {
             let ownerusername = await client.users.cache.get(aucowner).username
             let ownerdata = alluserdata.find(x => x.userid === aucowner)
             let winnerdata = alluserdata.find(x => x.userid === auctopbidder)
+            ownerdata.totalharearned += curbid
+            if(winnerdata.highestwinbid < curbid) winnerdata.highestwinbid = curbid
+            fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4));
             let ownerign = ownerdata?.ign || "Not Set"
             let winnerign; 
             if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username, winnerign = winnerdata?.ign || "Not Set"

@@ -249,6 +249,8 @@ module.exports.biddms = async function (id, authorid) {
             "auctionbids": 0,
             "auctionhosts": 0,
             "totalharspent": 0,
+            "totalharearned": 0,
+			"highestwinbid": 0,
             "ign": "Not Set",
         }
         alluserdata.push(userdataobject)

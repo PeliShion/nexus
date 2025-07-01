@@ -16,6 +16,8 @@ module.exports = {
                     { name: "Number of Bids", value: "bids" },
                     { name: "Auctions Created", value: "created" },
                     { name: "HAR spent", value: "spent" },
+                    { name: "HAR earned", value: "earned"},
+                    { name: "Highest Winning Bid", value: "highestbid"},
                 )),
 
     async execute(interaction) {
@@ -27,6 +29,8 @@ module.exports = {
         if (chosenLb === "spent") searchKey = "totalharspent", unit = "HAR", title = "Total HAR Spent on Auctions"
         else if (chosenLb === "created") searchKey = "auctionhosts", unit = "Auctions", title = "Number of Auction Created"
         else if (chosenLb === "bids") searchKey = "auctionbids", unit = "Bids", title = "Total Number of Bids"
+        else if(chosenLb === "earned") searchKey = "totalharearned", unit = "HAR", title = "Total HAR Earned from Auctions"
+        else if(chosenLb === "highestbid") searchKey = "highestwinbid", unit = "HAR", title = "Highest Winning Bid"
         else searchKey = "auctionswon", unit = "Auctions", title = "Number of Auctions Won"
 
         function generateLb(data, key, userId, top) {

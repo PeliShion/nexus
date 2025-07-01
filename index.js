@@ -53,6 +53,8 @@ client.once(Events.ClientReady, () => {
 					"auctionbids": 0,
 					"auctionhosts": 0,
 					"totalharspent": 0,
+					"totalharearned": 0,
+					"highestwinbid": 0,
 					"ign": "Not set"
 				}
 			  alluserdata.push(userdataobject)
@@ -80,6 +82,8 @@ client.on(Events.InteractionCreate, async interaction => {
 			"auctionbids": 0,
 			"auctionhosts": 0,
 			"totalharspent": 0,
+			"totalharearned": 0,
+			"highestwinbid": 0,
 			"ign": "Not Set",
 		}
 	  alluserdata.push(userdataobject)

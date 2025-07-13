@@ -52,13 +52,15 @@ module.exports = {
         const ahcommandembed = new EmbedBuilder()
             .setTitle("Commands")
             .addFields(
-                { name: "**createah**", value: "Creates an auction" },
+                { name: "**qc**", value: "Creates an auction using your preferred arguments" },
+                { name: "**createah**", value: "Creates an auction with custom arguments" },
                 { name: "**searchah**", value: "Searches auction for charms using arguments" },
                 { name: "**getah**", value: "Gets auction by ID or User" },
                 { name: "**bids**", value: "View the bids on the auction"},
                 { name: "**lb**", value: "View leaderboards" },
                 { name: "**ign**", value: "View the ign of other players"},
                 { name: "**setign**", value: "Set ign of your own"},
+                { name: "**setqc**", value: "Sets qc's arguments" },
                 { name: "**deleteah**", value: "Deletes an auction if there are no bids and you are the owner" },
                 { name: "**me**", value: "Look at your auction stats"}
             )

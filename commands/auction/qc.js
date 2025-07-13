@@ -83,12 +83,12 @@ module.exports = {
             if (image2link) {
                   let img = await mergeImg([imagelink, image2link.url])
                   await img.write(`./tempimg/${tempfilename}.png`)
-                  await new Promise(r => setTimeout(r, 1000));
+                  await new Promise(r => setTimeout(r, 2000));
             } else {
                   await fetch(imagelink).then(res => {
                         res.body.pipe(fs.createWriteStream(`./tempimg/${tempfilename}.png`))
                   })
-                  await new Promise(r => setTimeout(r, 1000))
+                  await new Promise(r => setTimeout(r, 2000))
             }
 
             let colorhex = colors[charmclass] //color of the embed

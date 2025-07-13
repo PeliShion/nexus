@@ -8,8 +8,8 @@ const { newaucchannelid, logchannelid, botchannelid } = JSON.parse(fs.readFileSy
 
 module.exports = {
       data: new SlashCommandBuilder()
-            .setName('createah')
-            .setDescription('Create a new auction')
+            .setName('qc')
+            .setDescription('Create an auction with settings you have configured')
             .setDMPermission(false)
             .addStringOption(option =>
                   option.setName("rarity")
@@ -69,8 +69,10 @@ module.exports = {
             let charmclass = interaction.options.getString("class")
             let cp = interaction.options.getInteger("cp")
 
-            let antisnipelength = userdata.qc.antisnipestring
-            let antisnipelengthins = userdata.qc.antisnipesec
+            let antisnipe = userdata.qc.antisnipe
+            let antisnipelengthins = antisnipe * 3600
+            let antisnipelength = antisnipe + "h"
+            
             let startingbid = userdata.qc.startingbid
             let increment = userdata.qc.increment
             let length = userdata.qc.length

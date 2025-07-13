@@ -43,11 +43,13 @@ module.exports = {
         if (length.includes("h")) ahlengthinsec = +(length.replace(/[a-zA-Z]/g, "")) * 3600
         else if (length.includes("d")) ahlengthinsec = +(length.replace(/[a-zA-Z]/g, "")) * 86400
         else return await interaction.editReply({ content: redtext("Please input a valid time for auction length in h or d!"), ephemeral: true })
-        
-        userdata.qc.length = ahlengthinsec
-        userdata.qc.startingbid = startingbid
-        userdata.qc.increment = increment
-        userdata.qc.antisnipe = antisnipe
+
+        userdata.qc = {
+          length: ahlengthinsec,
+          startingbid: startingbid,
+          increment: increment,
+          antisnipe: antisnipe
+        }
 
         interaction.reply({ content: "Success.", ephemeral: true})
         fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))

@@ -46,7 +46,7 @@ client.once(Events.ClientReady, () => {
 		collector.on('collect', async i => {
 			i.deferUpdate()
 			let userdata = alluserdata.find(x => x.userid === i.user.id)
-			if(!userdata) {
+			if (!userdata) {
 				let userdataobject = {
 					"userid": i.user.id,
 					"auctionswon": 0,
@@ -55,10 +55,16 @@ client.once(Events.ClientReady, () => {
 					"totalharspent": 0,
 					"totalharearned": 0,
 					"highestwinbid": 0,
-					"ign": "Not set"
+					"ign": "Not set",
+					"qc": {
+						"length": 172800,
+						"startingbid": 10,
+						"increment": 2,
+						"antisnipe": 12
+					}
 				}
-			  alluserdata.push(userdataobject)
-			  fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
+				alluserdata.push(userdataobject)
+				fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
 			}
 			let collected = +i.customId
 			biddms(collected, i.user.id)
@@ -75,7 +81,7 @@ client.on(Events.InteractionCreate, async interaction => {
 	const command = interaction.client.commands.get(interaction.commandName);
 	console.log(`${interaction.user.username} used ${interaction.commandName}`)
 	let userdata = alluserdata.find(x => x.userid === interaction.user.id)
-	if(!userdata) {
+	if (!userdata) {
 		let userdataobject = {
 			"userid": interaction.user.id,
 			"auctionswon": 0,
@@ -85,15 +91,21 @@ client.on(Events.InteractionCreate, async interaction => {
 			"totalharearned": 0,
 			"highestwinbid": 0,
 			"ign": "Not Set",
+			"qc": {
+				"length": 172800,
+				"startingbid": 10,
+				"increment": 2,
+				"antisnipe": 12
+			}
 		}
-	  alluserdata.push(userdataobject)
-	  fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
+		alluserdata.push(userdataobject)
+		fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
 	}
 	let settings = JSON.parse(fs.readFileSync('./data/settings.json'))
 	let bannedusers = settings.bannedusers
-	for(i = 0; i < bannedusers.length; i++) {
+	for (i = 0; i < bannedusers.length; i++) {
 		let user = bannedusers[i].user
-		if(interaction.user.id === user) return await interaction.reply({ content:redtext(`You are banned from running a command!`), ephemeral:true})
+		if (interaction.user.id === user) return await interaction.reply({ content: redtext(`You are banned from running a command!`), ephemeral: true })
 		else continue
 	}
 	if (!command) {

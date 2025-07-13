@@ -35,19 +35,19 @@ module.exports.togglenotif = async function (id, interaction, authorid) {
     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 }
 
-module.exports.sendnotif = async function(id, bid, authorid) {
+module.exports.sendnotif = async function (id, bid, authorid) {
     let selectedah = listofauctions.find(x => x.id === id);
     let notifications = selectedah.notification
     let increment = selectedah.increment
     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
 
     let bidminamount = new ButtonBuilder()
-    .setCustomId('minamount')
-    .setLabel(`Bid ${bid + increment} HAR`)
-    .setStyle(ButtonStyle.Primary);
+        .setCustomId('minamount')
+        .setLabel(`Bid ${bid + increment} HAR`)
+        .setStyle(ButtonStyle.Primary);
 
     const ahembedrow = new ActionRowBuilder()
-    .addComponents(bidminamount, bidcustomamount, bidprebid, togglenotif)
+        .addComponents(bidminamount, bidcustomamount, bidprebid, togglenotif)
 
     for (i = 0; i < notifications.length; i++) {
         //send a notification to everyone who is participating in the auction
@@ -57,33 +57,33 @@ module.exports.sendnotif = async function(id, bid, authorid) {
         if (msguser === selectedah.owner) {
             let ownermessage = { content: bluetext(`Your auction #${id} now has ${bid} HAR as current bid!`) + `\n` + genmessagelink(id), embeds: [module.exports.embedgen(id)], files: [attachment], components: [notifrow] }
             await client.users.send(msguser, ownermessage)
-            .then(ownermsg => {
-                const collector = ownermsg.createMessageComponentCollector({ time: 86400_00 })
-                collector.on('collect', async m => {
-                    m.deferUpdate()
-                    module.exports.togglenotif(id, m, msguser)
+                .then(ownermsg => {
+                    const collector = ownermsg.createMessageComponentCollector({ time: 86400_00 })
+                    collector.on('collect', async m => {
+                        m.deferUpdate()
+                        module.exports.togglenotif(id, m, msguser)
+                    })
                 })
-            })
-            .catch((e) => console.log(e))
-        } 
+                .catch((e) => console.log(e))
+        }
         else {
             let sendmessage = { content: bluetext(`You have been outbidded for ${bid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.embedgen(id)], components: [ahembedrow], files: [attachment] }
             await client.users.send(msguser, sendmessage)
-            .then(outbidresponse => {
-                const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
-                
-                collector.on('collect', async j => {
-                    //if the buttons in dms has been pressed, run function depending on what the user has chosen
-                    j.deferUpdate()
-                    const selection = j.customId
-                    collector.stop()
-                    if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
-                    else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
-                    else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
-                    else if (selection === 'togglenotif') module.exports.togglenotif(id, j, msguser)
+                .then(outbidresponse => {
+                    const collector = outbidresponse.createMessageComponentCollector({ time: 86400_00 })
+
+                    collector.on('collect', async j => {
+                        //if the buttons in dms has been pressed, run function depending on what the user has chosen
+                        j.deferUpdate()
+                        const selection = j.customId
+                        collector.stop()
+                        if (selection === 'minamount') module.exports.bidmin(id, j, msguser)
+                        else if (selection === 'customamount') module.exports.bidcustom(id, j, msguser)
+                        else if (selection === 'prebid') module.exports.prebid(id, j, msguser)
+                        else if (selection === 'togglenotif') module.exports.togglenotif(id, j, msguser)
+                    })
                 })
-            })
-            .catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
+                .catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`<@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
         }
     }
 }
@@ -250,8 +250,14 @@ module.exports.biddms = async function (id, authorid) {
             "auctionhosts": 0,
             "totalharspent": 0,
             "totalharearned": 0,
-			"highestwinbid": 0,
+            "highestwinbid": 0,
             "ign": "Not Set",
+            "qc": {
+                "length": 172800,
+                "startingbid": 10,
+                "increment": 2,
+                "antisnipe": 12
+            }
         }
         alluserdata.push(userdataobject)
         fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
@@ -299,7 +305,7 @@ module.exports.embedgen = function (id) {
     let charmclass = selectedah.class
     let anonymity = selectedah.anonymity
     let ownerun = selectedah.ownerun
-    if(!ownerun) ownertext = " "
+    if (!ownerun) ownertext = " "
     else ownertext = `\`${ownerun}\``
     let colorhex = colors[charmclass]
     let aucname = selectedah.aucname
@@ -365,15 +371,15 @@ module.exports.auccheck = async function () {
             let ownerdata = alluserdata.find(x => x.userid === aucowner)
             let winnerdata = alluserdata.find(x => x.userid === auctopbidder)
             ownerdata.totalharearned += curbid
-            if(auctopbidder != 0 && winnerdata.highestwinbid < curbid) winnerdata.highestwinbid = curbid
+            if (auctopbidder != 0 && winnerdata.highestwinbid < curbid) winnerdata.highestwinbid = curbid
             fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4));
             let ownerign = ownerdata?.ign || "Not Set"
-            let winnerign; 
+            let winnerign;
             if (auctopbidder) topbidusername = await client.users.cache.get(auctopbidder).username, winnerign = winnerdata?.ign || "Not Set"
             //check if an auction has ended
             //if it has, send the owner, top bidder, and other bidders notifications
             //if it fails to dm, send it in bot channel instead
-            if(curbid === 0) {
+            if (curbid === 0) {
                 await client.channels.cache.get(newaucchannelid).messages.fetch(currentcheck.msgid).then(message => message.delete()).catch((err) => console.log(err))
                 currentcheck.msgid = "deleted"
                 fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
@@ -393,7 +399,7 @@ module.exports.auccheck = async function () {
                     fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
                     client.users.send(msguser, ({ content: bluetext(`You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!\nTheir ign: ${ownerign}`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> You won the auction #${auctionid} for ${curbid} HAR! Please contact ${ownerusername} to collect your charm!\nPlease enable DMs with the bot!`)))
                 } else if (msguser === aucowner) {
-                    if (auctopbidder === 0) client.users.send(msguser, ({ content: redtext(`Your auction #${auctionid} has ended but with no bids!`), embeds:[module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended but with no bids!\nPlease enable DMs with the bot!`)))
+                    if (auctopbidder === 0) client.users.send(msguser, ({ content: redtext(`Your auction #${auctionid} has ended but with no bids!`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended but with no bids!\nPlease enable DMs with the bot!`)))
                     else client.users.send(msguser, ({ content: bluetext(`Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbidusername} to sell your charm.\nTheir ign: ${winnerign}`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> Your auction #${auctionid} has ended with the bid of ${curbid} HAR! Please contact ${topbidusername} to sell your charm.\nPlease enable DMs with the bot!`)))
                 } else client.users.send(msguser, ({ content: redtext(`The auction #${auctionid} has ended with ${curbid} HAR as top bid! You unfortunately did not win the auction.`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })).catch((e) => client.channels.fetch(botchannelid).then(channel => channel.send(`> <@${msguser}> I tried to message you in DMs, but I couldn't! Please unblock or enable DMs!`)))
             }
@@ -421,7 +427,7 @@ module.exports.auccheck = async function () {
             currentcheck.active = false
             console.log(`#${auctionid} has been deleted as it had no bids for 48 hours`)
             let attachment = new AttachmentBuilder(`./images/${auctionid}.png`, { name: `${auctionid}.png` })
-            await client.users.send(aucowner, { content: bluetext(`Auction #${auctionid} had no bids for 48 hours, and has been deleted!`), embeds: [module.exports.embedgen(auctionid)], files: [attachment]})
+            await client.users.send(aucowner, { content: bluetext(`Auction #${auctionid} had no bids for 48 hours, and has been deleted!`), embeds: [module.exports.embedgen(auctionid)], files: [attachment] })
             let aucendlog = miscembed()
                 .setTitle(`Auction #${auctionid} deleted`)
                 .setDescription(`Owner: <@${aucowner}> | No bids after 48 hours`)
@@ -496,7 +502,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
             userdata.auctionbids++
             fs.writeFileSync("./data/userdata.json", JSON.stringify(alluserdata, null, 4))
             if (i.customId === "confirm") {
-                if (authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount >= prebidamount) return await interactionsend(redtext(`You cannot lower your autobid!`))  
+                if (authorid === selectedah.prebids[0].user && selectedah.prebids[0].amount >= prebidamount) return await interactionsend(redtext(`You cannot lower your autobid!`))
                 await interactionsend(greentext(`Autobid Successful!`))
                 //if confirmed, bid immediately and add the user to "autobid" on the auction.
                 //if the existing autobid is larger than the one that has been bid, automatically bid up until previous one's maximum
@@ -513,9 +519,9 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                         module.exports.updateembed(id)
                         let prebidsubmitlog = miscembed()
-                        .setTitle(`Autobid updated for auction #${id}`)
-                        .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
-                        .setColor(0xCCCCFF)
+                            .setTitle(`Autobid updated for auction #${id}`)
+                            .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
+                            .setColor(0xCCCCFF)
                         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))
                     }
                     else if (authorid === currenttopbidder) {
@@ -524,9 +530,9 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
                         module.exports.updateembed(id)
                         let prebidsubmitlog = miscembed()
-                        .setTitle(`Autobid submitted for auction #${id}`)
-                        .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
-                        .setColor(0xCCCCFF)
+                            .setTitle(`Autobid submitted for auction #${id}`)
+                            .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
+                            .setColor(0xCCCCFF)
                         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))
                     }
                     else {
@@ -540,9 +546,9 @@ module.exports.prebid = async function (id, interaction, authorid) {
                         selectedah.topbidder = authorid
                         selectedah.bids.push({ "user": authorid, "bid": nextcurbid })
                         fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
-    
+
                         if (existingprebid > currentbid) await interactionsend(bluetext(`There was another autobid submitted, so your bid has been adjusted accordingly to beat it!`))
-    
+
                         let prebidsubmitlog = miscembed()
                             .setTitle(`Autobid submitted for auction #${id}`)
                             .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
@@ -551,7 +557,7 @@ module.exports.prebid = async function (id, interaction, authorid) {
                             .setTitle(`Bid on auction #${id}`)
                             .setDescription(`Bidder: <@${authorid}>\nAmount: ${nextcurbid} HAR`)
                             .setColor(0xCCCCFF)
-    
+
                         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [prebidsubmitlog] }))
                         await client.channels.fetch(logchannelid).then(channel => channel.send({ embeds: [bidcustomlog] }))
                         module.exports.updateembed(id)
@@ -563,14 +569,14 @@ module.exports.prebid = async function (id, interaction, authorid) {
                     await interactionsend(bluetext(`There was another autobid submitted, which beat or was equal to yours! The current bid is now ${nextcurbid}.`))
                     selectedah.currentbid = nextcurbid
                     selectedah.topbidder = prebiduser
-                    selectedah.bids.push({ "user": authorid, "bid": prebidamount})
+                    selectedah.bids.push({ "user": authorid, "bid": prebidamount })
                     selectedah.bids.push({ "user": prebiduser, "bid": nextcurbid })
                     fs.writeFileSync("./data/auctions.json", JSON.stringify(listofauctions, null, 4));
 
                     let attachment = new AttachmentBuilder(`./images/${id}.png`, { name: `${id}.png` })
                     let prebidtriggermsg = { content: greentext(`Your autobid on auction #${id} has triggered, bidding ${nextcurbid} HAR!`) + `\n` + genmessagelink(id), embeds: [module.exports.embedgen(id)], files: [attachment] }
                     await client.users.send(prebiduser, prebidtriggermsg)
-                    
+
                     let prebidsubmitlog = miscembed()
                         .setTitle(`Autobid submitted for auction #${id}`)
                         .setDescription(`Bidder: <@${authorid}>\nAmount: ${prebidamount} HAR`)
@@ -625,7 +631,7 @@ module.exports.prebidcheck = async function (id) {
 
         module.exports.updateembed(id)
         module.exports.sendnotif(id, nextbidamount, prebiduser)
-        
+
     } else return //else do nothing
 }
 
